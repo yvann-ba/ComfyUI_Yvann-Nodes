@@ -1,0 +1,15 @@
+[project]
+name = "comfyui_yvann-nodes"
+description = "NODES:Audio Analysis YVANN, Show Text YVANN."
+version = "1.0.0"
+license = {file = "LICENSE"}
+dependencies = ["librosa", "numpy", "torch"]
+
+[project.urls]
+Repository = "https://github.com/yvann-ba/ComfyUI_Yvann-Nodes"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI_Yvann-Nodes"
+Icon = ""
