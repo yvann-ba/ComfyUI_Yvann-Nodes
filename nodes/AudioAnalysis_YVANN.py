@@ -1,36 +1,119 @@
-import numpy as np
 import librosa
+import torch
+import os
+import folder_paths
+
+
+class DownloadOpenUnmixModel:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "model_name": (["umxl", "umxhq"], {"default": "umxl"}),
+            }
+        }
+
+    RETURN_TYPES = ("OPEN_UNMIX_MODEL",)
+    FUNCTION = "download_and_load_model"
+    CATEGORY = "RyanOnTheInside/Audio"
+
+    def download_and_load_model(self, model_name):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        download_path = os.path.join(folder_paths.models_dir, "openunmix")
+        os.makedirs(download_path, exist_ok=True)
+
+        model_file = f"{model_name}.pth"
+        model_path = os.path.join(download_path, model_file)
+
+        if not os.path.exists(model_path):
+            print(f"Downloading {model_name} model...")
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', model_name, device='cpu')
+            torch.save(separator.state_dict(), model_path)
+            print(f"Model saved to: {model_path}")
+        else:
+            print(f"Loading model from: {model_path}")
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', model_name, device='cpu')
+            separator.load_state_dict(torch.load(model_path, map_location='cpu'))
+
+        separator = separator.to(device)
+        separator.eval()
+
+        return (separator,)
 
 class AudioAnalysis_YVANN:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_path": ("STRING",),
-                "frame_rate": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 100.0, "step": 1.0}),
-                "mid_threshold": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "model": ("OPEN_UNMIX_MODEL",),
+                "audio": ("AUDIO",),
+                "video_frames": ("IMAGE",),
+                "frame_rate": ("FLOAT", {"default": 30, "min": 0.1, "max": 120, "step": 0.1}),
             }
-        }
+		}
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("mid_values", "audio")
-    FUNCTION = "analyze_audio"
-    CATEGORY = "Audio/Analysis"
+    RETURN_TYPES = ("AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "FLOAT")
+    RETURN_NAMES = ("audio", "drums_audio", "vocals_audio", "bass_audio", "other_audio", "audio_weights")
+    FUNCTION = "process_audio"
 
-    def analyze_audio(self, audio_path, frame_rate, mid_threshold):
-        # Load audio using librosa
-        y, sr = librosa.load(audio_path, sr=None)
+    def process_audio(self, model, audio, video_frames, frame_rate):
+        waveform = audio['waveform']
+        sample_rate = audio['sample_rate']
 
-        # Calculate the mid-range frequencies (e.g., 300-5000 Hz)
-        mid_frequencies = librosa.effects.harmonic(y)
-        
-        # Calculate the mid values based on the threshold
-        mid_values = mid_frequencies[mid_frequencies > mid_threshold]
+        num_frames, height, width, _ = video_frames.shape
 
-        # Convert the mid values to a string for output
-        mid_values_str = ",".join(map(str, mid_values.tolist()))
+        if waveform.dim() == 3:
+            waveform = waveform.squeeze(0) 
+        if waveform.dim() == 1:
+            waveform = waveform.unsqueeze(0)  # Add channel dimension if mono
+        if waveform.shape[0] != 2:
+            waveform = waveform.repeat(2, 1)  # Duplicate mono to stereo if necessary
+            
+        waveform = waveform.unsqueeze(0)
 
-        return (mid_values_str, audio_path)
+        # Determine the device
+        device = next(model.parameters()).device
+        waveform = waveform.to(device)
+
+        estimates = model(waveform)
+
+        # Create isolated audio objects for each target
+        isolated_audio = {}
+        target_indices = {'drums': 1, 'vocals': 0, 'bass': 2, 'other': 3}  # Corrected indices
+        for target, index in target_indices.items():
+            target_waveform = estimates[:, index, :, :]  # Shape: (1, 2, num_samples)
+            
+            isolated_audio[target] = {
+                'waveform': target_waveform.cpu(),  # Move back to CPU
+                'sample_rate': sample_rate,
+                'frame_rate': frame_rate
+            }
+                # Compute normalized audio weights for each frame
+        total_samples = waveform.shape[-1]
+        samples_per_frame = total_samples // num_frames
+
+        # Calculate the energy of the waveform in each frame
+        audio_weights = []
+        for i in range(num_frames):
+            start = i * samples_per_frame
+            end = start + samples_per_frame
+            frame_waveform = waveform[..., start:end]
+            frame_energy = torch.sqrt(torch.mean(frame_waveform ** 2)).item()
+            audio_weights.append(frame_energy)
+
+        # Normalize the audio weights to be between 0 and 1
+        max_weight = max(audio_weights)
+        if max_weight > 0:
+            audio_weights = [weight / max_weight for weight in audio_weights]
+
+        return (
+            audio,
+            isolated_audio['drums'],
+            isolated_audio['vocals'],
+            isolated_audio['bass'],
+            isolated_audio['other'],
+            audio_weights
+        )
 
 
 
