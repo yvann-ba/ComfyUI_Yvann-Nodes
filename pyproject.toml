@@ -10,6 +10,6 @@ Repository = "https://github.com/yvann-ba/ComfyUI_Yvann-Nodes"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = "yvann"
+PublisherId = "yvann-node"
 DisplayName = "ComfyUI_Yvann-Nodes"
 Icon = ""
