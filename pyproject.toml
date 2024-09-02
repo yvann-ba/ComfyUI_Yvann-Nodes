@@ -1,7 +1,7 @@
 [project]
 name = "comfyui_yvann-nodes"
-description = "Audio Analysis, Transform audio into float weights"
-version = "1.0.0"
+description = "Audio Analysis for Weights Schedules"
+version = "1.0.1"
 license = {file = "LICENSE"}
 dependencies = ["openunmix", "numpy", "torch"]
 
