@@ -2,39 +2,25 @@ import torch
 import os
 import folder_paths
 from scipy.signal import butter, lfilter
-
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyquist = 0.5 * fs
-    low = lowcut / nyquist
-    high = highcut / nyquist
-    b, a = butter(order, [low, high], btype='band')
-    return b, a
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-def extract_frequency_bands(waveform, sample_rate):
-    low_waveform = butter_bandpass_filter(waveform, 20, 250, sample_rate)
-    mid_waveform = butter_bandpass_filter(waveform, 250, 4000, sample_rate)
-    high_waveform = butter_bandpass_filter(waveform, 4000, 20000, sample_rate)
-    return low_waveform, mid_waveform, high_waveform
+import matplotlib.pyplot as plt
+import tempfile
+import numpy as np
+from PIL import Image
 
 class AudioAnalysis_YVANN:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model_name": (["umxl", "umxhq"], {"default": "umxl"}),
-                "audio": ("AUDIO",),
+                "model_name": (["umxhq", "umxl"], {"default": "umxhq"}),
                 "video_frames": ("IMAGE",),
+                "audio": ("AUDIO",),
                 "frame_rate": ("FLOAT", {"default": 30, "min": 0.1, "max": 120, "step": 0.1}),
             }
 		}
 
-    RETURN_TYPES = ("AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("audio", "drums_audio", "vocals_audio", "bass_audio", "other_audio", "mid_audio", "low_audio", "high_audio", "audio_weights_str", "drums_weights_str", "vocals_weights_str", "bass_weights_str", "other_weights_str", "mid_weights_str", "low_weights_str", "high_weights_str")
+    RETURN_TYPES = ("AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "STRING", "STRING", "STRING", "STRING", "STRING", "IMAGE")
+    RETURN_NAMES = ("audio", "drums_audio", "vocals_audio", "bass_audio", "other_audio", "audio_weights_str", "drums_weights_str", "vocals_weights_str", "bass_weights_str", "other_weights_str", "Visual Weights Graph")
     FUNCTION = "process_audio"
 
     def download_and_load_model(self, model_name):
@@ -83,12 +69,6 @@ class AudioAnalysis_YVANN:
 
         estimates = model(waveform)
 
-        # Extract frequency bands
-        low_waveform, mid_waveform, high_waveform = extract_frequency_bands(waveform.cpu().numpy(), sample_rate)
-        low_waveform = torch.tensor(low_waveform).to(device)
-        mid_waveform = torch.tensor(mid_waveform).to(device)
-        high_waveform = torch.tensor(high_waveform).to(device)
-
         # Compute normalized audio weights for each frame
         total_samples = waveform.shape[-1]
         samples_per_frame = total_samples // num_frames
@@ -105,14 +85,6 @@ class AudioAnalysis_YVANN:
             if max_weight > 0:
                 weights = [weight / max_weight for weight in weights]
             return weights
-
-        mid_weights = compute_weights(mid_waveform)
-        low_weights = compute_weights(low_waveform)
-        high_weights = compute_weights(high_waveform)
-
-        mid_weights_str = [f"\"{i}:{round(weight, 2)}\"" for i, weight in enumerate(mid_weights)]
-        low_weights_str = [f"\"{i}:{round(weight, 2)}\"" for i, weight in enumerate(low_weights)]
-        high_weights_str = [f"\"{i}:{round(weight, 2)}\"" for i, weight in enumerate(high_weights)]
 
         # Create isolated audio objects for each target
         isolated_audio = {}
@@ -144,43 +116,54 @@ class AudioAnalysis_YVANN:
         # Normalize the audio weights to be between 0 and 1
         max_weight = max(audio_weights)
         if max_weight > 0:
-            audio_weights_str = [f"\"{i}:{round(weight / max_weight, 2)}\"" for i, weight in enumerate(audio_weights)]
+            audio_weights = [weight / max_weight for weight in audio_weights]
+            audio_weights_str = [f"\"{i}:{round(weight, 2)}\"" for i, weight in enumerate(audio_weights)]
 
         # Calculate and normalize weights for each isolated audio target
+        target_weights = {}
         target_weights_str = {}
         for target, index in target_indices.items():
             target_waveform = isolated_audio[target]['waveform']
-            target_weights = []
+            target_weights[target] = []
             for i in range(num_frames):
                 start = i * samples_per_frame
                 end = start + samples_per_frame
                 frame_waveform = target_waveform[..., start:end]
                 frame_energy = torch.sqrt(torch.mean(frame_waveform ** 2)).item()
-                target_weights.append(frame_energy)
+                target_weights[target].append(frame_energy)
             
-            max_target_weight = max(target_weights)
+            max_target_weight = max(target_weights[target])
             if max_target_weight > 0:
-                target_weights_str[target] = [f"\"{i}:{round(weight / max_target_weight, 2)}\"" for i, weight in enumerate(target_weights)]
+                target_weights[target] = [weight / max_target_weight for weight in target_weights[target]]
+                target_weights_str[target] = [f"\"{i}:{round(weight, 2)}\"" for i, weight in enumerate(target_weights[target])]
 
-        # Extract mid, low, and high frequencies from the input audio
-        mid_audio = {'waveform': [], 'sample_rate': sample_rate, 'frame_rate': frame_rate}
-        low_audio = {'waveform': [], 'sample_rate': sample_rate, 'frame_rate': frame_rate}
-        high_audio = {'waveform': [], 'sample_rate': sample_rate, 'frame_rate': frame_rate}
-        
-        for i in range(num_frames):
-            start = i * samples_per_frame
-            end = start + samples_per_frame
-            frame_waveform = waveform[..., start:end]
-            
-            # Append the frame waveform to the respective frequency band audio
-            mid_audio['waveform'].append(mid_waveform[..., start:end].cpu())
-            low_audio['waveform'].append(low_waveform[..., start:end].cpu())
-            high_audio['waveform'].append(high_waveform[..., start:end].cpu())
+        # Plot the weights
+        frames = list(range(1, num_frames + 1))
+        plt.figure(figsize=(10, 6))
+        plt.plot(frames, audio_weights, label='Audio Weights', color='black')
+        plt.plot(frames, target_weights['drums'], label='Drums Weights', color='red')
+        plt.plot(frames, target_weights['vocals'], label='Vocals Weights', color='green')
+        plt.plot(frames, target_weights['bass'], label='Bass Weights', color='blue')
+        plt.plot(frames, target_weights['other'], label='Other Weights', color='orange')
+        plt.xlabel('Frame Number')
+        plt.ylabel('Normalized Weights')
+        plt.title('Normalized Weights for Audio Components')
+        plt.legend()
+        plt.grid(True)
 
-        # Convert lists to tensors
-        mid_audio['waveform'] = torch.cat(mid_audio['waveform'], dim=-1)
-        low_audio['waveform'] = torch.cat(low_audio['waveform'], dim=-1)
-        high_audio['waveform'] = torch.cat(high_audio['waveform'], dim=-1)
+        # Save the plot to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+            plt.savefig(tmpfile, format='png')
+            tmpfile_path = tmpfile.name
+        plt.close()
+
+        # Load the image from the temporary file and convert to tensor
+        weights_graph = Image.open(tmpfile_path).convert("RGB")
+        weights_graph = np.array(weights_graph)
+        weights_graph = torch.tensor(weights_graph).permute(2, 0, 1).unsqueeze(0).float() / 255.0
+
+        # Ensure the tensor has the correct shape [B, H, W, C]
+        weights_graph = weights_graph.permute(0, 2, 3, 1)
 
         return (
             audio,
@@ -188,15 +171,10 @@ class AudioAnalysis_YVANN:
             isolated_audio['vocals'],
             isolated_audio['bass'],
             isolated_audio['other'],
-            mid_audio,
-            low_audio,
-            high_audio,
             ", ".join(audio_weights_str),
             ", ".join(target_weights_str['drums']),
             ", ".join(target_weights_str['vocals']),
             ", ".join(target_weights_str['bass']),
             ", ".join(target_weights_str['other']),
-            ", ".join(mid_weights_str),
-            ", ".join(low_weights_str),
-            ", ".join(high_weights_str)
+            weights_graph
         )

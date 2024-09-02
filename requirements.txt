@@ -1,4 +1,3 @@
-librosa
 numpy
 torch
 openumix
