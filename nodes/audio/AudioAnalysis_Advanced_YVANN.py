@@ -1,45 +1,49 @@
 import torch
 import os
 import folder_paths
+from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 import tempfile
 import numpy as np
 from PIL import Image
 import librosa
 
-class AudioAnalysis_YVANN:
+class AudioAnalysis_Advanced_YVANN:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "model_name": (["umxhq", "umxl"], {"default": "umxhq"}),
                 "video_frames": ("IMAGE",),
                 "audio": ("AUDIO",),
                 "frame_rate": ("FLOAT", {"default": 30, "min": 0.1, "max": 120, "step": 0.1}),
-                "weight_algorithm": (["rms_energy", "amplitude_envelope", "spectral_centroid", "onset_detection", "chroma_features"], {"default": "rms_energy"}),
-                "smoothing_factor": ("FLOAT", {"default": 0.5, "min": 0.01, "max": 1.0, "step": 0.01}),
+                "weight_algorithm": (["amplitude_envelope", "rms_energy", "spectral_centroid", "onset_detection", "chroma_features"], {"default": "rms_energy"}),
+                "threshold": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "smoothing_factor": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 5.0, "step": 0.01}),
+                "weight_multiplier": ("FLOAT", {"default": 1.0, "min": -1.0, "max": 1.0, "step": 0.01}),
             }
         }
 
-    RETURN_TYPES = ("AUDIO", "STRING", "AUDIO", "STRING", "AUDIO", "STRING", "AUDIO", "STRING", "IMAGE")
-    RETURN_NAMES = ("audio", "audio_weights_str", "drums_audio", "drums_weights_str", "vocals_audio", "vocals_weights_str", "bass_audio", "bass_weights_str", "Visual Weights Graph")
+    RETURN_TYPES = ("AUDIO", "AUDIO", "AUDIO", "AUDIO", "AUDIO", "STRING", "STRING", "STRING", "STRING", "STRING", "IMAGE")
+    RETURN_NAMES = ("audio", "drums_audio", "vocals_audio", "bass_audio", "other_audio", "audio_weights_str", "drums_weights_str", "vocals_weights_str", "bass_weights_str", "other_weights_str", "Visual Weights Graph")
     FUNCTION = "process_audio"
 
-    def download_and_load_model(self):
+    def download_and_load_model(self, model_name):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         download_path = os.path.join(folder_paths.models_dir, "openunmix")
         os.makedirs(download_path, exist_ok=True)
 
-        model_file = "umxl.pth"
+        model_file = f"{model_name}.pth"
         model_path = os.path.join(download_path, model_file)
 
         if not os.path.exists(model_path):
-            print("Downloading umxhq model...")
-            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
+            print(f"Downloading {model_name} model...")
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', model_name, device='cpu')
             torch.save(separator.state_dict(), model_path)
             print(f"Model saved to: {model_path}")
         else:
             print(f"Loading model from: {model_path}")
-            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', model_name, device='cpu')
             separator.load_state_dict(torch.load(model_path, map_location='cpu'))
 
         separator = separator.to(device)
@@ -67,10 +71,19 @@ class AudioAnalysis_YVANN:
     def _chroma_features(self, waveform, num_frames, samples_per_frame, sample_rate):
         return np.array([np.mean(librosa.feature.chroma_stft(y=self._get_audio_frame(waveform, i, samples_per_frame), sr=sample_rate)) for i in range(num_frames)])
 
+    def _apply_threshold(self, weights, threshold):
+        mean = np.mean(weights)
+        std = np.std(weights)
+        dynamic_threshold = mean + threshold * std
+        return np.where(weights < dynamic_threshold, 0, weights)
+
     def _smooth_weights(self, weights, smoothing_factor):
-        kernel_size = max(3, int(smoothing_factor * 50))  # Ensure minimum kernel size of 3
+        kernel_size = int(smoothing_factor * 50)  # Increased kernel size for more smoothing
         kernel = np.ones(kernel_size) / kernel_size
         return np.convolve(weights, kernel, mode='same')
+
+    def _apply_weight_multiplier(self, weights, weight_multiplier):
+        return np.clip(weights * weight_multiplier, 0, 1)
 
     def _normalize_weights(self, weights):
         min_val, max_val = np.min(weights), np.max(weights)
@@ -79,8 +92,8 @@ class AudioAnalysis_YVANN:
         else:
             return np.zeros_like(weights)
 
-    def process_audio(self, audio, video_frames, frame_rate, weight_algorithm, smoothing_factor):
-        model = self.download_and_load_model()
+    def process_audio(self, model_name, audio, video_frames, frame_rate, weight_algorithm, threshold, smoothing_factor, weight_multiplier):
+        model = self.download_and_load_model(model_name)
         
         waveform = audio['waveform']
         sample_rate = audio['sample_rate']
@@ -108,7 +121,7 @@ class AudioAnalysis_YVANN:
 
         # Create isolated audio objects for each target
         isolated_audio = {}
-        target_indices = {'drums': 1, 'vocals': 0, 'bass': 2}
+        target_indices = {'drums': 1, 'vocals': 0, 'bass': 2, 'other': 3}  # Corrected indices
         for target, index in target_indices.items():
             target_waveform = estimates[:, index, :, :]  # Shape: (1, 2, num_samples)
             
@@ -125,8 +138,10 @@ class AudioAnalysis_YVANN:
         else:
             audio_weights = weight_function(waveform.squeeze(0), num_frames, samples_per_frame)
 
-        # Apply smoothing to audio weights
+        # Apply threshold, smoothing, and weight multiplier to audio weights
+        audio_weights = self._apply_threshold(audio_weights, threshold)
         audio_weights = self._smooth_weights(audio_weights, smoothing_factor)
+        audio_weights = self._apply_weight_multiplier(audio_weights, weight_multiplier)
         audio_weights = self._normalize_weights(audio_weights)
 
         audio_weights_str = [f"{i}:({float(weight):.2f})" for i, weight in enumerate(audio_weights)]
@@ -141,8 +156,10 @@ class AudioAnalysis_YVANN:
             else:
                 target_weights[target] = weight_function(target_waveform, num_frames, samples_per_frame)
             
-            # Apply smoothing to target weights
+            # Apply threshold, smoothing, and weight multiplier to target weights
+            target_weights[target] = self._apply_threshold(target_weights[target], threshold)
             target_weights[target] = self._smooth_weights(target_weights[target], smoothing_factor)
+            target_weights[target] = self._apply_weight_multiplier(target_weights[target], weight_multiplier)
             target_weights[target] = self._normalize_weights(target_weights[target])
             
             target_weights_str[target] = [f"{i}:({float(weight):.2f})" for i, weight in enumerate(target_weights[target])]
@@ -154,6 +171,7 @@ class AudioAnalysis_YVANN:
         plt.plot(frames, target_weights['drums'], label='Drums Weights', color='red')
         plt.plot(frames, target_weights['vocals'], label='Vocals Weights', color='green')
         plt.plot(frames, target_weights['bass'], label='Bass Weights', color='blue')
+        plt.plot(frames, target_weights['other'], label='Other Weights', color='orange')
         plt.xlabel('Frame Number')
         plt.ylabel('Normalized Weights')
         plt.title(f'Normalized Weights for Audio Components ({weight_algorithm})')
@@ -176,12 +194,14 @@ class AudioAnalysis_YVANN:
 
         return (
             audio,
-            ",\n".join(audio_weights_str),
             isolated_audio['drums'],
-            ",\n".join(target_weights_str['drums']),
             isolated_audio['vocals'],
-            ",\n".join(target_weights_str['vocals']),
             isolated_audio['bass'],
+            isolated_audio['other'],
+            ",\n".join(audio_weights_str),
+            ",\n".join(target_weights_str['drums']),
+            ",\n".join(target_weights_str['vocals']),
             ",\n".join(target_weights_str['bass']),
+            ",\n".join(target_weights_str['other']),
             weights_graph
         )
