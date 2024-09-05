@@ -89,13 +89,13 @@ class AudioFrequencyAnalysis_YVANN:
         mid_weights = compute_weights(mid_waveform, mid_threshold)
         high_weights = compute_weights(high_waveform, high_threshold)
 
-        # Format weights as strings with frame index starting from 1
-        low_weights_str = [
-            f"\"{i+1}:{round(weight, 2)}\"" for i, weight in enumerate(low_weights)]
-        mid_weights_str = [
-            f"\"{i+1}:{round(weight, 2)}\"" for i, weight in enumerate(mid_weights)]
-        high_weights_str = [
-            f"\"{i+1}:{round(weight, 2)}\"" for i, weight in enumerate(high_weights)]
+        # Format weights as strings with frame index starting from 0
+        def format_weights(weights):
+            return ",\n".join([f"{i}:({weight:.1f})" if weight > 0 else f"{i}:0" for i, weight in enumerate(weights)])
+
+        low_weights_str = format_weights(low_weights)
+        mid_weights_str = format_weights(mid_weights)
+        high_weights_str = format_weights(high_weights)
 
         # Plot the weights
         frames = list(range(1, num_frames + 1))
@@ -122,4 +122,4 @@ class AudioFrequencyAnalysis_YVANN:
         # Ensure the tensor has the correct shape [B, H, W, C]
         weights_graph = weights_graph.permute(0, 2, 3, 1)
 
-        return ", ".join(low_weights_str), ", ".join(mid_weights_str), ", ".join(high_weights_str), weights_graph
+        return low_weights_str, mid_weights_str, high_weights_str, weights_graph
