@@ -6,6 +6,7 @@ import tempfile
 import numpy as np
 from PIL import Image
 import librosa
+from nodes import SaveImage
 
 class Audio_Reactive_IPAdapter_YVANN:
     @classmethod
@@ -14,14 +15,14 @@ class Audio_Reactive_IPAdapter_YVANN:
             "required": {
                 "video_frames": ("IMAGE",),
                 "audio": ("AUDIO",),
-                "frame_rate": ("FLOAT",),
+                "frame_rate": ("INT", {"default": 30.0, "min": 1.0, "max": 60.0, "step": 1.0}),
                 "weight_algorithm": (["rms_energy", "amplitude_envelope", "spectral_centroid", "onset_detection", "chroma_features"], {"default": "rms_energy"}),
                 "smoothing_factor": ("FLOAT", {"default": 0.5, "min": 0.01, "max": 1.0, "step": 0.01}),
             }
         }
 
-    RETURN_TYPES = ("AUDIO", "FLOAT", "AUDIO", "FLOAT", "AUDIO", "FLOAT", "AUDIO", "FLOAT", "IMAGE")
-    RETURN_NAMES = ("audio", "Audio Weights", "drums_audio", "Drums Weights", "vocals_audio", "Vocals Weights", "bass_audio", "Bass Weights", "Visual Weights Graph")
+    RETURN_TYPES = ("FLOAT", "AUDIO", "FLOAT", "AUDIO", "FLOAT", "IMAGE")
+    RETURN_NAMES = ("Audio Weights", "Drums Audio", "Drums Weights", "Vocals Audio", "Vocals Weights", "Weights Graph")
     FUNCTION = "process_audio"
 
     def download_and_load_model(self):
@@ -106,17 +107,12 @@ class Audio_Reactive_IPAdapter_YVANN:
         total_samples = waveform.shape[-1]
         samples_per_frame = total_samples // num_frames
 
-        # Création des isolated_audio avec normalisation
+        # Create isolated audio objects for each target
         isolated_audio = {}
-        target_indices = {'drums': 1, 'vocals': 0, 'bass': 2}
+        target_indices = {'drums': 1, 'vocals': 0}
         for target, index in target_indices.items():
             target_waveform = estimates[:, index, :, :]  # Shape: (1, 2, num_samples)
             
-            # Normalisation du volume
-            max_val = torch.max(torch.abs(target_waveform))
-            if max_val > 0:
-                target_waveform = target_waveform / max_val
-
             isolated_audio[target] = {
                 'waveform': target_waveform.cpu(),  # Move back to CPU
                 'sample_rate': sample_rate,
@@ -157,7 +153,6 @@ class Audio_Reactive_IPAdapter_YVANN:
         plt.plot(frames, audio_weights, label='Audio Weights', color='black')
         plt.plot(frames, target_weights['drums'], label='Drums Weights', color='red')
         plt.plot(frames, target_weights['vocals'], label='Vocals Weights', color='green')
-        plt.plot(frames, target_weights['bass'], label='Bass Weights', color='blue')
         plt.xlabel('Frame Number')
         plt.ylabel('Normalized Weights')
         plt.title(f'Normalized Weights for Audio Components ({weight_algorithm})')
@@ -179,13 +174,10 @@ class Audio_Reactive_IPAdapter_YVANN:
         weights_graph = weights_graph.permute(0, 2, 3, 1)
 
         return (
-            audio,
             audio_weights,
             isolated_audio['drums'],
             target_weights['drums'],
             isolated_audio['vocals'],
             target_weights['vocals'],
-            isolated_audio['bass'],
-            target_weights['bass'],
             weights_graph
         )
