@@ -11,7 +11,7 @@ import pandas as pd
 from ... import Yvann
 
 class AudioNodeBase(Yvann):
-    CATEGORY= "👁️ Yvann Nodes/Audio"
+    CATEGORY= "👁️ Yvann Nodes/🔊 Audio"
 
 class Audio_Vocals_Analysis_Yvann(AudioNodeBase):
 

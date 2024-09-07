@@ -45,7 +45,7 @@ loadScript('/yvann_web_async/purify.min.js').catch((e) => {
   console.log(e)
 })
 
-const categories = [""];
+const categories = ["👁️ Yvann Nodes"];
 app.registerExtension({
 	name: "Yvann.HelpPopup",
 	async beforeRegisterNodeDef(nodeType, nodeData) {
@@ -275,7 +275,7 @@ const create_documentation_stylesheet = () => {
       ctx.lineJoin = 'round'
       ctx.lineWidth = 2.4
       ctx.font = 'bold 36px monospace'
-      ctx.fillStyle = 'orange';
+      ctx.fillStyle = '#EADFB4';
       ctx.fillText('?', 0, 24)
       ctx.restore()
       return r

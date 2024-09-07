@@ -1,19 +1,21 @@
 import torch
-import os
 import folder_paths
 import matplotlib.pyplot as plt
 import tempfile
 import numpy as np
 from PIL import Image
-import librosa
-from nodes import SaveImage
 import pandas as pd
 from ... import Yvann
+import random
 
 class AudioNodeBase(Yvann):
-    CATEGORY= "👁️ Yvann Nodes/Audio"
-    
+    CATEGORY= "👁️ Yvann Nodes/🔊 Audio"
+        
 class Audio_Analysis_Yvann(AudioNodeBase):
+    def __init__(self):
+        self.output_dir = folder_paths.get_temp_directory()
+        self.type = "temp"
+        self.prefix_append = "_temp_" + ''.join(random.choice("abcdefghijklmnopqrstupvxyz") for x in range(5))
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -77,7 +79,7 @@ class Audio_Analysis_Yvann(AudioNodeBase):
     
         return masks_out
 
-    def process_audio(self, audio, video_frames, frame_rate, smoothing_factor, global_intensity):
+    def process_audio(self, audio, video_frames, frame_rate, smoothing_factor, global_intensity, prompt=None, filename_prefix="ComfyUI", extra_pnginfo=None):
         waveform = audio['waveform']
         sample_rate = audio['sample_rate']
 
@@ -94,7 +96,7 @@ class Audio_Analysis_Yvann(AudioNodeBase):
         samples_per_frame = total_samples // num_frames
 
         processed_audio = {
-            'waveform': waveform,
+            'waveform': waveform.cpu(),
             'sample_rate': sample_rate,
             'frame_rate': frame_rate
         }
@@ -133,5 +135,5 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             processed_audio,
             audio_weights.tolist(),
             audio_masks,
-            weights_graph
+            weights_graph,
         )
