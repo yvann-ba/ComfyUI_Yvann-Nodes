@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import tempfile
 import numpy as np
 from PIL import Image
-import librosa
-from nodes import SaveImage
-import pandas as pd
 from ... import Yvann
 
 class AudioNodeBase(Yvann):
@@ -21,7 +18,6 @@ class Audio_Vocals_Analysis_Yvann(AudioNodeBase):
             "required": {
                 "video_frames": ("IMAGE",),
                 "audio": ("AUDIO",),
-                "frame_rate": ("INT", {"default": 30, "min": 1, "max": 60, "step": 1}),
                 "smoothing_factor": ("FLOAT", {"default": 0.25, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "global_intensity": ("FLOAT", {"default": 0.0, "min": -1.0, "max": 1.0, "step": 0.01}),
             }
@@ -86,8 +82,6 @@ class Audio_Vocals_Analysis_Yvann(AudioNodeBase):
         # Ensure input_values is a list
         if isinstance(input_values, (float, int)):
             input_values = [input_values]
-        elif isinstance(input_values, pd.Series):
-            input_values = input_values.tolist()
         elif isinstance(input_values, list) and all(isinstance(item, list) for item in input_values):
             input_values = [item for sublist in input_values for item in sublist]
 
@@ -100,7 +94,7 @@ class Audio_Vocals_Analysis_Yvann(AudioNodeBase):
     
         return masks_out
 
-    def process_audio(self, audio, video_frames, frame_rate, smoothing_factor, global_intensity):
+    def process_audio(self, audio, video_frames, smoothing_factor, global_intensity):
         model = self.download_and_load_model()
         
         waveform = audio['waveform']
@@ -129,7 +123,6 @@ class Audio_Vocals_Analysis_Yvann(AudioNodeBase):
         vocals_audio = {
             'waveform': vocals_waveform.cpu(),  # Move back to CPU
             'sample_rate': sample_rate,
-            'frame_rate': frame_rate
         }
         
         vocals_weights = self._rms_energy(vocals_waveform.squeeze(0), num_frames, samples_per_frame)

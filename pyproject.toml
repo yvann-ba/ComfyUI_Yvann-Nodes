@@ -1,9 +1,9 @@
 [project]
 name = "comfyui_yvann-nodes"
 description = "In Progress"
-version = "1.0.3"
+version = "1.0.4"
 license = {file = "LICENSE"}
-dependencies = ["openunmix", "numpy", "torch"]
+dependencies = ["openunmix", "numpy", "torch", "matplotlib", "pillow"]
 
 [project.urls]
 Repository = "https://github.com/yvann-ba/ComfyUI_Yvann-Nodes"

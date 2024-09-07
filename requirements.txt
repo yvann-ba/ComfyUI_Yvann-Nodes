@@ -1,3 +1,5 @@
 numpy
 torch
-openumix
+openunmix
+matplotlib
+pillow
