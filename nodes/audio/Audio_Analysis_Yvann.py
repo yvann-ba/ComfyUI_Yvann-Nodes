@@ -1,5 +1,4 @@
 import torch
-import folder_paths
 import matplotlib.pyplot as plt
 import tempfile
 import numpy as np
