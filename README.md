@@ -7,32 +7,18 @@
 
 ### With this pack, you can analyze audio, extract drum and vocal tracks, and use this information to create audio-reactive animations in your ComfyUI workflows
 
-![Usage Example](./docs/example.gif)
+
 
 ## Audio Nodes
 
-### Audio Analysis
+### `Audio Analysis`
+![Audio Analysis](./assets/AudioAnalysis-Demo.gif)
 
-This node analyzes the overall audio and generates weights based on RMS energy.
+### `Audio Drums Analysis`
+![Audio Drums Analysis](./assets/AudioDrumsAnalysis-Demo.gif)
 
-![Audio Analysis](./docs/audio_analysis.png)
-
-### Audio Drums Analysis
-
-Extracts and analyzes the drum track from the audio.
-
-![Audio Drums Analysis](./docs/audio_drums_analysis.png)
-
-### Audio Vocals Analysis
-
-Extracts and analyzes the vocal track from the audio.
-
-![Audio Vocals Analysis](./docs/audio_vocals_analysis.png)
-
-Each analysis node provides:
-- Audio weights
-- Audio masks
-- Weights graph
+### `Audio Vocals Analysis` 🗣️
+![Audio Vocals Analysis](./assets/AudioVocalsAnalysis-Demo.gif)
 
 ---
 
