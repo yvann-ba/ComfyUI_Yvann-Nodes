@@ -15,8 +15,10 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             "required": {
                 "video_frames": ("IMAGE",),
                 "audio": ("AUDIO",),
-                "smoothing_factor": ("FLOAT", {"default": 0.25, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "global_intensity": ("FLOAT", {"default": 0.0, "min": -1.0, "max": 1.0, "step": 0.01}),
+                "threshold": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 0.6, "step": 0.01}),
+                "gain": ("FLOAT", {"default": 3.5, "min": 0.0, "max": 7.0, "step": 0.1}),
+                "add": ("FLOAT", {"default": 0.0, "min": -1.0, "max": 1.0, "step": 0.01}),
+                "smooth": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
             }
         }
 
@@ -33,32 +35,31 @@ class Audio_Analysis_Yvann(AudioNodeBase):
         try:
             return np.array([np.sqrt(np.mean(self._get_audio_frame(waveform, i, samples_per_frame)**2)) for i in range(num_frames)])
         except Exception as e:
-            print(f"Error in RMS energy(Audio Anaalysis algorithm) calculation: {e}")
+            print(f"Error in RMS energy(Audio Analysis algorithm) calculation: {e}")
             return np.zeros(num_frames)
 
-    def _smooth_weights(self, weights, smoothing_factor):
-        try:
-            if smoothing_factor <= 0.01:
-                return weights
-            kernel_size = max(3, int(smoothing_factor * 50))
-            kernel = np.ones(kernel_size) / kernel_size
-            return np.convolve(weights, kernel, mode='same')
-        except Exception as e:
-            print(f"Error in smoothing weights: {e}")
-            return weights
-
-    def _normalize_weights(self, weights):
-        min_val, max_val = np.min(weights), np.max(weights)
-        if max_val > min_val:
-            return (weights - min_val) / (max_val - min_val)
-        else:
-            return np.zeros_like(weights)
-
-    def adjust_weights(self, weights, global_intensity):
-        factor = 1 + (global_intensity * 0.5)
-        adjusted_weights = np.maximum(weights * factor, 0)
-        adjusted_weights = np.round(adjusted_weights, 3)
-        return adjusted_weights
+    def _apply_audio_processing(self, weights, threshold, gain, add, smooth):
+        # Normalize weights to 0-1 range
+        weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights))
+        
+        # Apply threshold
+        weights = np.where(weights > threshold, weights, 0)
+        
+        # Apply gain (with increased effect)
+        weights = np.power(weights, 1 / gain)  # This will boost lower values more aggressively
+        
+        # Apply add
+        weights = np.clip(weights + add, 0, 1)
+        
+        # Apply smooth
+        smoothed = np.zeros_like(weights)
+        for i in range(len(weights)):
+            if i == 0:
+                smoothed[i] = weights[i]
+            else:
+                smoothed[i] = smoothed[i-1] * smooth + weights[i] * (1 - smooth)
+        
+        return smoothed
 
     def generate_masks(self, input_values, width, height):
         # Ensure input_values is a list
@@ -77,8 +78,7 @@ class Audio_Analysis_Yvann(AudioNodeBase):
     
         return masks_out
 
-    def process_audio(self, audio, video_frames, smoothing_factor, global_intensity, prompt=None, filename_prefix="ComfyUI", extra_pnginfo=None):
-        
+    def process_audio(self, audio, video_frames, threshold, gain, add, smooth):
         if audio is None:
             print("No audio provided")
             return (None, None, None, None,)
@@ -109,23 +109,13 @@ class Audio_Analysis_Yvann(AudioNodeBase):
 
         samples_per_frame = total_samples // num_frames
 
-        processed_audio = {
-            'waveform': waveform.cpu(),
-            'sample_rate': sample_rate,
-        }
-        
         audio_weights = self._rms_energy(waveform, num_frames, samples_per_frame)
         if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
             print("Invalid audio weights calculated")
             return None, None, None, None
 
-        audio_weights = self._smooth_weights(audio_weights, max(0.01, smoothing_factor))
-        audio_weights = self._normalize_weights(audio_weights)
-        if len(audio_weights) != num_frames:
-            print("Mismatch between audio weights and video frames")
-            return None, None, None, None
-
-        audio_weights = self.adjust_weights(np.array(audio_weights), global_intensity)
+        # Apply new audio processing
+        audio_weights = self._apply_audio_processing(audio_weights, threshold, gain, add, smooth)
 
         # Plot the weights
         frames = list(range(1, num_frames + 1))
@@ -134,7 +124,7 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             plt.plot(frames, audio_weights, label='Audio Weights', color='blue')
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Weights')
-            plt.title('Normalized Weights for Audio (RMS Energy)')
+            plt.title('Processed Audio Weights')
             plt.legend()
             plt.grid(True)
 
@@ -154,8 +144,8 @@ class Audio_Analysis_Yvann(AudioNodeBase):
         # Generate masks from audio weights
         audio_masks = self.generate_masks(audio_weights, width, height)
 
-        if processed_audio is None or audio_weights is None or audio_masks is None or weights_graph is None:
+        if audio is None or audio_weights is None or audio_masks is None or weights_graph is None:
             print("One or more outputs are invalid")
             return None, None, None, None
 
-        return processed_audio, audio_weights.tolist(), audio_masks, weights_graph
+        return audio, audio_weights.tolist(), audio_masks, weights_graph
