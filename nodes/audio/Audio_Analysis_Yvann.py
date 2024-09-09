@@ -197,8 +197,7 @@ class Audio_Analysis_Yvann(AudioNodeBase):
                      label=f'{analysis_mode.capitalize()} Weights', color='blue')
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Weights')
-            plt.title(f'Processed Audio Weights ({
-                      analysis_mode.capitalize()})')
+            plt.title(f'Processed Audio Weights ({analysis_mode.capitalize()})')
             plt.legend()
             plt.grid(True)
 
