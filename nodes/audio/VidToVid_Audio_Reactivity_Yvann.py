@@ -26,14 +26,16 @@ class VidToVid_Audio_Reactivity_Yvann(AudioNodeBase):
                 "gain": ("FLOAT", {"default": 3.0, "min": 1.0, "max": 8.0, "step": 0.1}),
                 "add": ("FLOAT", {"default": 0.0, "min": -0.5, "max": 0.5, "step": 0.01}),
                 "smooth": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "multiply_by": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.1}),
             }
         }
 
-    RETURN_TYPES = ("MASK", "FLOAT", "AUDIO", "IMAGE")
-    RETURN_NAMES = ("audio_masks", "audio_weights", "processed_audio", "audio_visualization")
+    RETURN_TYPES = ("MASK", "FLOAT", "FLOAT", "AUDIO", "IMAGE")
+    RETURN_NAMES = ("audio_masks", "audio_weights", "audio_weights_inverted", "processed_audio", "audio_visualization")
     FUNCTION = "process_audio"
 
     def download_and_load_model(self):
+        # Download and load the OpenUnmix model for audio separation
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         download_path = os.path.join(folder_paths.models_dir, "openunmix")
         os.makedirs(download_path, exist_ok=True)
@@ -60,68 +62,94 @@ class VidToVid_Audio_Reactivity_Yvann(AudioNodeBase):
         return separator
 
     def _get_audio_frame(self, waveform, i, samples_per_frame):
+        # Extract a single frame of audio from the waveform
         start = i * samples_per_frame
         end = start + samples_per_frame
         return waveform[..., start:end].cpu().numpy().squeeze()
 
     def _rms_energy(self, waveform, num_frames, samples_per_frame):
+        # Calculate the RMS energy for each audio frame
         try:
-            return np.array([np.sqrt(np.mean(self._get_audio_frame(waveform, i, samples_per_frame)**2)) for i in range(num_frames)])
+            return np.array([round(np.sqrt(np.mean(self._get_audio_frame(waveform, i, samples_per_frame)**2)), 4) for i in range(num_frames)])
         except Exception as e:
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(num_frames)
 
-    def _apply_audio_processing(self, weights, threshold, gain, add, smooth):
+    def _apply_audio_processing(self, weights, threshold, gain, add, smooth, multiply_by):
         # Normalize weights to 0-1 range
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
+        weights = np.round(weights, 4)
 
         # Apply threshold
         weights = np.where(weights > threshold, weights, 0)
+        weights = np.round(weights, 4)
 
-        # Apply gain (with safety check for zero or near-zero values)
-        if gain > 0.01:  # Avoid division by very small numbers
+        # Apply gain
+        if gain > 0.01:
             weights = np.power(weights, 1 / gain)
-        elif gain < -0.01:  # Handle negative gain
+        elif gain < -0.01:
             weights = 1 - np.power(1 - weights, 1 / abs(gain))
-        else:  # For gain very close to zero, don't modify weights
-            pass  # weights remain unchanged
-        # Apply add
-        weights = np.clip(weights + add, 0, 1)
+        weights = np.round(weights, 4)
+        
+        # Apply addition and clip to 0-1.25 range
+        weights = np.clip(weights + add, 0, 1.25)
+        weights = np.round(weights, 4)
 
-        # Apply smooth
+        # Apply smoothing
         smoothed = np.zeros_like(weights)
         for i in range(len(weights)):
             if i == 0:
                 smoothed[i] = weights[i]
             else:
                 smoothed[i] = smoothed[i-1] * smooth + weights[i] * (1 - smooth)
+        smoothed = np.round(smoothed, 4)
+
+        # Apply final multiplication
+        smoothed = smoothed * multiply_by
+        smoothed = np.round(smoothed, 4)
 
         return smoothed
 
     def _apply_threshold(self, weights, threshold):
-        # Normalisation
+        # Apply threshold to weights with normalization
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
+        weights = np.round(weights, 4)
 
-        # Application du threshold avec une fonction de transfert
-        return np.where(weights > threshold,
+        thresholded = np.where(weights > threshold,
                         (weights - threshold) / (1 - threshold),
                         0)
+        return np.round(thresholded, 4)
 
     def generate_masks(self, input_values, width, height):
+        # Generate compressed masks from input values
         if isinstance(input_values, (float, int)):
-            input_values = [input_values]
+            input_values = [round(input_values, 4)]
         elif isinstance(input_values, list) and all(isinstance(item, list) for item in input_values):
-            input_values = [item for sublist in input_values for item in sublist]
+            input_values = [round(item, 4) for sublist in input_values for item in sublist]
+        else:
+            input_values = [round(item, 4) for item in input_values]
+
+        # Compress the mask resolution
+        compressed_width = max(32, width // 8)  # Minimum width of 32 pixels
+        compressed_height = max(32, height // 8)  # Minimum height of 32 pixels
 
         masks = []
         for value in input_values:
-            mask = torch.ones((height, width), dtype=torch.float32) * value
+            # Create a small mask
+            small_mask = torch.ones((compressed_height, compressed_width), dtype=torch.float32) * value
+            # Resize the mask to original dimensions
+            mask = torch.nn.functional.interpolate(small_mask.unsqueeze(0).unsqueeze(0), 
+                                                   size=(height, width), 
+                                                   mode='nearest').squeeze(0).squeeze(0)
             masks.append(mask)
         masks_out = torch.stack(masks, dim=0)
 
         return masks_out
 
-    def process_audio(self, video_audio, video_frames, analysis_mode, threshold, gain, add, smooth):
+    def process_audio(self, video_audio, video_frames, analysis_mode, threshold, gain, add, smooth, multiply_by):
+        # Main function to process audio and generate weights and masks
+        
+        # Input validation
         if video_audio is None or 'waveform' not in video_audio or 'sample_rate' not in video_audio:
             print("Invalid video_audio input")
             return None, None, None, None
@@ -139,6 +167,7 @@ class VidToVid_Audio_Reactivity_Yvann(AudioNodeBase):
 
         num_frames, height, width, _ = video_frames.shape
 
+        # Ensure waveform has correct shape
         if waveform.dim() == 3:
             waveform = waveform.squeeze(0)
         if waveform.dim() == 1:
@@ -155,6 +184,7 @@ class VidToVid_Audio_Reactivity_Yvann(AudioNodeBase):
 
         samples_per_frame = total_samples // num_frames
 
+        # Apply audio separation if needed
         if analysis_mode in ["drums only", "vocals only"]:
             try:
                 model = self.download_and_load_model()
@@ -176,22 +206,34 @@ class VidToVid_Audio_Reactivity_Yvann(AudioNodeBase):
             'sample_rate': sample_rate,
         }
 
+        # Calculate audio weights
         audio_weights = self._rms_energy(
             processed_waveform.squeeze(0), num_frames, samples_per_frame)
         if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
             print("Invalid audio weights calculated")
             return None, None, None, None
 
-        # Ajuster le gain pour éviter la division par zéro
+        # Apply audio processing
         effective_gain = max(gain, 0.01)
-        
         audio_weights = self._apply_audio_processing(
-            audio_weights, threshold, effective_gain, add, smooth)
+            audio_weights, threshold, effective_gain, add, smooth, multiply_by)
 
+        # Ensure audio_weights are within [0, 1] range
+        audio_weights = np.clip(audio_weights, 0, 1)
+
+        # Calculate inverted weights
+        audio_weights_inverted = 1.0 - np.array(audio_weights)
+        
+        # Ensure inverted weights are also within [0, 1] range
+        audio_weights_inverted = np.clip(audio_weights_inverted, 0, 1)
+
+        # Generate visualization
         try:
             plt.figure(figsize=(10, 6))
-            plt.plot(list(range(1, num_frames + 1)), audio_weights,
-                     label=f'{analysis_mode.capitalize()} Weights', color='blue')
+            plt.plot(list(range(1, len(audio_weights) + 1)), audio_weights,
+                     label=f'Weights', color='blue')
+            plt.plot(list(range(1, len(audio_weights_inverted) + 1)), audio_weights_inverted,
+                     label='Inverted Weights', color='red', linestyle='--')
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode.capitalize()})')
@@ -212,10 +254,12 @@ class VidToVid_Audio_Reactivity_Yvann(AudioNodeBase):
             print(f"Error in creating weights graph: {e}")
             weights_graph = None
 
+        # Generate compressed audio masks
         audio_masks = self.generate_masks(audio_weights, width, height)
 
+        # Final validation
         if processed_audio is None or audio_weights is None or audio_masks is None or weights_graph is None:
             print("One or more outputs are invalid")
-            return None, None, None, None
+            return None, None, None, None, None
 
-        return (audio_masks, audio_weights.tolist(), processed_audio, weights_graph)
+        return (audio_masks, audio_weights.tolist(), audio_weights_inverted.tolist(), processed_audio, weights_graph)
