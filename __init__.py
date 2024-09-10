@@ -36,21 +36,16 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
-from .nodes.audio.VidToVid_Audio_Reactivity_Yvann import VidToVid_Audio_Reactivity_Yvann
-from .nodes.audio.AudioToVid_Audio_Reactivity_Yvann import AudioToVid_Audio_Reactivity_Yvann
 from .nodes.audio.Audio_Analysis_Yvann import Audio_Analysis_Yvann
+
 NODE_CLASS_MAPPINGS = {
     "Audio Analysis | Yvann": Audio_Analysis_Yvann,
-    "VidToVid Audio Reactivity | Yvann": VidToVid_Audio_Reactivity_Yvann,
-    "AudioToVid Audio Reactivity | Yvann": AudioToVid_Audio_Reactivity_Yvann,
 }
 
 WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis | Yvann": "Audio Analysis | Yvann",
-    "VidToVid Audio Reactivity | Yvann": "VidToVid Audio Reactivity | Yvann",
-    "AudioToVid Audio Reactivity | Yvann": "AudioToVid Audio Reactivity | Yvann",
 }
 
 Yvann_Print = """
