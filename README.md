@@ -35,6 +35,8 @@
 ### Contributing 🙌  
 Want to help make this project better? Feel free to:
 
+## TO DO
+Mask depth CN
 - Open an issue
 - Submit a pull request
 - Reach out to me on [LinkedIn](https://www.linkedin.com/in/yvann-barbot/) or via email at [barbot.yvann@gmail.com](mailto:barbot.yvann@gmail.com)
