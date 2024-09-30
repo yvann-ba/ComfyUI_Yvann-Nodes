@@ -36,3 +36,9 @@ add_node_config("Audio_Analysis_Yvann", {
 - `Weights Graph`: Visual Graph of "Audio Weights"
 """
 })
+
+add_node_config("Math_Float_List", {
+    "BASE_DESCRIPTION": """
+    Not yet
+    """
+})
