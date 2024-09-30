@@ -4,19 +4,6 @@
 
 
 ### **With this pack of nodes, you can analyze audio, extract drums and vocal tracks, and use this information to create audio-reactive animations in your ComfyUI workflows**
-*More audio Reactive Nodes coming soon... 👀*
-
----
-
-**`Audio Analysis 🔊`**
-![Audio Analysis](./assets/AudioAnalysis-Demo.gif)
-
-**`Audio Drums Analysis 🥁`**
-![Audio Drums Analysis](./assets/AudioDrumsAnalysis-Demo.gif)
-
-**`Audio Vocals Analysis 🗣️`**
-![Audio Vocals Analysis](./assets/AudioVocalsAnalysis-Demo.gif)
-
 ---
 
 **`For detailed information, click the ❔ icon on any of my nodes`**
@@ -34,9 +21,6 @@
 
 ### Contributing 🙌  
 Want to help make this project better? Feel free to:
-
-## TO DO
-Mask depth CN
 - Open an issue
 - Submit a pull request
 - Reach out to me on [LinkedIn](https://www.linkedin.com/in/yvann-barbot/) or via email at [barbot.yvann@gmail.com](mailto:barbot.yvann@gmail.com)
