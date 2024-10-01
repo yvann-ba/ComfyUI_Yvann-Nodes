@@ -1,6 +1,7 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: You have an idea for something new you would like to see added to my pack of
+  ComfyUI Nodes
 title: ''
 labels: ''
 assignees: ''
