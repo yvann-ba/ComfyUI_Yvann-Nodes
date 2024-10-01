@@ -1,16 +1,7 @@
 name: User Support
-description: "Use this if you need help with something, or you're experiencing an issue."
+description: "Use this if you need help with something"
 labels: [ "User Support" ]
 body:
-    - type: markdown
-      attributes:
-        value: |
-            Before submitting a **User Report** issue, please ensure the following:
-
-            **1:** You are running the latest version of ComfyUI.
-            **2:** You have made an effort to find public answers to your question before asking here. In other words, you googled it first, and scrolled through recent help topics.
-
-                If unsure, ask on the [ComfyUI Matrix Space](https://app.element.io/#/room/%23comfyui_space%3Amatrix.org) or the [Comfy Org Discord](https://discord.gg/comfyorg) first.
     - type: textarea
       attributes:
             label: Your question
