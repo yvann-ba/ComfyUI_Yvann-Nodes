@@ -21,18 +21,18 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             "required": {
                 "num_frames": ("INT", {"forceInput": True}),
                 "fps": ("FLOAT", {"forceInput": True}),
-                "audio": ("AUDIO",),
+                "audio": ("AUDIO", {"forceInput": True}),
                 "analysis_mode": (cls.analysis_modes,),
                 "threshold": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 0.6, "step": 0.01}),
-                "gain": ("FLOAT", {"default": 3.0, "min": 1.0, "max": 8.0, "step": 0.1}),
                 "add": ("FLOAT", {"default": 0.0, "min": -0.5, "max": 0.5, "step": 0.01}),
                 "smooth": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "multiply_by": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.1}),
+                "multiply_by": ("FLOAT", {"default": 1.0, "min": 0, "max": 10.0, "step": 0.1}),
+                "invert_weights": ("BOOLEAN", {"default": False}),
             }
         }
 
-    RETURN_TYPES = ("FLOAT", "FLOAT", "AUDIO", "IMAGE")
-    RETURN_NAMES = ("audio_weights", "audio_weights_inverted", "processed_audio", "audio_visualization")
+    RETURN_TYPES = ("FLOAT", "AUDIO", "AUDIO", "IMAGE")
+    RETURN_NAMES = ("audio_weights", "processed_audio", "original_audio", "audio_visualization")
     FUNCTION = "process_audio"
 
     def download_and_load_model(self):
@@ -76,20 +76,13 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(num_frames)
 
-    def _apply_audio_processing(self, weights, threshold, gain, add, smooth, multiply_by):
+    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply_by):
         # Normalize weights to 0-1 range
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
         weights = np.round(weights, 4)
 
         # Apply threshold
         weights = np.where(weights > threshold, weights, 0)
-        weights = np.round(weights, 4)
-
-        # Apply gain
-        if gain > 0.01:
-            weights = np.power(weights, 1 / gain)
-        elif gain < -0.01:
-            weights = 1 - np.power(1 - weights, 1 / abs(gain))
         weights = np.round(weights, 4)
         
         # Apply addition and clip to 0-1.25 range
@@ -147,7 +140,7 @@ class Audio_Analysis_Yvann(AudioNodeBase):
 
         return masks_out
 
-    def process_audio(self, audio, num_frames, fps, analysis_mode, threshold, gain, add, smooth, multiply_by):
+    def process_audio(self, audio, num_frames, fps, analysis_mode, threshold, add, smooth, multiply_by, invert_weights):
         # Main function to process audio and generate weights and masks
         
         # Input validation
@@ -197,6 +190,10 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             'waveform': processed_waveform.cpu(),
             'sample_rate': sample_rate,
         }
+        original_audio = {
+            'waveform': waveform.cpu(),
+            'sample_rate': sample_rate,
+        }
 
         # Calculate audio weights
         audio_weights = self._rms_energy(
@@ -207,24 +204,28 @@ class Audio_Analysis_Yvann(AudioNodeBase):
 
         # Apply audio processing
         audio_weights = self._apply_audio_processing(
-            audio_weights, threshold, gain, add, smooth, multiply_by)
+            audio_weights, threshold, add, smooth, multiply_by)
 
         # Ensure audio_weights are within [0, 1] range
         audio_weights = np.clip(audio_weights, 0, 1)
 
-        # Calculate inverted weights
-        audio_weights_inverted = 1.0 - np.array(audio_weights)
+        if (invert_weights == True):
+            # Calculate inverted weights
+            audio_weights_inverted = 1.0 - np.array(audio_weights)        
+            # Ensure inverted weights are also within [0, 1] range
+            audio_weights_inverted = np.clip(audio_weights_inverted, 0, 1)
         
-        # Ensure inverted weights are also within [0, 1] range
-        audio_weights_inverted = np.clip(audio_weights_inverted, 0, 1)
-
         # Generate visualization
         try:
-            plt.figure(figsize=(10, 6))
-            plt.plot(list(range(1, len(audio_weights) + 1)), audio_weights,
-                     label=f'{analysis_mode.capitalize()} Weights', color='blue')
-            plt.plot(list(range(1, len(audio_weights_inverted) + 1)), audio_weights_inverted,
-                     label='Inverted Weights', color='red', linestyle='--')
+            plt.figure(figsize=(10, 6), facecolor='white')
+            if (invert_weights == False):
+                plt.plot(list(range(1, len(audio_weights) + 1)), audio_weights,
+                    label=f'{analysis_mode.capitalize()} Weights', color='blue')
+                
+            if (invert_weights == True):
+                plt.plot(list(range(1, len(audio_weights_inverted) + 1)), audio_weights_inverted,
+                    label='Inverted Weights', color='red', linestyle='--')
+                
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode.capitalize()})')
@@ -245,9 +246,11 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             print(f"Error in creating weights graph: {e}")
             weights_graph = None
 
-        # Final validation
+        if (invert_weights == True):
+            audio_weights = audio_weights_inverted
+
         if processed_audio is None or audio_weights is None or weights_graph is None:
             print("One or more outputs are invalid")
             return None, None, None, None
 
-        return (audio_weights.tolist(), audio_weights_inverted.tolist(), processed_audio, weights_graph)
+        return (audio_weights.tolist(), processed_audio, original_audio, weights_graph)
