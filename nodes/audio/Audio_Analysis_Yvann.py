@@ -24,15 +24,15 @@ class Audio_Analysis_Yvann(AudioNodeBase):
                 "audio": ("AUDIO",),
                 "analysis_mode": (cls.analysis_modes,),
                 "threshold": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 0.6, "step": 0.01}),
-                "gain": ("FLOAT", {"default": 3.0, "min": 1.0, "max": 8.0, "step": 0.1}),
+                "gain": ("FLOAT", {"default": 3.0, "min": 1.0, "max": 20.0, "step": 0.1}),
                 "add": ("FLOAT", {"default": 0.0, "min": -0.5, "max": 0.5, "step": 0.01}),
                 "smooth": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "multiply_by": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.1}),
+                "multiply_by": ("FLOAT", {"default": 1.0, "min": 0, "max": 10.0, "step": 0.1}),
             }
         }
 
-    RETURN_TYPES = ("FLOAT", "FLOAT", "AUDIO", "IMAGE")
-    RETURN_NAMES = ("audio_weights", "audio_weights_inverted", "processed_audio", "audio_visualization")
+    RETURN_TYPES = ("FLOAT", "FLOAT", "AUDIO", "AUDIO", "IMAGE")
+    RETURN_NAMES = ("audio_weights", "audio_weights_inverted", "processed_audio", "original_audio", "audio_visualization")
     FUNCTION = "process_audio"
 
     def download_and_load_model(self):
@@ -197,6 +197,10 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             'waveform': processed_waveform.cpu(),
             'sample_rate': sample_rate,
         }
+        original_audio = {
+            'waveform': waveform.cpu(),
+            'sample_rate': sample_rate,
+        }
 
         # Calculate audio weights
         audio_weights = self._rms_energy(
@@ -250,4 +254,4 @@ class Audio_Analysis_Yvann(AudioNodeBase):
             print("One or more outputs are invalid")
             return None, None, None, None
 
-        return (audio_weights.tolist(), audio_weights_inverted.tolist(), processed_audio, weights_graph)
+        return (audio_weights.tolist(), audio_weights_inverted.tolist(), processed_audio, original_audio, weights_graph)

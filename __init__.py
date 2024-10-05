@@ -1,14 +1,10 @@
 # Thanks to RyanOnTheInside, KJNodes, MTB, Fill, Akatz, their works helped me a lot
-from .nodes.audio.Audio_Analysis_Yvann import Audio_Analysis_Yvann
 from pathlib import Path
-from server import PromptServer
 from aiohttp import web
-from .nodes.utils.Math_Float_List import Math_Float_List
 from .node_configs import CombinedMeta
 from collections import OrderedDict
-
-# Allows for central management and inheritance of class variables for help documentation
-
+from server import PromptServer
+#from .nodes.utils.Math_Float_List import Math_Float_List
 
 class Yvann(metaclass=CombinedMeta):
     @classmethod
@@ -43,25 +39,23 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
+from .nodes.audio.Audio_Analysis_Yvann import Audio_Analysis_Yvann
 
 NODE_CLASS_MAPPINGS = {
     "Audio Analysis | Yvann": Audio_Analysis_Yvann,
-    "Math Float List | Yvann": Math_Float_List,
 }
 
 WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis | Yvann": "Audio Analysis | Yvann",
-    "Math Float List | Yvann": "Math Float List | Yvann",
-
 }
 
 Yvann_Print = """
 🔊 Yvann Audio Reactive Nodes"""
 
 print("\033[38;5;195m" + Yvann_Print +
-      "\033[38;5;222m" + " : Loaded\n" + "\033[0m")
+      "\033[38;5;222m" + " : Dev Branch Loaded\n" + "\033[0m")
 
 
 if hasattr(PromptServer, "instance"):
