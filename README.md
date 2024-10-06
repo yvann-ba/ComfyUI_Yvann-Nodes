@@ -18,8 +18,7 @@
 4. Search for `ComfyUI_Yvann-Nodes` in the manager and install it
 
 ### TO-DO ✅
-- [ ] Add Outputs Masks based on weights
-- [ ] Add others audio extraction in analysis_mode: others audio, specialized kick etc...
+- [x] Add others audio extraction in analysis_mode: others audio, Bass etc...
 - [ ] Add a node to adapt the range of the node to animatediff multival
 - [ ] make work mask output with controlnet and others stuff
 - [ ] Round values of weights to 0.111
