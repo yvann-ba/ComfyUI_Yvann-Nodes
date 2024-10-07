@@ -16,10 +16,10 @@ def add_node_config(node_name, config):
 
 NODE_CONFIGS = {}
 
-add_node_config("Audio_Analysis_Yvann", {
+add_node_config("Audio_Reactive_Yvann", {
     "BASE_DESCRIPTION": """
 
-### Analyzes video audio to generate audio-reactive weights and masks
+### Analyze audio to generate audio-reactive weights and masks
 
 #### Parameters:
 - `smoothing_factor`: Smooths audio weights (higher values = smoother transitions)

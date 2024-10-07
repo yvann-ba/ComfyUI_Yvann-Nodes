@@ -1,10 +1,9 @@
-# Thanks to RyanOnTheInside, KJNodes, MTB, Fill, Akatz, their works helped me a lot
+# Thanks to RyanOnTheInside, KJNodes, MTB, Fill, Akatz, Matheo, their works helped me a lot
 from pathlib import Path
 from aiohttp import web
 from .node_configs import CombinedMeta
 from collections import OrderedDict
 from server import PromptServer
-#from .nodes.utils.Math_Float_List import Math_Float_List
 
 class Yvann(metaclass=CombinedMeta):
     @classmethod
@@ -39,23 +38,23 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
-from .nodes.audio.Audio_Analysis_Yvann import Audio_Analysis_Yvann
+from .nodes.audio.Audio_Reactive_Yvann import Audio_Reactive_Yvann
 
 NODE_CLASS_MAPPINGS = {
-    "Audio Analysis | Yvann": Audio_Analysis_Yvann,
+    "Audio Reactive | Yvann": Audio_Reactive_Yvann,
 }
 
 WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Audio Analysis | Yvann": "Audio Analysis | Yvann",
+    "Audio Reactive | Yvann": "Audio Reactive | Yvann",
 }
 
 Yvann_Print = """
-🔊 Yvann Audio Reactive Nodes"""
+🔊 Yvann Audio Reactive Node"""
 
 print("\033[38;5;195m" + Yvann_Print +
-      "\033[38;5;222m" + " : Dev Branch Loaded\n" + "\033[0m")
+      "\033[38;5;222m" + " : Loaded\n" + "\033[0m")
 
 
 if hasattr(PromptServer, "instance"):
