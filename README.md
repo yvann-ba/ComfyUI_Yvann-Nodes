@@ -28,5 +28,5 @@
 Want to help make this project better? Feel free to:
 - Open an issue
 - Submit a pull request
-- Reach out to me on [LinkedIn](https://www.linkedin.com/in/yvann-barbot/) or via email at [barbot.yvann@gmail.com](mailto:barbot.yvann@gmail.com)
+- Reach out to me on [Instagram](https://www.instagram.com/yvann.mp4/)
 ---
