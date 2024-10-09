@@ -19,9 +19,9 @@
 
 ### TO-DO ✅
 - [x] Add others audio extraction in analysis_mode: others audio, Bass etc...
-- [ ] Add a node to adapt the range of the node to animatediff multival
-- [ ] make work mask output with controlnet and others stuff
-- [ ] Round values of weights to 0.111
+- [x] Add a node to adapt the range of the node to animatediff multival
+- [x] make work mask output with controlnet and others stuff
+- [x] Round values of weights to 0.111
 ---
 
 ### Contributing 🙌  
