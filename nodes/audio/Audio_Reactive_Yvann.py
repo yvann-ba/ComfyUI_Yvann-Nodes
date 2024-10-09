@@ -10,7 +10,6 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-
 class Audio_Reactive_Yvann(AudioNodeBase):
     analysis_modes = ["Drums Only", "Full Audio",
                       "Vocals Only", "Bass Only", "Other Audio"]
@@ -27,7 +26,8 @@ class Audio_Reactive_Yvann(AudioNodeBase):
                 "add": ("FLOAT", {"default": 0.0, "min": -1, "max": 1, "step": 0.01}),
                 "smooth": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "multiply": ("FLOAT", {"default": 1.0, "min": 0, "max": 10.0, "step": 0.1}),
-                "weights_range": ("FLOAT", {"default": 0, "min": 0, "max": 3, "step": 0.1}),
+                "add_range": ("FLOAT", {"default": 0, "min": 0, "max": 3, "step": 0.01}),
+                "scale_range": ("FLOAT", {"default": 1, "min": 0, "max": 3, "step": 0.01}),
                 "invert_weights": ("BOOLEAN", {"default": False}),
             }
         }
@@ -46,16 +46,13 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 
         if not os.path.exists(model_path):
             print("Downloading umxl model...")
-            separator = torch.hub.load(
-                'sigsep/open-unmix-pytorch', 'umxl', device='cpu')
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
             torch.save(separator.state_dict(), model_path)
             print(f"Model saved to: {model_path}")
         else:
             print(f"Loading model from: {model_path}")
-            separator = torch.hub.load(
-                'sigsep/open-unmix-pytorch', 'umxl', device='cpu')
-            separator.load_state_dict(
-                torch.load(model_path, map_location='cpu'))
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
+            separator.load_state_dict(torch.load(model_path, map_location='cpu'))
 
         separator = separator.to(device)
         separator.eval()
@@ -76,7 +73,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(batch_size)
 
-    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply):
+    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, add_range, scale_range):
         # Normalize weights to 0-1 range
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
 
@@ -84,7 +81,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
         weights = np.where(weights > threshold, weights, 0)
 
         # Apply Add
-        weights = np.clip(weights + add, 0, (1))
+        weights = np.clip(weights + add, 0, 1)
 
         # Apply smoothing
         smoothed = np.zeros_like(weights)
@@ -93,6 +90,12 @@ class Audio_Reactive_Yvann(AudioNodeBase):
                 smoothed[i] = weights[i]
             else:
                 smoothed[i] = smoothed[i-1] * smooth + weights[i] * (1 - smooth)
+
+        #Apply range scaling
+        smoothed = smoothed * scale_range
+        
+        #Apply Add Range
+        smoothed = smoothed + add_range
 
         # Apply final multiplication
         smoothed = smoothed * multiply
@@ -106,7 +109,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
         thresholded = np.where(weights > threshold,(weights - threshold) / (1 - threshold),0)
         return thresholded
 
-    def process_audio(self, audio, batch_size, fps, analysis_mode, threshold, add, smooth, multiply, weights_range, invert_weights):
+    def process_audio(self, audio, batch_size, fps, analysis_mode, threshold, add, smooth, multiply, add_range, scale_range, invert_weights):
         # Main function to process audio and generate weights
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             print("Invalid audio input")
@@ -170,17 +173,18 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             return None, None, None, None
 
         audio_weights = self._apply_audio_processing(
-            audio_weights, threshold, add, smooth, multiply)
+            audio_weights, threshold, add, smooth, multiply, scale_range, add_range)
 
-        audio_weights = np.clip(audio_weights, 0, 1)
-        scale_audio_weights = audio_weights + weights_range
+        max_value = scale_range + add_range
+        audio_weights = np.clip(audio_weights , 0, max_value)
+        scale_audio_weights = audio_weights
         scale_audio_weights = np.round(scale_audio_weights, 3)
 
 
         if (invert_weights == True):
-            audio_weights_inverted = 1.0 - np.array(audio_weights)
-            audio_weights_inverted = np.clip(audio_weights_inverted, 0, 1)
-            scale_audio_weights_inverted = audio_weights_inverted + weights_range
+            audio_weights_inverted = max_value - np.array(audio_weights)
+            audio_weights_inverted = np.clip(audio_weights_inverted, 0, max_value)
+            scale_audio_weights_inverted = audio_weights_inverted
             scale_audio_weights_inverted = np.round(scale_audio_weights_inverted, 3)
 
         # Generate visualization
@@ -197,6 +201,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode.capitalize()})')
+            plt.ylim(0, max_value)
             plt.legend()
             plt.grid(True)
 
