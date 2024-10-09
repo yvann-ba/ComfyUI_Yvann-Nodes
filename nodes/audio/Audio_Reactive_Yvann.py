@@ -10,6 +10,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
+
 class Audio_Reactive_Yvann(AudioNodeBase):
     analysis_modes = ["Drums Only", "Full Audio",
                       "Vocals Only", "Bass Only", "Other Audio"]
@@ -73,7 +74,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(batch_size)
 
-    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, add_range, scale_range):
+    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, scale_range):
         # Normalize weights to 0-1 range
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
 
@@ -90,12 +91,6 @@ class Audio_Reactive_Yvann(AudioNodeBase):
                 smoothed[i] = weights[i]
             else:
                 smoothed[i] = smoothed[i-1] * smooth + weights[i] * (1 - smooth)
-
-        #Apply range scaling
-        smoothed = smoothed * scale_range
-        
-        #Apply Add Range
-        smoothed = smoothed + add_range
 
         # Apply final multiplication
         smoothed = smoothed * multiply
@@ -173,18 +168,17 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             return None, None, None, None
 
         audio_weights = self._apply_audio_processing(
-            audio_weights, threshold, add, smooth, multiply, scale_range, add_range)
+            audio_weights, threshold, add, smooth, multiply, scale_range)
 
-        max_value = scale_range + add_range
-        audio_weights = np.clip(audio_weights , 0, max_value)
-        scale_audio_weights = audio_weights
+        audio_weights = np.clip(audio_weights, 0, 1)
+        scale_audio_weights = audio_weights + add_range
         scale_audio_weights = np.round(scale_audio_weights, 3)
 
 
         if (invert_weights == True):
-            audio_weights_inverted = max_value - np.array(audio_weights)
-            audio_weights_inverted = np.clip(audio_weights_inverted, 0, max_value)
-            scale_audio_weights_inverted = audio_weights_inverted
+            audio_weights_inverted = 1.0 - np.array(audio_weights)
+            audio_weights_inverted = np.clip(audio_weights_inverted, 0, 1)
+            scale_audio_weights_inverted = audio_weights_inverted + add_range
             scale_audio_weights_inverted = np.round(scale_audio_weights_inverted, 3)
 
         # Generate visualization
@@ -201,7 +195,6 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode.capitalize()})')
-            plt.ylim(0, max_value)
             plt.legend()
             plt.grid(True)
 
