@@ -8,8 +8,9 @@ from server import PromptServer
 class Yvann(metaclass=CombinedMeta):
     @classmethod
     def get_description(cls):
-        footer = "Code: [Yvann GitHub](https://github.com/yvann-ba)\n"
-        footer += "👁️ Tutorials and Workflows: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n\n"
+        footer = "\n\n"
+        footer = "#### 🐙 Documentation, Workflows and Code Source: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI_Yvann-Nodes)\n"
+        footer += "#### 👁️ Tutorials: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n"
 
         desc = ""
 

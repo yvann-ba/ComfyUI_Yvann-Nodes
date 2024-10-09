@@ -18,21 +18,22 @@ NODE_CONFIGS = {}
 
 add_node_config("Audio_Reactive_Yvann", {
     "BASE_DESCRIPTION": """
-
-### Analyze audio to generate audio-reactive weights and masks
-
-#### Parameters:
-- `smoothing_factor`: Smooths audio weights (higher values = smoother transitions)
-- `global_intensity`: Adjusts overall intensity of audio weights
-
-#### Inputs:
-- `video_frames`: Input video
-- `audio`: Video audio
-
-#### Outputs:
-- `Audio`: Same as input
-- `Audio Weights`: Audio-reactive float values for each frame, usable with IPAdapter, CN, etc.
-- `Audio Masks`: Audio weights converted to masks usable withLatent NoiseMask, CN, IPadapter...
-- `Weights Graph`: Visual Graph of "Audio Weights"
+### Analyze audio to generate audio-reactive weights and masks\n
+### Compatible with Ipadapter, AnimateDiff, ControlNets for video generation
 """
 })
+
+# #### Inputs
+# - `audio`: Audio to analyze
+# - `batch_size`: Number of frames to process
+# - `fps`: Frame rate for the output vid (high fps works better like 30, 50 or 60)
+
+# #### Parameters
+# - `analysis_mode`: Select the audio component to analyze
+# - `threshold`, `add`, `smooth`, `multiply`: Adjust and fine-tune weights.
+
+# #### Outputs:
+# - `Audio`: Processed audio
+# - `Audio Weights`: Audio-reactive float values for each frame
+# - `Audio Masks`: Converted weights for masking
+# - `Weights Graph`: A visual plot of the audio weights

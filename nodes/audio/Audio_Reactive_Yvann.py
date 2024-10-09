@@ -28,7 +28,6 @@ class Audio_Reactive_Yvann(AudioNodeBase):
                 "smooth": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "multiply": ("FLOAT", {"default": 1.0, "min": 0, "max": 10.0, "step": 0.1}),
                 "add_range": ("FLOAT", {"default": 0, "min": 0, "max": 3, "step": 0.01}),
-                "scale_range": ("FLOAT", {"default": 1, "min": 0, "max": 3, "step": 0.01}),
                 "invert_weights": ("BOOLEAN", {"default": False}),
             }
         }
@@ -74,7 +73,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(batch_size)
 
-    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, scale_range):
+    def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, ):
         # Normalize weights to 0-1 range
         weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
 
@@ -104,7 +103,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
         thresholded = np.where(weights > threshold,(weights - threshold) / (1 - threshold),0)
         return thresholded
 
-    def process_audio(self, audio, batch_size, fps, analysis_mode, threshold, add, smooth, multiply, add_range, scale_range, invert_weights):
+    def process_audio(self, audio, batch_size, fps, analysis_mode, threshold, add, smooth, multiply, add_range, invert_weights):
         # Main function to process audio and generate weights
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             print("Invalid audio input")
@@ -168,7 +167,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
             return None, None, None, None
 
         audio_weights = self._apply_audio_processing(
-            audio_weights, threshold, add, smooth, multiply, scale_range)
+            audio_weights, threshold, add, smooth, multiply, )
 
         audio_weights = np.clip(audio_weights, 0, 1)
         scale_audio_weights = audio_weights + add_range
