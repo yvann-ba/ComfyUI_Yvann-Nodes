@@ -25,7 +25,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
                 "analysis_mode": (cls.analysis_modes,),
                 "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
                 "add": ("FLOAT", {"default": 0.0, "min": -1, "max": 1, "step": 0.01}),
-                "smooth": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "smooth": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "multiply": ("FLOAT", {"default": 1.0, "min": 0, "max": 10.0, "step": 0.1}),
                 "add_range": ("FLOAT", {"default": 0, "min": 0, "max": 3, "step": 0.01}),
                 "invert_weights": ("BOOLEAN", {"default": False}),
