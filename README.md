@@ -3,8 +3,8 @@
 
 #### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the outputted masks and scheduled weights to create audio-reactive animations in ComfyUI**
 
----
-# Table of contents
+
+### Table of contents
 - [Workflows](#Workflows)
 - [Nodes](#Nodes)
 - [Installation](#Installation), [Contributing](#Contributing)
