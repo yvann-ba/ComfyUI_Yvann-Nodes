@@ -1,14 +1,13 @@
 # 👁️ ComfyUI_Yvann-Nodes  [![Instagram](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=instagram&logoColor=E4405F)](https://www.instagram.com/yvann.mp4/) [![YouTube](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann.mp4)
 
 
-#### **With this pack of nodes, you can analyze audio, extract drums and vocal tracks, and use this data to create audio-reactive animations in your ComfyUI workflows**
+#### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the outputted masks and scheduled weights to create audio-reactive animations in ComfyUI**
 
 ---
 # Table of contents
 - [Workflows](#Workflows)
 - [Nodes](#Nodes)
-- [Installation](#Installation)
-- [About](#About)
+- [Installation](#Installation), [Contributing](#Contributing)
 
 --- 
 
@@ -63,7 +62,7 @@ The node parameters allow manual adjustment, offering fine-grained control over 
 
 ---
 
-### About
+### Contributing
 Want to help make this project better? Feel free to:
 - Open an issue
 - Submit a pull request
