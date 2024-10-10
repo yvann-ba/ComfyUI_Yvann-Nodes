@@ -5,30 +5,30 @@
 
 ---
 # Table of contents
-- [Nodes-Documentation](#Nodes-Documentation)
+- [Workflows](#Workflows)
+- [Nodes](#Nodes)
 - [Installation](#Installation)
+- [About](#About)
 
 --- 
 
-### Installation 🚀
-1. Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) & [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
-2. Launch ComfyUI
-3. Click on "🧩 Manager" -> "Custom Nodes Manager"
-4. Search for `ComfyUI_Yvann-Nodes` in the manager and install it
+### Workflows
+
+**In Progress**
 
 ---
-
-### Nodes-Documentation
+### Nodes
 
 #### Node: Audio Reactive
 
 This node analyzes audio input to generate **audio-reactive weights** and visualizations. It can extract specific elements from the audio, such as **drums**, **vocals**, **bass**, or analyze the **full audio**. Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
 
+![Audio Reactive Yvann](./docs/audio-reactive-yvann.png)
+
 The various parameters offer advanced control over how the audio input is transformed into weights, providing flexibility in shaping the audio-driven visual effects. 
 
 The node parameters allow manual adjustment, offering fine-grained control over how the audio data is interpreted and converted into weights for reactive animations or visual effects.
 
-![Audio Reactive Yvann](./docs/audio-reactive-yvann.png)
 
 
 <details>
@@ -53,13 +53,18 @@ The node parameters allow manual adjustment, offering fine-grained control over 
 
 </details>
 
+---
 
+### Installation
+1. Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) & [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
+2. Launch ComfyUI
+3. Click on "🧩 Manager" -> "Custom Nodes Manager"
+4. Search for `ComfyUI_Yvann-Nodes` in the manager and install it
 
 ---
 
-### Contributing 🙌  
+### About
 Want to help make this project better? Feel free to:
 - Open an issue
 - Submit a pull request
 - Reach out to me on [LinkedIn](https://www.linkedin.com/in/yvann-barbot/)
----
