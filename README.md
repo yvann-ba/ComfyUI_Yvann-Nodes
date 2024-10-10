@@ -24,8 +24,6 @@ This node analyzes audio input to generate **audio-reactive weights** and visual
 
 ![Audio Reactive Yvann](./docs/audio-reactive-yvann.png)
 
-The various parameters offer advanced control over how the audio input is transformed into weights, providing flexibility in shaping the audio-driven visual effects. 
-
 The node parameters allow manual adjustment, offering fine-grained control over how the audio data is interpreted and converted into weights for reactive animations or visual effects.
 
 
