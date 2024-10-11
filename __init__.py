@@ -40,11 +40,13 @@ class Yvann(metaclass=CombinedMeta):
         return desc
 
 from .nodes.audio.Audio_Reactive_Yvann import Audio_Reactive_Yvann
+from .nodes.audio.Audio_Reactive_Switch_Yvann import Audio_Reactive_Switch_Yvann
 from .nodes.utils.FloatList_to_Weights_Strategy import FloatList_to_Weights_Strategy
 
 
 NODE_CLASS_MAPPINGS = {
     "Audio Reactive | Yvann": Audio_Reactive_Yvann,
+    "Audio Reactive Switch | Yvann": Audio_Reactive_Switch_Yvann,
     "Float List to Weights Strategy | Yvann": FloatList_to_Weights_Strategy,
 }
 
@@ -52,6 +54,7 @@ WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Reactive | Yvann": "Audio Reactive | Yvann",
+    "Audio Reactive Switch | Yvann": "Audio Reactive Switch | Yvann",
     "Float List to Weights Strategy | Yvann": "Float List to Weights Strategy | Yvann"
 }
 
