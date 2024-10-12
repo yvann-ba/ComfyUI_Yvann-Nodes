@@ -182,7 +182,8 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 
         # Generate visualization
         try:
-            plt.figure(figsize=(10, 6), facecolor='white')
+            figsize = 12.0
+            plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
             if (invert_weights == False):
                 plt.plot(list(range(1, len(scale_audio_weights) + 1)), scale_audio_weights, 
                          label=f'{analysis_mode.capitalize()} Weights', color='blue')
