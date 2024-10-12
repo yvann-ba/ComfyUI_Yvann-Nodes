@@ -40,26 +40,32 @@ class Yvann(metaclass=CombinedMeta):
         return desc
 
 from .nodes.audio.Audio_Reactive_Yvann import Audio_Reactive_Yvann
-from .nodes.audio.Audio_Reactive_Switch_Yvann import Audio_Reactive_Switch_Yvann
-from .nodes.utils.FloatList_to_Weights_Strategy import FloatList_to_Weights_Strategy
+from .nodes.audio.Audio_Reactive_IPAdapter_Yvann import Audio_Reactive_IPAdapter_Yvann
+from .nodes.utils.Floats_To_Weights_Strategy_Yvann import Floats_To_Weights_Strategy_Yvann
+from .nodes.utils.Invert_Floats_Yvann import Invert_Floats_Yvann
+from .nodes.utils.Floats_Visualizer_Yvann import Floats_Visualizer_Yvann
 
 
 NODE_CLASS_MAPPINGS = {
     "Audio Reactive | Yvann": Audio_Reactive_Yvann,
-    "Audio Reactive Switch | Yvann": Audio_Reactive_Switch_Yvann,
-    "Float List to Weights Strategy | Yvann": FloatList_to_Weights_Strategy,
+    "Audio Reactive IPAdapter | Yvann": Audio_Reactive_IPAdapter_Yvann,
+    "Floats to Weights Strategy | Yvann": Floats_To_Weights_Strategy_Yvann,
+    "Invert Floats | Yvann": Invert_Floats_Yvann,
+    "Floats Visualizer | Yvann": Floats_Visualizer_Yvann,
 }
 
 WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Reactive | Yvann": "Audio Reactive | Yvann",
-    "Audio Reactive Switch | Yvann": "Audio Reactive Switch | Yvann",
-    "Float List to Weights Strategy | Yvann": "Float List to Weights Strategy | Yvann"
+    "Audio Reactive IPAdapter | Yvann": "Audio Reactive IPAdapter | Yvann",
+    "Floats to Weights Strategy | Yvann": "Floats to Weights Strategy | Yvann",
+    "Invert Floats | Yvann": "Invert Floats | Yvann",
+    "Floats Visualizer | Yvann": "Floats Visualizer | Yvann",
 }
 
 Yvann_Print = """
-🔊 Yvann Audio Reactive Node"""
+🔊 Yvann Audio Reactive & Utils Node"""
 
 print("\033[38;5;195m" + Yvann_Print +
       "\033[38;5;222m" + " : Loaded\n" + "\033[0m")

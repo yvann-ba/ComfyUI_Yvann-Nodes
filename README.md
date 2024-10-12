@@ -55,7 +55,9 @@ The node parameters allow manual adjustment, offering fine-grained control over 
 4. Search for `ComfyUI_Yvann-Nodes` in the manager and install it
 
 ---
-
+## TO DO
+- [ ] Node FloatList to Graph Visualization
+- [ ] Node Combine graph visualization
 ## Contributing
 Want to help make this project better? Feel free to:
 - Open an issue

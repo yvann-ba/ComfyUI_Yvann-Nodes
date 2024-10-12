@@ -3,3 +3,4 @@ torch
 openunmix
 matplotlib
 pillow
+scipy.signal
