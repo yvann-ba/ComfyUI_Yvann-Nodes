@@ -43,7 +43,6 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 >  - **audio_visualization**: An image displaying a graph of the audio weights over time, representing the variation in intensity across the analyzed frames
 >
 ></details>
-The node parameters allow manual adjustment, offering fine-grained control over how the audio data is interpreted and converted into weights for reactive animations or visual effects
 
 ### Node: Floats To Weights Strategy 🛠️
 
