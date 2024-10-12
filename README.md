@@ -44,6 +44,8 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 >
 ></details>
 
+---
+
 ### Node: Floats To Weights Strategy 🛠️
 
 Converts a list of floats to IPAdapter weights strategy, useful to use "IPAdapter Weights From Strategy" & "Prompt Schedule From Weights Strategy" from any float list, this way you can give the audio_weights from my audio nodes to the [IPAdapter](https://github.com/cubiq/ComfyUI_IPAdapter_plus) pipeline 
