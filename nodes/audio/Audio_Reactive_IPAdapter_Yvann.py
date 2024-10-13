@@ -127,6 +127,9 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
                 images2.append(current_image)
                 blending_weights.append(blending_weight)
 
+        blending_weights = [round(w, 3) for w in blending_weights]
+        weights_invert = [round(1.0 - w, 3) for w in blending_weights]
+        
         # Convert lists to tensors
         images1 = torch.stack(images1)
         images2 = torch.stack(images2)
@@ -134,9 +137,6 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
 
         # Ensure blending weights are compatible with image dimensions
         blending_weights_tensor = blending_weights_tensor.to(images1.device).type_as(images1)
-
-        # Generate inverted weights
-        weights_invert = [1.0 - w for w in blending_weights]
 
         # Generate visualization
         try:

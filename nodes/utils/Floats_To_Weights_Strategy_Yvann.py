@@ -1,5 +1,5 @@
 from ... import Yvann
-
+import numpy as np
 class UtilsNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
 
@@ -19,7 +19,7 @@ class Floats_To_Weights_Strategy_Yvann(UtilsNodeBase):
     def convert(self, floats, batch_size):
         frames = batch_size
         
-        weights_str = ", ".join(map(lambda x: f"{x:.8f}", floats))
+        weights_str = ", ".join(map(lambda x: f"{x:.3f}", floats))
 
         weights_strategy = {
         "weights": weights_str,

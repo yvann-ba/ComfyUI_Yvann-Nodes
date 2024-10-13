@@ -1,6 +1,7 @@
 from ... import Yvann
 import numpy as np
 
+
 class UtilsNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
 
@@ -24,6 +25,7 @@ class Invert_Floats_Yvann(UtilsNodeBase):
         # Invert the values relative to the range midpoint
         range_midpoint = (max_value + min_value) / 2.0
         floats_invert_array = (2 * range_midpoint) - floats_array
+        floats_invert_array = np.round(floats_invert_array, decimals=3)
 
         # Convert back to list
         floats_invert = floats_invert_array.tolist()
