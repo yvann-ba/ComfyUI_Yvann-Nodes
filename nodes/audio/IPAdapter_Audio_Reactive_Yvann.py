@@ -6,13 +6,12 @@ import numpy as np
 import math
 from PIL import Image
 from scipy.signal import find_peaks
-import random
 from ... import Yvann
 
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
+class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -20,15 +19,15 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
                 "audio_weights": ("FLOAT", {"forceInput": True}),
                 "images": ("IMAGE", {"forceInput": True}),
                 "timing": (["custom", "linear", "ease_in_out", "ease_in", "ease_out", "random"], {"default": "linear"}),
-                "transition_frames": ("INT", {"default": 10, "min": 1, "step": 1}),
+                "transition_frames": ("INT", {"default": 7, "min": 1, "step": 1}),
                 "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "distance": ("INT", {"default": 1, "min": 1, "step": 1}),
                 "prominence": ("FLOAT", {"default": 0.1, "min": 0.0,  "max": 1.0, "step": 0.01}),
             }
         }
 
-    RETURN_TYPES = ("FLOAT", "FLOAT", "IMAGE", "IMAGE", "IMAGE")
-    RETURN_NAMES = ("weights", "weights_invert", "image_1", "image_2", "visualization")
+    RETURN_TYPES = ("FLOAT", "FLOAT", "IMAGE", "IMAGE", "WEIGHTS_STRATEGY", "IMAGE")
+    RETURN_NAMES = ("weights", "weights_invert", "image_1", "image_2", "weights_strategy", "visualization")
     FUNCTION = "process_weights"
 
     def process_weights(self, audio_weights, images, timing, transition_frames, threshold, distance, prominence):
@@ -36,16 +35,18 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
 
         if not isinstance(audio_weights, list) and not isinstance(audio_weights, np.ndarray):
             print("Invalid audio_weights input")
-            return None, None, None, None, None, None, None
+            return None, None, None, None, None, None
 
         if images is None or not isinstance(images, torch.Tensor):
             print("Invalid or empty images input")
-            return None, None, None, None, None, None, None
+            return None, None, None, None, None, None
 
         # Normalize audio_weights
-        audio_weights = np.array(audio_weights)
-        weights_range = np.max(audio_weights) - np.min(audio_weights)
-        weights_normalized = (audio_weights - np.min(audio_weights)) / weights_range if weights_range > 0 else audio_weights
+        audio_weights = np.array(audio_weights, dtype=np.float32)
+        min_weight = np.min(audio_weights)
+        max_weight = np.max(audio_weights)
+        weights_range = max_weight - min_weight
+        weights_normalized = (audio_weights - min_weight) / weights_range if weights_range > 0 else audio_weights - min_weight
 
         # Detect peaks
         peaks, _ = find_peaks(weights_normalized, height=threshold, distance=distance, prominence=prominence)
@@ -63,7 +64,7 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
 
         # Use images in the order they are provided
         # images is a batch of images: tensor of shape [B, H, W, C]
-        if len(images.shape) == 3:
+        if images.dim() == 3:
             images = images.unsqueeze(0)  # Add batch dimension if missing
 
         num_images = images.shape[0]
@@ -127,16 +128,33 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
                 images2.append(current_image)
                 blending_weights.append(blending_weight)
 
+        # Now, blending_weights correspond to image_2
         blending_weights = [round(w, 3) for w in blending_weights]
         weights_invert = [round(1.0 - w, 3) for w in blending_weights]
-        
+
         # Convert lists to tensors
         images1 = torch.stack(images1)
         images2 = torch.stack(images2)
-        blending_weights_tensor = torch.tensor(blending_weights).view(-1, 1, 1, 1)
+        blending_weights_tensor = torch.tensor(blending_weights, dtype=images1.dtype).view(-1, 1, 1, 1)
 
         # Ensure blending weights are compatible with image dimensions
-        blending_weights_tensor = blending_weights_tensor.to(images1.device).type_as(images1)
+        blending_weights_tensor = blending_weights_tensor.to(images1.device)
+
+        # Generate WEIGHTS_STRATEGY
+        frames = total_frames
+        weights_str = ", ".join(map(lambda x: f"{x:.3f}", blending_weights))
+
+        weights_strategy = {
+            "weights": weights_str,
+            "timing": timing,
+            "frames": frames,
+            "start_frame": 0,
+            "end_frame": frames,
+            "add_starting_frames": 0,
+            "add_ending_frames": 0,
+            "method": "alternate batchs",
+            "frame_count": frames,
+        }
 
         # Generate visualization
         try:
@@ -144,8 +162,10 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
             plt.plot(range(len(weights_normalized)), weights_normalized, label='Audio Weights', color='blue', alpha=0.5)
             plt.scatter(peaks, weights_normalized[peaks], color='red', label='Detected Peaks')
-            indices_normalized = np.array(indices) / max(indices if max(indices) > 0 else 1)
-            plt.step(range(len(indices)), indices_normalized, where='post', label='Indices (Normalized)', color='green')
+            indices_array = np.array(indices, dtype=np.float32)
+            max_index = max(indices) if indices else 1
+            indices_normalized = indices_array / (max_index if max_index > 0 else 1)
+            plt.step(range(len(indices)), indices_normalized, where='post', label='Images Switch', color='green')
             plt.xlabel('Frame Number')
             plt.ylabel('Normalized Values')
             plt.title('Audio Weights and Detected Peaks')
@@ -153,7 +173,7 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
             plt.grid(True)
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-                plt.savefig(tmpfile, format='png')
+                plt.savefig(tmpfile.name, format='png')
                 tmpfile_path = tmpfile.name
             plt.close()
 
@@ -165,4 +185,5 @@ class Audio_Reactive_IPAdapter_Yvann(AudioNodeBase):
             print(f"Error in creating visualization: {e}")
             visualization = None
 
-        return blending_weights, weights_invert, images1, images2, visualization
+        # Return values with weights and images as originally
+        return blending_weights, weights_invert, weights_strategy, images2, images1, visualization

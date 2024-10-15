@@ -40,7 +40,7 @@ class Yvann(metaclass=CombinedMeta):
         return desc
 
 from .nodes.audio.Audio_Reactive_Yvann import Audio_Reactive_Yvann
-from .nodes.audio.Audio_Reactive_IPAdapter_Yvann import Audio_Reactive_IPAdapter_Yvann
+from .nodes.audio.IPAdapter_Audio_Reactive_Yvann import IPAdapter_Audio_Reactive_Yvann
 from .nodes.utils.Floats_To_Weights_Strategy_Yvann import Floats_To_Weights_Strategy_Yvann
 from .nodes.utils.Invert_Floats_Yvann import Invert_Floats_Yvann
 from .nodes.utils.Floats_Visualizer_Yvann import Floats_Visualizer_Yvann
@@ -49,7 +49,7 @@ from .nodes.utils.Mask_To_Float_Yvann import Mask_To_Float_Yvann
 
 NODE_CLASS_MAPPINGS = {
     "Audio Reactive | Yvann": Audio_Reactive_Yvann,
-    "Audio Reactive IPAdapter | Yvann": Audio_Reactive_IPAdapter_Yvann,
+    "IPAdapter Audio Reactive | Yvann": IPAdapter_Audio_Reactive_Yvann,
     "Floats To Weights Strategy | Yvann": Floats_To_Weights_Strategy_Yvann,
     "Invert Floats | Yvann": Invert_Floats_Yvann,
     "Floats Visualizer | Yvann": Floats_Visualizer_Yvann,
@@ -60,7 +60,7 @@ WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Reactive | Yvann": "Audio Reactive | Yvann",
-    "Audio Reactive IPAdapter | Yvann": "Audio Reactive IPAdapter | Yvann",
+    "IPAdapter Audio Reactive | Yvann": "IPAdapter Audio Reactive | Yvann",
     "Floats to Weights Strategy | Yvann": "Floats to Weights Strategy | Yvann",
     "Invert Floats | Yvann": "Invert Floats | Yvann",
     "Floats Visualizer | Yvann": "Floats Visualizer | Yvann",
