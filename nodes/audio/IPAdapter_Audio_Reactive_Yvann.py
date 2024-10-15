@@ -26,8 +26,8 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
             }
         }
 
-    RETURN_TYPES = ("FLOAT", "FLOAT", "IMAGE", "IMAGE", "WEIGHTS_STRATEGY", "IMAGE")
-    RETURN_NAMES = ("weights", "weights_invert", "image_1", "image_2", "weights_strategy", "visualization")
+    RETURN_TYPES = ("FLOAT", "FLOAT", "IMAGE", "IMAGE", "FLOAT", "IMAGE")
+    RETURN_NAMES = ("weights", "weights_invert", "image_1", "image_2", "prompt_index", "visualization")
     FUNCTION = "process_weights"
 
     def process_weights(self, audio_weights, images, timing, transition_frames, threshold, distance, prominence):
@@ -85,6 +85,9 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
         transition_counter = 0
         in_transition = False
 
+        # Initialize prompt_schedule with the first frame index
+        prompt_schedule = [0]
+
         for i in range(total_frames):
             if i == 0:
                 blending_weight = 0.0
@@ -95,6 +98,8 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
                     transition_counter = 0
                     current_image = image_mapping[indices[i-1]]
                     next_image = image_mapping[indices[i]]
+                    # Append the frame index where the image switches
+                    prompt_schedule.append(i)
 
             if in_transition:
                 # Generate blending weight using timing function
@@ -140,22 +145,6 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
         # Ensure blending weights are compatible with image dimensions
         blending_weights_tensor = blending_weights_tensor.to(images1.device)
 
-        # Generate WEIGHTS_STRATEGY
-        frames = total_frames
-        weights_str = ", ".join(map(lambda x: f"{x:.3f}", blending_weights))
-
-        weights_strategy = {
-            "weights": weights_str,
-            "timing": timing,
-            "frames": frames,
-            "start_frame": 0,
-            "end_frame": frames,
-            "add_starting_frames": 0,
-            "add_ending_frames": 0,
-            "method": "alternate batchs",
-            "frame_count": frames,
-        }
-
         # Generate visualization
         try:
             figsize = 12.0
@@ -186,4 +175,4 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
             visualization = None
 
         # Return values with weights and images as originally
-        return blending_weights, weights_invert, weights_strategy, images2, images1, visualization
+        return blending_weights, weights_invert, images2, images1, prompt_schedule, visualization
