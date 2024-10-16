@@ -22,18 +22,3 @@ add_node_config("Audio_Reactive_Yvann", {
 ### Compatible with Ipadapter, AnimateDiff, ControlNets for video generation
 """
 })
-
-# #### Inputs
-# - `audio`: Audio to analyze
-# - `batch_size`: Number of frames to process
-# - `fps`: Frame rate for the output vid (high fps works better like 30, 50 or 60)
-
-# #### Parameters
-# - `analysis_mode`: Select the audio component to analyze
-# - `threshold`, `add`, `smooth`, `multiply`: Adjust and fine-tune weights.
-
-# #### Outputs:
-# - `Audio`: Processed audio
-# - `Audio Weights`: Audio-reactive float values for each frame
-# - `Audio Masks`: Converted weights for masking
-# - `Weights Graph`: A visual plot of the audio weights

@@ -1,46 +1,51 @@
 from ... import Yvann
 
 class AudioNodeBase(Yvann):
-    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
+	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
 class Audio_PromptSchedule_Yvann(AudioNodeBase):
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "prompt_index": ("FLOAT", {"forceInput": True}),
-                "prompt": ("STRING", {"default": "", "multiline": True}),
-            }
-        }
+	@classmethod
+	def INPUT_TYPES(cls):
+		return {
+			"required": {
+				"prompt_indices": ("FLOAT", {"forceInput": True}),
+				"prompts": ("STRING", {"default": "", "multiline": True}),
+			}
+		}
 
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("prompt_schedule",)
-    FUNCTION = "create_prompt_schedule"
+	RETURN_TYPES = ("STRING",)
+	RETURN_NAMES = ("prompt_schedule",)
+	FUNCTION = "create_prompt_schedule"
 
-    def create_prompt_schedule(self, prompt_index, prompt=""):
-        # Ensure prompt_index is a list of integers (frame indices)
-        if isinstance(prompt_index, float) or isinstance(prompt_index, int):
-            prompt_index = [int(prompt_index)]
-        else:
-            prompt_index = [int(idx) for idx in prompt_index]
+	def create_prompt_schedule(self, prompt_indices, prompts=""):
+		if isinstance(prompt_indices, float) or isinstance(prompt_indices, int):
+			prompt_indices = [int(prompt_indices)]
+		else:
+			prompt_indices = [int(idx) for idx in prompt_indices]
 
-        # Parse the prompts, split by newline, and remove empty lines
-        prompt_list = [p.strip() for p in prompt.split("\n") if p.strip() != ""]
+		# Parse the prompts, split by newline, and remove empty lines
+		prompts_list = [p.strip() for p in prompts.split("\n") if p.strip() != ""]
 
-        # Ensure the number of prompts matches the number of indices
-        num_indices = len(prompt_index)
-        num_prompts = len(prompt_list)
+		# Ensure the number of prompts matches the number of indices by looping prompts
+		num_indices = len(prompt_indices)
+		num_prompts = len(prompts_list)
 
-        if num_prompts > num_indices:
-            # Truncate prompts if there are more prompts than indices
-            prompt_list = prompt_list[:num_indices]
-        elif num_prompts < num_indices:
-            # Extend prompts by repeating the last prompt if fewer prompts than indices
-            prompt_list += [prompt_list[-1]] * (num_indices - num_prompts)
+		if num_prompts > 0:
+			# Loop prompts to match the number of indices
+			extended_prompts = []
+			while len(extended_prompts) < num_indices:
+				for p in prompts_list:
+					extended_prompts.append(p)
+					if len(extended_prompts) == num_indices:
+						break
+			prompts_list = extended_prompts
+		else:
+			# If no prompts provided, fill with empty strings
+			prompts_list = [""] * num_indices
 
-        # Create the formatted prompt schedule string
-        out = ""
-        for idx, frame in enumerate(prompt_index):
-            out += f"\"{frame}\": \"{prompt_list[idx]}\",\n"
+		# Create the formatted prompt schedule string
+		out = ""
+		for idx, frame in enumerate(prompt_indices):
+			out += f"\"{frame}\": \"{prompts_list[idx]}\",\n"
 
-        return (out,)
+		return (out,)
