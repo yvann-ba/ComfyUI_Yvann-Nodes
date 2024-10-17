@@ -46,20 +46,64 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 
 ---
 
+### Node: IPAdapter Audio Reactive 🎵
+
+This node receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks
+
+><details>
+>  <summary><i>Node Parameters</i></summary>
+>
+>  - **audio_weights**: A list of audio-reactive weights used to control image blending
+>  - **images**: A batch of images as a tensor, used as sources for transitions (required, type IMAGE)
+>  - **timing**: Timing function for blending (choices: custom, linear, ease_in_out, ease_in, ease_out, random; default: linear)
+>  - **transition_frames**: The number of frames over which to blend between images (type INT, default: 7, min: 1, step: 1)
+>  - **threshold**: The minimum height required for a peak to be considered (type FLOAT, default: 0.5, min: 0.0, max: 1.0, step: 0.01)
+>  - **distance**: The minimum number of frames between peaks (type INT, default: 1, min: 1, step: 1)
+>  - **prominence**: The relative importance of a peak (type FLOAT, default: 0.1, min: 0.0, max: 1.0, step: 0.01)
+>
+>  **Outputs**:
+>  - **weights**: The calculated blending weights for image transitions
+>  - **weights_invert**: The inverse of the calculated blending weights
+>  - **image_1**: The starting image for a transition
+>  - **image_2**: The ending image for a transition
+>  - **prompt_index**: The frame indices at which image transitions occur
+>  - **visualization**: An image visualization of audio weights, detected peaks, and image transitions
+>
+></details>
+
+---
+
+### Node: Audio Prompt Schedule 📝
+
+This node creates a structured prompt schedule for audio-reactive animations. It associates specific prompts with defined indices, allowing precise control over prompt changes in sync with audio cues
+
+><details>
+>  <summary><i>Node Parameters</i></summary>
+>
+>  - **prompt_indices**: A list of indices where prompts will change (required, type FLOAT)
+>  - **prompts**: A multiline string of prompts to be used at each index (type STRING, default: empty)
+>
+>  **Outputs**:
+>  - **prompt_schedule**: A string representation of the prompt schedule. Each index is associated with a prompt from the provided list
+>
+></details>
+
+---
+
 ### Node: Floats To Weights Strategy 🛠️
 
 Converts a list of floats to IPAdapter weights strategy, useful to use "IPAdapter Weights From Strategy" & "Prompt Schedule From Weights Strategy" from any float list, this way you can give the audio_weights from my audio nodes to the [IPAdapter](https://github.com/cubiq/ComfyUI_IPAdapter_plus) pipeline 
 
-<details>
-  <summary><i>Node Parameters</i></summary>
-
-  - **floats**: The list of float values to be converted into a weights strategy
-  - **batch_size**: The number of frames you want to proceed
-
-  **Outputs**:
-  - **WEIGHTS_STRATEGY**: A dictionary containing the weights strategy used by IPAdapter, including the weights and related parameters
-
-</details>
+><details>
+>  <summary><i>Node Parameters</i></summary>
+>
+>  - **floats**: The list of float values to be converted into a weights strategy
+>  - **batch_size**: The number of frames you want to proceed
+>
+>  **Outputs**:
+>  - **WEIGHTS_STRATEGY**: A dictionary containing the weights strategy used by IPAdapter, including the weights and related parameters
+>
+></details>
 
 ---
 
@@ -81,6 +125,22 @@ This node generates a visualization of one or more list of floats. It plots the 
   - **visual_graph**: An image displaying the graph of the provided float sequences
 
 </details>
+
+---
+
+### Node: Mask To Float 🛠️
+
+This node converts a mask input into a float value by computing the mean pixel value of the mask. It is useful for deriving numerical insights from mask data, which can then be applied in various processing scenarios
+
+><details>
+>  <summary><i>Node Parameters</i></summary>
+>
+>  - **mask**: The mask input from which to compute the float value (required, type MASK)
+>
+>  **Outputs**:
+>  - **float**: A float representing the average value of the mask. This output is especially useful for analyzing or comparing different mask areas quantitatively
+>
+></details>
 
 ---
 
