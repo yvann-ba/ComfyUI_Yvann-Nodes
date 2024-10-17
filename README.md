@@ -3,20 +3,22 @@
 
 ### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create audio-reactive animations in ComfyUI**
 
-- [Workflows](#Workflows)
-- [Nodes](#Nodes)
-- [Installation](#Installation), [Contributing](#Contributing)
+#### **Works with IPAdapter, AnimateDiff, ControlNets, Prompts Schedules**
+
+- **[Workflows](#Workflows)**
+- **[Nodes](#Nodes)**
+- **[Installation](#Installation), [Contributing](#Contributing)**
 
 --- 
 
-## Workflows
+# Workflows
 
 **In Progress**
 
 ---
-## Nodes
+# Nodes
 
-### Node: Audio Reactive 🔊
+### Audio Reactive 🔊
 
 Analyzes audio input to generate **audio-reactive weights** and visualizations. It can extract specific elements from the audio, such as **drums**, **vocals**, **bass**, or analyze the **full audio**. Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
 
@@ -46,9 +48,9 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 
 ---
 
-### Node: IPAdapter Audio Reactive 🎵
+### IPAdapter Audio Reactive 🎵
 
-This node receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks
+Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks. Return images and associed weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -73,9 +75,9 @@ This node receives "audio-reactive weights" from the "Audio Reactive Node" to co
 
 ---
 
-### Node: Audio Prompt Schedule 📝
+### Audio Prompt Schedule 📝
 
-This node creates a structured prompt schedule for audio-reactive animations. It associates specific prompts with defined indices, allowing precise control over prompt changes in sync with audio cues
+Associates Inputs prompts with inputs floats into a scheduled prompt format. The output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -90,9 +92,9 @@ This node creates a structured prompt schedule for audio-reactive animations. It
 
 ---
 
-### Node: Floats To Weights Strategy 🛠️
+### Floats To Weights Strategy 🏋️
 
-Converts a list of floats to IPAdapter weights strategy, useful to use "IPAdapter Weights From Strategy" & "Prompt Schedule From Weights Strategy" from any float list, this way you can give the audio_weights from my audio nodes to the [IPAdapter](https://github.com/cubiq/ComfyUI_IPAdapter_plus) pipeline 
+Convert a list of floats into an IPAdapter weights strategy, enabling use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Strategy". This allows to pass audio_weights or any float list to the IPAdapter pipeline
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -107,30 +109,30 @@ Converts a list of floats to IPAdapter weights strategy, useful to use "IPAdapte
 
 ---
 
-### Node: Floats Visualizer 🛠️
+### Floats Visualizer 📈
 
-This node generates a visualization of one or more list of floats. It plots the provided float lists on a graph, allowing you to visually analyze the data, Useful if you want to compare the audio weights of differents Audio Reactive instance, for example one with your drums weights, one with your vocal weights etc...
+Generates a graph from one or more lists of floats to visually compare data. Useful for comparing audio weights from different Audio Reactive nodes
 
-<details>
-  <summary><i>Node Parameters</i></summary>
-
-  - **floats**: The primary list of float values to visualize
-  - **title**: Title of the graph
-  - **x_label**: Label for the x-axis
-  - **y_label**: Label for the y-axis
-  - **floats_optional2**: (Optional) A second list of float values to include in the visualization
-  - **floats_optional3**: (Optional) A third list of float values to include in the visualization
-
-  **Outputs**:
-  - **visual_graph**: An image displaying the graph of the provided float sequences
-
-</details>
+><details>
+>  <summary><i>Node Parameters</i></summary>
+>
+>  - **floats**: The primary list of float values to visualize
+>  - **title**: Title of the graph
+>  - **x_label**: Label for the x-axis
+>  - **y_label**: Label for the y-axis
+>  - **floats_optional2**: (Optional) A second list of float values to include in the visualization
+>  - **floats_optional3**: (Optional) A third list of float values to include in the visualization
+>
+>  **Outputs**:
+>  - **visual_graph**: An image displaying the graph of the provided float sequences
+>
+></details>
 
 ---
 
-### Node: Mask To Float 🛠️
+### Mask To Float 🎭
 
-This node converts a mask input into a float value by computing the mean pixel value of the mask. It is useful for deriving numerical insights from mask data, which can then be applied in various processing scenarios
+Converts mask(s) input into float(s) value(s) by computing the mean pixel value of each mask
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -144,19 +146,19 @@ This node converts a mask input into a float value by computing the mean pixel v
 
 ---
 
-### Node: Invert Floats 🛠️
+### Invert Floats 🔁
 
-This node inverts all the individuals values of a list of floats
+Inverts all the individuals values of a list of floats
 
-<details>
-  <summary><i>Node Parameters</i></summary>
-
-  - **floats**: The list of float values to invert
-
-  **Outputs**:
-  - **floats_invert**: The inverted list of float values, where all the individual values have been inversed
-
-</details>
+><details>
+>  <summary><i>Node Parameters</i></summary>
+>
+>  - **floats**: The list of float values to invert
+>
+>  **Outputs**:
+>  - **floats_invert**: The inverted list of float values, where all the individual values have been inversed
+>
+></details>
 
 ---
 
@@ -167,9 +169,10 @@ This node inverts all the individuals values of a list of floats
 4. Search for `ComfyUI_Yvann-Nodes` in the manager and install it
 
 ---
-## TO DO
-- [x] Node FloatList to Graph Visualization
-- [x] Node Combine graph visualization
+
+**You can find easily all my nodes in ComfyUI by 2x left click on mouse when you're on Comfy and type "yva" in the search box (:**
+
+---
 ## Contributing
 Want to help make this project better? Feel free to:
 - Open an issue

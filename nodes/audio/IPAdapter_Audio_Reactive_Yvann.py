@@ -17,7 +17,7 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 			"required": {
 				"audio_weights": ("FLOAT", {"forceInput": True}),
 				"images": ("IMAGE", {"forceInput": True}),
-				"timing": (["custom", "linear", "ease_in_out", "ease_in", "ease_out", "random"], {"default": "linear"}),
+				"timing": (["linear", "ease_in_out", "ease_in", "ease_out", "random"], {"default": "linear"}),
 				"transition_frames": ("INT", {"default": 7, "min": 1, "step": 1}),
 				"threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
 				"distance": ("INT", {"default": 1, "min": 1, "step": 1}),
@@ -25,8 +25,8 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 			}
 		}
 
-	RETURN_TYPES = ("FLOAT", "FLOAT", "IMAGE", "IMAGE", "FLOAT", "IMAGE")
-	RETURN_NAMES = ("weights", "weights_invert", "image_1", "image_2", "prompt_index", "visualization")
+	RETURN_TYPES = ("FLOAT", "IMAGE", "FLOAT", "IMAGE", "FLOAT", "IMAGE")
+	RETURN_NAMES = ("weights", "image_1", "weights_invert", "image_2", "prompt_index", "visualization")
 	FUNCTION = "process_weights"
 
 	def process_weights(self, audio_weights, images, timing, transition_frames, threshold, distance, prominence):
@@ -174,4 +174,4 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 			visualization = None
 
 		# Return values with weights and images as originally
-		return blending_weights, weights_invert, images2, images1, prompt_schedule, visualization
+		return blending_weights, images2, weights_invert, images1, prompt_schedule, visualization
