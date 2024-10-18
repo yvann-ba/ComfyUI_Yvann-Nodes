@@ -6,13 +6,13 @@
 
 #### **Works with IPAdapter, AnimateDiff, ControlNets, Prompts Schedules**
 
-- **[Workflows 📜](#Workflows)**
+- **[Workflows](#Workflows)**
 - **[Nodes](#Nodes)**
 - **[Installation](#Installation)**
 
 --- 
 
-# Workflows 📜
+# Workflows
 
 ## AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
 
