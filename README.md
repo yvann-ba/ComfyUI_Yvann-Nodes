@@ -12,7 +12,7 @@
 
 --- 
 
-# Workflows
+# Workflows 📜
 
 ## AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
 
@@ -24,23 +24,22 @@ https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
 
 Song: Daft Punk - Infinity Repetiting
 
-#### Workflow Preview 🍝
+#### Workflow Preview
 ![wf-screen-ipadapterswitchsd15](https://github.com/user-attachments/assets/d76fca16-e111-499c-84f9-c43bbb1015a3)
 
-#### Workflow File 📜
+#### WF File (download it and drop it into ComfyUI ☝️🤓)
+
 [AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
 
-#### Workflow Details 🤓
+#### Details
 This lightweight workflow lets you synchronize any number of image inputs with audio input (e.g., switch images based on bass or drums) throught your animation, with the help of IPAdapter to diffuse the style of your audio reactive input images. There are also ControlNet included to control the composition of your animation based on an input video, making styles and shapes audio-reactive and controlable. The workflow uses Stable Diffusion 1.5 and HyperSD (8 steps) for efficient, high-quality animations, even on a low VRAM/GPU setup
 
 ---
-# Nodes
+# Nodes 🍝
 
 ### Audio Reactive 🔊
 
 Analyzes audio input to generate **audio-reactive weights** and visualizations. It can extract specific elements from the audio, such as **drums**, **vocals**, **bass**, or analyze the **full audio**. Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
-
-![Audio Reactive Yvann](./assets/AudioReactive_node_preview.png)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -57,10 +56,10 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 >  - **invert_weights**: Inverts the audio weights
 >
 >  **Outputs**:
->  - **audio_weights**: A float list of audio-reactive weights based on the processed audio
+>  - **graph_audio**: An image displaying a graph of the audio weights over time, representing the variation in intensity across the analyzed frames
 >  - **processed_audio**: The separated or processed audio (e.g., drums, vocals) used in the analysis
 >  - **original_audio**: The original audio input without modifications
->  - **audio_visualization**: An image displaying a graph of the audio weights over time, representing the variation in intensity across the analyzed frames
+>  - **audio_weights**: A float list of audio-reactive weights based on the processed audio
 >
 ></details>
 
@@ -73,21 +72,21 @@ Receives "audio-reactive weights" from the "Audio Reactive Node" to control the 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
->  - **audio_weights**: A list of audio-reactive weights used to control image blending
->  - **images**: A batch of images as a tensor, used as sources for transitions (required, type IMAGE)
->  - **timing**: Timing function for blending (choices: custom, linear, ease_in_out, ease_in, ease_out, random; default: linear)
->  - **transition_frames**: The number of frames over which to blend between images (type INT, default: 7, min: 1, step: 1)
->  - **threshold**: The minimum height required for a peak to be considered (type FLOAT, default: 0.5, min: 0.0, max: 1.0, step: 0.01)
->  - **distance**: The minimum number of frames between peaks (type INT, default: 1, min: 1, step: 1)
->  - **prominence**: The relative importance of a peak (type FLOAT, default: 0.1, min: 0.0, max: 1.0, step: 0.01)
+>  - **images**: A batch of images used as sources for transitions, each images switch when a peak occurs in the audio (when you see a red dots in the graph)
+>  - **audio_weights**: A list of audio-reactive weights used to control image blending, received from "Audio Reactive Node"
+>  - **timing**: Timing function for blending, each mode smooth the weights in a differents way, to understand what they're doing just display the audio weights you will see differents smoothed values
+>  - **transition_frames**: The number of frames over which to blend between images, I recommend lower low values when you have a low frame rate and high value when you have a high frame rate
+>  - **threshold**: The minimum height required for a peak in the audio to be considered, look at the graph to understand
+>  - **distance**: The minimum number of frames between peaks, useful when you have small peaks near a big peak and you want only the big peak, you can kind of ignore the small peaks around by increasing the distance
+>  - **prominence**: The relative importance of a peak (not really important lol)
 >
 >  **Outputs**:
->  - **weights**: The calculated blending weights for image transitions
->  - **weights_invert**: The inverse of the calculated blending weights
->  - **image_1**: The starting image for a transition
->  - **image_2**: The ending image for a transition
->  - **prompt_index**: The frame indices at which image transitions occur
->  - **visualization**: An image visualization of audio weights, detected peaks, and image transitions
+>  - **switch_index**: Each frame indices at which image transitions occur, useful only in the case you want to have a scheduled prompt based on the peak of your audio, in this case connect this output to my node "Audio Prompt Schedule"
+>  - **image_1**: The starting image for a transition, connect it to the first IPadapter batch in the image input
+>  - **weights**: The calculated blending weights for image transitions, connect it to the first IPadapter batch in the weight input
+>  - **image_2**: The ending image for a transition, connect it to the second IPadapter batch in the image input
+>  - **weights_invert**: The inverse of the calculated blending weights, connect it to the second IPadapter batch in the weight input
+>  - **graph_audio_index**: An image visualization of audio weights, detected peaks, and image transitions
 >
 ></details>
 
@@ -100,11 +99,11 @@ Associates Inputs prompts with inputs floats into a scheduled prompt format. The
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
->  - **prompt_indices**: A list of indices where prompts will change (required, type FLOAT)
+>  - **switch_index**: A list of indices where prompts will change (required, type FLOAT)
 >  - **prompts**: A multiline string of prompts to be used at each index (type STRING, default: empty)
 >
 >  **Outputs**:
->  - **prompt_schedule**: A string representation of the prompt schedule. Each index is associated with a prompt from the provided list
+>  - **prompt_schedule**: A string representation of the prompt schedule. Each audio reactive index is associated with a prompt from the provided list
 >
 ></details>
 
@@ -155,10 +154,10 @@ Converts mask(s) input into float(s) value(s) by computing the mean pixel value 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
->  - **mask**: The mask input from which to compute the float value (required, type MASK)
+>  - **mask**: The mask input from which to compute the float value
 >
 >  **Outputs**:
->  - **float**: A float representing the average value of the mask. This output is especially useful for analyzing or comparing different mask areas quantitatively
+>  - **float**: A float representing the average value of the mask
 >
 ></details>
 
@@ -180,7 +179,7 @@ Inverts all the individuals values of a list of floats
 
 ---
 
-## Installation
+## Installation 🏃🏽‍♂️‍➡️
 1. Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) & [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
 2. Launch ComfyUI
 3. Click on "🧩 Manager" -> "Custom Nodes Manager"
