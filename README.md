@@ -14,7 +14,20 @@
 
 # Workflows
 
-**In Progress**
+### AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
+
+#### Workflow Demo Render (Enable Video Sound)
+
+
+https://github.com/user-attachments/assets/6149ee77-e664-432b-9f3f-3e782bcf44fa
+
+Song: Daft Punk - Infinity Repetiting
+
+#### **Workflow Preview**
+![wf-screen-ipadapterswitchsd15](https://github.com/user-attachments/assets/d76fca16-e111-499c-84f9-c43bbb1015a3)
+
+#### **Workflow File**
+[AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
 
 ---
 # Nodes
