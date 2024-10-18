@@ -16,7 +16,7 @@
 
 ## AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
 
-#### Workflow Demo Render *(Enable Video Sound)* 🔊
+#### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
 
 
 https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
