@@ -18,48 +18,48 @@ NODE_CONFIGS = {}
 
 add_node_config("Audio_Reactive_Yvann", {
     "BASE_DESCRIPTION": """
-### Analyzes audio input to generate audio-reactive weights and visualizations\n
-### It can extract specific elements from the audio, such as drums, vocals, bass, or analyze the full audio\n
-### Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
+Analyzes audio input to generate audio-reactive weights and visualizations\n
+It can extract specific elements from the audio, such as drums, vocals, bass, or analyze the full audio\n
+Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
 """
 })
 
 add_node_config("IPAdapter_Audio_Reactive_Yvann", {
     "BASE_DESCRIPTION": """
-### Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks\n
-### return images and associed weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks\n
+return images and associed weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 """
 })
 
 add_node_config("Audio_PromptSchedule_Yvann", {
     "BASE_DESCRIPTION": """
-### Associates Inputs prompts with inputs floats into a scheduled prompt format\n
-### the output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
+Associates Inputs prompts with inputs floats into a scheduled prompt format\n
+the output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
 """
 })
 
 add_node_config("Floats_To_Weights_Strategy_Yvann", {
     "BASE_DESCRIPTION": """
-### Convert a list of floats into an IPAdapter weights strategy, enabling use with "IPAdapter Weights From Strategy"\n
-### or "Prompt Schedule From Weights Strategy". This allows to pass audio_weights or any float list to the IPAdapter pipeline
+Convert a list of floats into an IPAdapter weights strategy, enabling use with "IPAdapter Weights From Strategy"\n
+or "Prompt Schedule From Weights Strategy". This allows to pass audio_weights or any float list to the IPAdapter pipeline
 """
 })
 
 add_node_config("Invert_Floats_Yvann", {
     "BASE_DESCRIPTION": """
-### Inverts all the individuals values of a list of floats
+Inverts all the individuals values of a list of floats
 """
 })
 
 add_node_config("Floats_Visualizer_Yvann", {
     "BASE_DESCRIPTION": """
-### Generates a graph from one or more lists of floats to visually compare data\n
-### Useful for comparing audio weights from different Audio Reactive nodes
+Generates a graph from one or more lists of floats to visually compare data\n
+Useful for comparing audio weights from different Audio Reactive nodes
 """
 })
 
 add_node_config("Mask_To_Float_Yvann", {
     "BASE_DESCRIPTION": """
-### Converts mask(s) input into float(s) value(s) by computing the mean pixel value of each mask
+Converts mask(s) input into float(s) value(s) by computing the mean pixel value of each mask
 """
 })

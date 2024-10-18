@@ -9,8 +9,8 @@ class Yvann(metaclass=CombinedMeta):
     @classmethod
     def get_description(cls):
         footer = "\n\n"
-        footer = "#### 🐙 Documentation, Workflows and Code Source: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI_Yvann-Nodes)\n"
-        footer += "#### 👁️ Tutorials: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n"
+        footer = "🐙 Docs, Workflows and Code: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI_Yvann-Nodes)\n"
+        footer += "👁️ Tutorials: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n"
 
         desc = ""
 
