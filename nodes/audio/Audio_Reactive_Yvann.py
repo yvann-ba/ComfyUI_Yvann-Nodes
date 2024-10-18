@@ -32,8 +32,8 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 			}
 		}
 		
-	RETURN_TYPES = ("FLOAT", "AUDIO", "AUDIO", "IMAGE")
-	RETURN_NAMES = ("audio_weights", "processed_audio", "original_audio", "audio_visualization")
+	RETURN_TYPES = ("IMAGE", "AUDIO", "AUDIO", "FLOAT",)
+	RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
 	FUNCTION = "process_audio"
 
 	def download_and_load_model(self):
@@ -223,4 +223,4 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 		scale_audio_weights = scale_audio_weights.tolist()
 		rounded_scale_audio_weights = [round(elem, 3) for elem in scale_audio_weights]
 		
-		return (rounded_scale_audio_weights, processed_audio, original_audio, weights_graph)
+		return (weights_graph, processed_audio, original_audio, rounded_scale_audio_weights)

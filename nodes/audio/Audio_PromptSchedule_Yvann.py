@@ -8,7 +8,7 @@ class Audio_PromptSchedule_Yvann(AudioNodeBase):
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"prompt_indices": ("FLOAT", {"forceInput": True}),
+				"switch_index": ("FLOAT", {"forceInput": True}),
 				"prompts": ("STRING", {"default": "", "multiline": True}),
 			}
 		}
@@ -17,17 +17,17 @@ class Audio_PromptSchedule_Yvann(AudioNodeBase):
 	RETURN_NAMES = ("prompt_schedule",)
 	FUNCTION = "create_prompt_schedule"
 
-	def create_prompt_schedule(self, prompt_indices, prompts=""):
-		if isinstance(prompt_indices, float) or isinstance(prompt_indices, int):
-			prompt_indices = [int(prompt_indices)]
+	def create_prompt_schedule(self, switch_index, prompts=""):
+		if isinstance(switch_index, float) or isinstance(switch_index, int):
+			switch_index = [int(switch_index)]
 		else:
-			prompt_indices = [int(idx) for idx in prompt_indices]
+			switch_index = [int(idx) for idx in switch_index]
 
 		# Parse the prompts, split by newline, and remove empty lines
 		prompts_list = [p.strip() for p in prompts.split("\n") if p.strip() != ""]
 
 		# Ensure the number of prompts matches the number of indices by looping prompts
-		num_indices = len(prompt_indices)
+		num_indices = len(switch_index)
 		num_prompts = len(prompts_list)
 
 		if num_prompts > 0:
@@ -45,7 +45,7 @@ class Audio_PromptSchedule_Yvann(AudioNodeBase):
 
 		# Create the formatted prompt schedule string
 		out = ""
-		for idx, frame in enumerate(prompt_indices):
+		for idx, frame in enumerate(switch_index):
 			out += f"\"{frame}\": \"{prompts_list[idx]}\",\n"
 
 		return (out,)
