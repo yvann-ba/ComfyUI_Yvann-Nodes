@@ -1,33 +1,37 @@
 # 👁️ ComfyUI_Yvann-Nodes  [![Instagram](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=instagram&logoColor=E4405F)](https://www.instagram.com/yvann.mp4/) [![YouTube](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann.mp4)
 
-### Made with the help [Lilien](https://github.com/Lilien86) [![X Badge](https://img.shields.io/badge/lilien.rig-white?style=flat&logo=x&logoColor=black)](https://x.com/Lilien_RIG)
+### Made with the help of [Lilien](https://github.com/Lilien86) [![X Badge](https://img.shields.io/badge/lilien.rig-white?style=flat&logo=x&logoColor=black)](https://x.com/Lilien_RIG)
 
 ### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create audio-reactive animations in ComfyUI**
 
-### **Works with IPAdapter, AnimateDiff, ControlNets, Prompts Schedules**
+#### **Works with IPAdapter, AnimateDiff, ControlNets, Prompts Schedules**
 
 - **[Workflows](#Workflows)**
 - **[Nodes](#Nodes)**
-- **[Installation](#Installation), [Contributing](#Contributing)**
+- **[Installation](#Installation)**
 
 --- 
 
 # Workflows
 
-### AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
+## AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
 
-#### Workflow Demo Render (Enable Video Sound)
+#### Workflow Demo Render *(Enable Video Sound)* 🔊
 
 
-https://github.com/user-attachments/assets/6149ee77-e664-432b-9f3f-3e782bcf44fa
+https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
+
 
 Song: Daft Punk - Infinity Repetiting
 
-#### **Workflow Preview**
+#### Workflow Preview 🍝
 ![wf-screen-ipadapterswitchsd15](https://github.com/user-attachments/assets/d76fca16-e111-499c-84f9-c43bbb1015a3)
 
-#### **Workflow File**
+#### Workflow File 📜
 [AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
+
+#### Workflow Details 🤓
+This lightweight workflow lets you synchronize any number of image inputs with audio input (e.g., switch images based on bass or drums) throught your animation, with the help of IPAdapter to diffuse the style of your audio reactive input images. There are also ControlNet included to control the composition of your animation based on an input video, making styles and shapes audio-reactive and controlable. The workflow uses Stable Diffusion 1.5 and HyperSD (8 steps) for efficient, high-quality animations, even on a low VRAM/GPU setup
 
 ---
 # Nodes
@@ -186,9 +190,3 @@ Inverts all the individuals values of a list of floats
 
 **You can find easily all my nodes in ComfyUI by 2x left click on mouse when you're on Comfy and type "yva" in the search box (:**
 
----
-## Contributing
-Want to help make this project better? Feel free to:
-- Open an issue
-- Submit a pull request
-- Reach out to me on [LinkedIn](https://www.linkedin.com/in/yvann-barbot/)
