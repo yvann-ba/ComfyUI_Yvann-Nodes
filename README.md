@@ -24,13 +24,16 @@ https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
 
 Song: Daft Punk - Infinity Repetiting
 
-#### WF File (download it and drop it into ComfyUI) 📜
+-
+#### Workflow File (download it and drop it into ComfyUI) 📜
 [AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
+
+-
 
 #### Youtube Tutorial (Click on the image)
 [![Video](https://img.youtube.com/vi/Gb4IESsiiJo/maxresdefault.jpg)](https://www.youtube.com/live/Gb4IESsiiJo?si=rFdOwKaFhnHxZCba)
 
-#### Preview
+#### Workflow Preview
 ![wf-screen-ipadapterswitchsd15](https://github.com/user-attachments/assets/d76fca16-e111-499c-84f9-c43bbb1015a3)
 
 #### Details ☝️🤓
