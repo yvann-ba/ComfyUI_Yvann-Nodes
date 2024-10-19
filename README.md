@@ -27,7 +27,7 @@ Song: Daft Punk - Infinity Repetiting
 #### WF File (download it and drop it into ComfyUI) 📜
 [AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
 
-#### Youtube Tutorial (Click on the pic)
+#### Youtube Tutorial (Click on the image)
 [![Video](https://img.youtube.com/vi/Gb4IESsiiJo/maxresdefault.jpg)](https://www.youtube.com/live/Gb4IESsiiJo?si=rFdOwKaFhnHxZCba)
 
 #### Preview
