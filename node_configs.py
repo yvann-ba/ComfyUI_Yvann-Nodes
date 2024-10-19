@@ -33,8 +33,7 @@ return images and associed weights to use with 2 IPadapter Batch, inspired by th
 
 add_node_config("Audio_PromptSchedule_Yvann", {
     "BASE_DESCRIPTION": """
-Associates Inputs prompts with inputs floats into a scheduled prompt format\n
-the output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
+Associates Inputs prompts with inputs floats into a scheduled prompt format, the output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
 """
 })
 
@@ -47,14 +46,34 @@ or "Prompt Schedule From Weights Strategy". This allows to pass audio_weights or
 
 add_node_config("Invert_Floats_Yvann", {
     "BASE_DESCRIPTION": """
-Inverts all the individuals values of a list of floats
+### Inverts all the individuals values of a list of floats
+Inputs:
+
+- floats: The list of float values to invert
+\n
+Outputs:
+
+- floats_invert: The inverted list of float values, where all the individual values have been inversed
 """
 })
 
 add_node_config("Floats_Visualizer_Yvann", {
     "BASE_DESCRIPTION": """
-Generates a graph from one or more lists of floats to visually compare data\n
-Useful for comparing audio weights from different Audio Reactive nodes
+### Generates a graph from one or more lists of floats to visually compare data, Useful for comparing audio weights from different Audio Reactive nodes
+
+Inputs:
+
+- floats: The primary floats values to visualize
+- floats_optional2: (Optional) second floats values to visualize
+- floats_optional3: (Optional) third floats values to visualize
+\n
+Parameters:
+- title: Title of the graph
+- x_label: Label for the x-axis
+- y_label: Label for the y-axis
+Outputs:
+
+visual_graph: An image displaying the graph of the provided float sequences
 """
 })
 

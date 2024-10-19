@@ -9,16 +9,14 @@ class Floats_To_Weights_Strategy_Yvann(UtilsNodeBase):
 		return {
 			"required": {
 				"floats": ("FLOAT", {"forceInput": True}),
-				"batch_size": ("INT", {"forceInput": True}),
 			}
 		}
 	RETURN_TYPES = ("WEIGHTS_STRATEGY",)
 	RETURN_NAMES = ("WEIGHTS_STRATEGY",)
 	FUNCTION = "convert"
 
-	def convert(self, floats, batch_size):
-		frames = batch_size
-		
+	def convert(self, floats):
+		frames = len(floats)
 		weights_str = ", ".join(map(lambda x: f"{x:.3f}", floats))
 
 		weights_strategy = {
@@ -33,4 +31,3 @@ class Floats_To_Weights_Strategy_Yvann(UtilsNodeBase):
 		"frame_count": frames,
 		}
 		return (weights_strategy,)
-		
