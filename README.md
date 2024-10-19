@@ -67,7 +67,7 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 
 ### IPAdapter Audio Reactive 🎵
 
-Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks. Return images and associed weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
+Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks. Return images and associated weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
