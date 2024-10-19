@@ -1,48 +1,42 @@
 # 👁️ ComfyUI_Yvann-Nodes  [![Instagram](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=instagram&logoColor=E4405F)](https://www.instagram.com/yvann.mp4/) [![YouTube](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann.mp4)
 
-### Made with the help of [Lilien](https://github.com/Lilien86) [![X Badge](https://img.shields.io/badge/lilien.rig-white?style=flat&logo=x&logoColor=black)](https://x.com/Lilien_RIG)
+#### Made with the help of [Lilien](https://github.com/Lilien86) [![X Badge](https://img.shields.io/badge/lilien.rig-white?style=flat&logo=x&logoColor=black)](https://x.com/Lilien_RIG)
 
-### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create AI generated audio-reactive animations in ComfyUI**
+#### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create AI generated audio-reactive animations in ComfyUI**
 
 #### **Works with IPAdapter, AnimateDiff, ControlNets, Prompts Schedules**
 
-- **[Workflows](#Workflows)**
-- **[Nodes](#Nodes)**
-- **[Installation](#Installation)**
+- [Workflows](#Workflows)
+- [Nodes](#Nodes)
+- [Installation](#Installation)
 
 --- 
 
-# Workflows
+## Workflows
 
-## AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
+### AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
 
-#### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
-
+##### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
 
 https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
 
-
-Song: Daft Punk - Infinity Repetiting
-
--
-#### Workflow File (download it and drop it into ComfyUI) 📜
+##### Workflow File (download it and drop it into ComfyUI) 📜
 [AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
 
--
 
-#### Youtube Tutorial (Click on the image)
+##### Youtube Tutorial (Click on the image)
 [![Video](https://img.youtube.com/vi/Gb4IESsiiJo/maxresdefault.jpg)](https://www.youtube.com/live/Gb4IESsiiJo?si=rFdOwKaFhnHxZCba)
 
-#### Workflow Preview
+##### Workflow Preview
 ![wf-screen-ipadapterswitchsd15](assets/wf_previews/Preview_AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.png)
 
-#### Details ☝️🤓
+##### Details ☝️🤓
 Synchronize any number of image inputs with audio input (e.g., switch images based on bass or drums) throught your animation, with the help of IPAdapter to diffuse the style of your audio reactive input images. There are also ControlNet included to control the composition of your animation based on an input video, making styles and shapes audio-reactive and controlable. The workflow uses Stable Diffusion 1.5 and HyperSD (8 steps) for efficient, high-quality animations, even on a low VRAM/GPU setup
 
 ---
-# Nodes
+## Nodes
 
-### Audio Reactive 🔊
+#### Audio Reactive 🔊
 
 Analyzes audio input to generate **audio-reactive weights** and visualizations. It can extract specific elements from the audio, such as **drums**, **vocals**, **bass**, or analyze the **full audio**. Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
 
@@ -72,7 +66,7 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 
 ---
 
-### IPAdapter Audio Reactive 🎵
+#### IPAdapter Audio Reactive 🎵
 
 Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks. Return images and associed weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 
@@ -101,7 +95,7 @@ Receives "audio-reactive weights" from the "Audio Reactive Node" to control the 
 
 ---
 
-### Audio Prompt Schedule 📝
+#### Audio Prompt Schedule 📝
 
 Associates Inputs prompts with inputs floats into a scheduled prompt format. The output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
 
@@ -120,7 +114,7 @@ Associates Inputs prompts with inputs floats into a scheduled prompt format. The
 
 ---
 
-### Floats To Weights Strategy 🏋️
+#### Floats To Weights Strategy 🏋️
 
 Convert a list of floats into an IPAdapter weights strategy, enabling use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Strategy". This allows to pass audio_weights or any float list to the IPAdapter pipeline
 
@@ -139,7 +133,7 @@ Convert a list of floats into an IPAdapter weights strategy, enabling use with "
 
 ---
 
-### Floats Visualizer 📈
+#### Floats Visualizer 📈
 
 Generates a graph from one or more lists of floats to visually compare data. Useful for comparing audio weights from different Audio Reactive nodes
 
@@ -162,7 +156,7 @@ Generates a graph from one or more lists of floats to visually compare data. Use
 
 ---
 
-### Mask To Float 🎭
+#### Mask To Float 🎭
 
 Converts mask(s) input into float(s) value(s) by computing the mean pixel value of each mask
 
@@ -180,7 +174,7 @@ Converts mask(s) input into float(s) value(s) by computing the mean pixel value 
 
 ---
 
-### Invert Floats 🔁
+#### Invert Floats 🔁
 
 Inverts all the individuals values of a list of floats
 
@@ -198,7 +192,7 @@ Inverts all the individuals values of a list of floats
 
 ---
 
-## Installation
+### Installation
 1. Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) & [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
 2. Launch ComfyUI
 3. Click on "🧩 Manager" -> "Custom Nodes Manager"
