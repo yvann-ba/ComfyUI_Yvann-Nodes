@@ -34,7 +34,7 @@ Song: Daft Punk - Infinity Repetiting
 [![Video](https://img.youtube.com/vi/Gb4IESsiiJo/maxresdefault.jpg)](https://www.youtube.com/live/Gb4IESsiiJo?si=rFdOwKaFhnHxZCba)
 
 #### Workflow Preview
-![wf-screen-ipadapterswitchsd15](https://github.com/user-attachments/assets/d76fca16-e111-499c-84f9-c43bbb1015a3)
+![wf-screen-ipadapterswitchsd15](assets/wf_previews/Preview_AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.png)
 
 #### Details ☝️🤓
 Synchronize any number of image inputs with audio input (e.g., switch images based on bass or drums) throught your animation, with the help of IPAdapter to diffuse the style of your audio reactive input images. There are also ControlNet included to control the composition of your animation based on an input video, making styles and shapes audio-reactive and controlable. The workflow uses Stable Diffusion 1.5 and HyperSD (8 steps) for efficient, high-quality animations, even on a low VRAM/GPU setup
@@ -45,6 +45,8 @@ Synchronize any number of image inputs with audio input (e.g., switch images bas
 ### Audio Reactive 🔊
 
 Analyzes audio input to generate **audio-reactive weights** and visualizations. It can extract specific elements from the audio, such as **drums**, **vocals**, **bass**, or analyze the **full audio**. Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), it separates these components from the input audio
+
+![preview](assets/nodes_previews/AudioReactive_node_solo.png)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -74,6 +76,8 @@ Analyzes audio input to generate **audio-reactive weights** and visualizations. 
 
 Receives "audio-reactive weights" from the "Audio Reactive Node" to control the blending and switch between images based on audio peaks. Return images and associed weights to use with 2 IPadapter Batch, inspired by the "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 
+![preview](assets/nodes_previews/IPAdapter_AudioReactive_Solo.png)
+
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
@@ -101,6 +105,8 @@ Receives "audio-reactive weights" from the "Audio Reactive Node" to control the 
 
 Associates Inputs prompts with inputs floats into a scheduled prompt format. The output of this node need to be connected to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)
 
+![preview](assets/nodes_previews/Audio_Prompt_schedule_solo.png)
+
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
@@ -118,6 +124,8 @@ Associates Inputs prompts with inputs floats into a scheduled prompt format. The
 
 Convert a list of floats into an IPAdapter weights strategy, enabling use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Strategy". This allows to pass audio_weights or any float list to the IPAdapter pipeline
 
+![preview](assets/nodes_previews/floatstoWeightsStrategy_Solo.png)
+
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
@@ -134,6 +142,8 @@ Convert a list of floats into an IPAdapter weights strategy, enabling use with "
 ### Floats Visualizer 📈
 
 Generates a graph from one or more lists of floats to visually compare data. Useful for comparing audio weights from different Audio Reactive nodes
+
+![preview](assets/nodes_previews/FloatsVisaulizer_solo.png)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
@@ -156,6 +166,8 @@ Generates a graph from one or more lists of floats to visually compare data. Use
 
 Converts mask(s) input into float(s) value(s) by computing the mean pixel value of each mask
 
+![preview](assets/nodes_previews/masktofloat_Solo.png)
+
 ><details>
 >  <summary><i>Node Parameters</i></summary>
 >
@@ -171,6 +183,8 @@ Converts mask(s) input into float(s) value(s) by computing the mean pixel value 
 ### Invert Floats 🔁
 
 Inverts all the individuals values of a list of floats
+
+![preview](assets/nodes_previews/InverFloats_Solo.png)
 
 ><details>
 >  <summary><i>Node Parameters</i></summary>
