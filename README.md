@@ -2,7 +2,7 @@
 
 ### Made with the help of [Lilien](https://github.com/Lilien86) [![X Badge](https://img.shields.io/badge/lilien.rig-white?style=flat&logo=x&logoColor=black)](https://x.com/Lilien_RIG)
 
-### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create audio-reactive animations in ComfyUI**
+### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create AI generated audio-reactive animations in ComfyUI**
 
 #### **Works with IPAdapter, AnimateDiff, ControlNets, Prompts Schedules**
 
