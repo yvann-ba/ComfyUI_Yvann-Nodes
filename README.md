@@ -200,5 +200,7 @@ Inverts all the individuals values of a list of floats
 
 ---
 
-**You can find easily all my nodes in ComfyUI by 2x left click on mouse when you're on Comfy and type "yva" in the search box (:**
+You can find easily all my nodes in ComfyUI by 2x left click on mouse when you're on ComfyUI Canva and type "yva" in the search box
 
+---
+#### *Giving a ⭐ to this repo is the best way to support us (:*
