@@ -26,7 +26,7 @@ https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
 
 ##### Youtube Tutorial (Click on the image)
 [![Video](https://img.youtube.com/vi/Gb4IESsiiJo/maxresdefault.jpg)](https://www.youtube.com/live/Gb4IESsiiJo?si=rFdOwKaFhnHxZCba)
-
+[CIVITAI Workflow Page](https://civitai.com/models/867298)
 ##### Workflow Preview
 ![wf-screen-ipadapterswitchsd15](assets/wf_previews/Preview_AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.png)
 
