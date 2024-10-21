@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator  # Import for integer x-axis labels
 import tempfile
 import numpy as np
 import math
@@ -18,7 +19,7 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 				"images": ("IMAGE", {"forceInput": True}),
 				"audio_weights": ("FLOAT", {"forceInput": True}),
 				"timing": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
-				"transition_frames": ("INT", {"default": 7, "min": 1, "step": 1}),
+				"transition_frames": ("INT", {"default": 4, "min": 1, "step": 1}),
 				"threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
 			}
 		}
@@ -27,15 +28,15 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 	RETURN_NAMES = ("image_1", "weights", "image_2", "weights_invert", "graph_audio_index")
 	FUNCTION = "process_weights"
 
-	def process_weights(self,  images, audio_weights, timing, transition_frames, threshold):
+	def process_weights(self, images, audio_weights, timing, transition_frames, threshold):
 
 		if not isinstance(audio_weights, list) and not isinstance(audio_weights, np.ndarray):
 			print("Invalid audio_weights input")
-			return None, None, None, None, None, None
+			return None, None, None, None, None
 
 		if images is None or not isinstance(images, torch.Tensor):
 			print("Invalid or empty images input")
-			return None, None, None, None, None, None
+			return None, None, None, None, None
 
 		# Normalize audio_weights
 		audio_weights = np.array(audio_weights, dtype=np.float32)
@@ -149,6 +150,10 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 			plt.title('Audio Weights and Detected Peaks')
 			plt.legend()
 			plt.grid(True)
+
+			# Ensure x-axis labels are integers
+			ax = plt.gca()
+			ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
 			with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
 				plt.savefig(tmpfile.name, format='png')

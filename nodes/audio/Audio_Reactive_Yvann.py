@@ -2,6 +2,7 @@ import torch
 import os
 import folder_paths
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator  # Import for integer x-axis labels
 import tempfile
 import numpy as np
 from PIL import Image
@@ -10,10 +11,8 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-
 class Audio_Reactive_Yvann(AudioNodeBase):
-	analysis_modes = ["Drums Only", "Full Audio",
-					  "Vocals Only", "Bass Only", "Other Audio"]
+	analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
 
 	@classmethod
 	def INPUT_TYPES(cls):
@@ -24,14 +23,13 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 				"audio": ("AUDIO", {"forceInput": True}),
 				"analysis_mode": (cls.analysis_modes,),
 				"threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
-				"add": ("FLOAT", {"default": 0.0, "min": -1, "max": 1, "step": 0.01}),
 				"smooth": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01}),
-				"multiply": ("FLOAT", {"default": 1.0, "min": 0, "max": 10.0, "step": 0.1}),
-				"add_range": ("FLOAT", {"default": 0, "min": 0, "max": 3, "step": 0.01}),
-				"invert_weights": ("BOOLEAN", {"default": False}),
+				"multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
+				"min_range": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 2.0, "step": 0.01}),
+				"max_range": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.1, "step": 0.01}),
 			}
 		}
-		
+
 	RETURN_TYPES = ("IMAGE", "AUDIO", "AUDIO", "FLOAT",)
 	RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
 	FUNCTION = "process_audio"
@@ -73,15 +71,12 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 			print(f"Error in RMS energy calculation: {e}")
 			return np.zeros(batch_size)
 
-	def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, ):
+	def _apply_audio_processing(self, weights, threshold, smooth, multiply):
 		# Normalize weights to 0-1 range
 		weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
 
 		# Apply threshold
 		weights = np.where(weights > threshold, weights, 0)
-
-		# Apply Add
-		weights = np.clip(weights + add, 0, 1)
 
 		# Apply smoothing
 		smoothed = np.zeros_like(weights)
@@ -91,19 +86,17 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 			else:
 				smoothed[i] = smoothed[i-1] * smooth + weights[i] * (1 - smooth)
 
-		# Apply final multiplication
+		# Apply multiply before rescaling
 		smoothed = smoothed * multiply
+		smoothed = np.clip(smoothed, 0, 1)
 
 		return smoothed
 
-	def _apply_threshold(self, weights, threshold):
-		# Apply threshold to weights with normalization
-		weights = (weights - np.min(weights)) / (np.max(weights) - np.min(weights)) if np.max(weights) - np.min(weights) > 0 else weights
+	def _rescale_weights(self, weights, min_range, max_range):
+		# Rescale weights to the specified range
+		return weights * (max_range - min_range) + min_range
 
-		thresholded = np.where(weights > threshold,(weights - threshold) / (1 - threshold),0)
-		return thresholded
-
-	def process_audio(self, audio, batch_size, fps, analysis_mode, threshold, add, smooth, multiply, add_range, invert_weights):
+	def process_audio(self, audio, batch_size, fps, analysis_mode, threshold, smooth, multiply, min_range, max_range):
 		# Main function to process audio and generate weights
 		if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
 			print("Invalid audio input")
@@ -147,7 +140,7 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 			except Exception as e:
 				print(f"Error in model processing: {e}")
 				return None, None, None, None
-		else:  # audio (full mix)
+		else:  # Full Audio
 			processed_waveform = waveform
 
 		processed_audio = {
@@ -160,43 +153,30 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 		}
 
 		# Calculate audio weights
-		audio_weights = self._rms_energy(
-			processed_waveform.squeeze(0), batch_size, samples_per_frame)
+		audio_weights = self._rms_energy(processed_waveform.squeeze(0), batch_size, samples_per_frame)
 		if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
 			print("Invalid audio weights calculated")
 			return None, None, None, None
 
-		audio_weights = self._apply_audio_processing(
-			audio_weights, threshold, add, smooth, multiply, )
-
-		audio_weights = np.clip(audio_weights, 0, 1)
-		scale_audio_weights = audio_weights + add_range
-		scale_audio_weights = np.round(scale_audio_weights, 3)
-
-
-		if (invert_weights == True):
-			audio_weights_inverted = 1.0 - np.array(audio_weights)
-			audio_weights_inverted = np.clip(audio_weights_inverted, 0, 1)
-			scale_audio_weights_inverted = audio_weights_inverted + add_range
-			scale_audio_weights_inverted = np.round(scale_audio_weights_inverted, 3)
+		audio_weights = self._apply_audio_processing(audio_weights, threshold, smooth, multiply)
+		audio_weights = self._rescale_weights(audio_weights, min_range, max_range)
+		audio_weights = np.round(audio_weights, 3)
 
 		# Generate visualization
 		try:
 			figsize = 12.0
 			plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
-			if (invert_weights == False):
-				plt.plot(list(range(1, len(scale_audio_weights) + 1)), scale_audio_weights, 
-						 label=f'{analysis_mode.capitalize()} Weights', color='blue')
-
-			if (invert_weights == True):
-				plt.plot(list(range(1, len(scale_audio_weights_inverted) + 1)), scale_audio_weights_inverted,
-						 label='Inverted Weights', color='red', linestyle='--')
+			plt.plot(list(range(1, len(audio_weights) + 1)), audio_weights, label=f'{analysis_mode} Weights', color='blue')
 
 			plt.xlabel('Frame Number')
-			plt.ylabel('Normalized Weights')
-			plt.title(f'Processed Audio Weights ({analysis_mode.capitalize()})')
+			plt.ylabel('Weights')
+			plt.title(f'Processed Audio Weights ({analysis_mode})')
 			plt.legend()
 			plt.grid(True)
+
+			# Ensure x-axis labels are integers
+			ax = plt.gca()
+			ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
 			with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
 				plt.savefig(tmpfile, format='png')
@@ -205,22 +185,18 @@ class Audio_Reactive_Yvann(AudioNodeBase):
 
 			weights_graph = Image.open(tmpfile_path).convert("RGB")
 			weights_graph = np.array(weights_graph)
-			weights_graph = torch.tensor(weights_graph).permute(
-				2, 0, 1).unsqueeze(0).float() / 255.0
+			weights_graph = torch.tensor(weights_graph).permute(2, 0, 1).unsqueeze(0).float() / 255.0
 			weights_graph = weights_graph.permute(0, 2, 3, 1)
-			
 		except Exception as e:
 			print(f"Error in creating weights graph: {e}")
 			weights_graph = None
 			return None, None, None, None
 
-		if (invert_weights == True):
-			scale_audio_weights = scale_audio_weights_inverted
-
-		if processed_audio is None or scale_audio_weights is None or weights_graph is None:
+		if processed_audio is None or audio_weights is None or weights_graph is None:
 			print("One or more outputs are invalid")
 			return None, None, None, None
-		scale_audio_weights = scale_audio_weights.tolist()
-		rounded_scale_audio_weights = [round(elem, 3) for elem in scale_audio_weights]
-		
-		return (weights_graph, processed_audio, original_audio, rounded_scale_audio_weights)
+
+		audio_weights = audio_weights.tolist()
+		rounded_audio_weights = [round(elem, 3) for elem in audio_weights]
+
+		return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
