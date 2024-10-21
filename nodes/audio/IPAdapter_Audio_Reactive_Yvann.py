@@ -17,20 +17,17 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 			"required": {
 				"images": ("IMAGE", {"forceInput": True}),
 				"audio_weights": ("FLOAT", {"forceInput": True}),
-				"timing": (["linear", "ease_in_out", "ease_in", "ease_out", "random"], {"default": "linear"}),
+				"timing": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
 				"transition_frames": ("INT", {"default": 7, "min": 1, "step": 1}),
 				"threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
-				"distance": ("INT", {"default": 1, "min": 1, "step": 1}),
-				"prominence": ("FLOAT", {"default": 0.1, "min": 0.0,  "max": 1.0, "step": 0.01}),
 			}
 		}
 
-	RETURN_TYPES = ("FLOAT", "IMAGE", "FLOAT", "IMAGE", "FLOAT", "IMAGE")
-	RETURN_NAMES = ("switch_index", "image_1", "weights", "image_2", "weights_invert", "graph_audio_index")
+	RETURN_TYPES = ("IMAGE", "FLOAT", "IMAGE", "FLOAT", "IMAGE")
+	RETURN_NAMES = ("image_1", "weights", "image_2", "weights_invert", "graph_audio_index")
 	FUNCTION = "process_weights"
 
-	def process_weights(self,  images, audio_weights, timing, transition_frames, threshold, distance, prominence):
-		import random
+	def process_weights(self,  images, audio_weights, timing, transition_frames, threshold):
 
 		if not isinstance(audio_weights, list) and not isinstance(audio_weights, np.ndarray):
 			print("Invalid audio_weights input")
@@ -48,7 +45,7 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 		weights_normalized = (audio_weights - min_weight) / weights_range if weights_range > 0 else audio_weights - min_weight
 
 		# Detect peaks
-		peaks, _ = find_peaks(weights_normalized, height=threshold, distance=distance, prominence=prominence)
+		peaks, _ = find_peaks(weights_normalized, height=threshold)
 
 		# Generate indices based on peaks
 		indices = []
@@ -84,9 +81,6 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 		transition_counter = 0
 		in_transition = False
 
-		# Initialize prompt_schedule with the first frame index
-		prompt_schedule = [0]
-
 		for i in range(total_frames):
 			if i == 0:
 				blending_weight = 0.0
@@ -97,8 +91,6 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 					transition_counter = 0
 					current_image = image_mapping[indices[i-1]]
 					next_image = image_mapping[indices[i]]
-					# Append the frame index where the image switches
-					prompt_schedule.append(i)
 
 			if in_transition:
 				# Generate blending weight using timing function
@@ -113,8 +105,6 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 					blending_weight = math.sin(t * math.pi / 2)
 				elif timing == "ease_out":
 					blending_weight = 1 - math.cos(t * math.pi / 2)
-				elif timing == "random":
-					blending_weight = random.uniform(0, 1)
 				else:
 					blending_weight = t
 
@@ -174,4 +164,4 @@ class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
 			visualization = None
 
 		# Return values with weights and images as originally
-		return prompt_schedule, images2, blending_weights, images1, weights_invert, visualization
+		return images2, blending_weights, images1, weights_invert, visualization
