@@ -9,7 +9,7 @@ class Yvann(metaclass=CombinedMeta):
     @classmethod
     def get_description(cls):
         footer = "\n\n"
-        footer = "#### 🐙 Docs, Workflows and Code: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI_Yvann-Nodes) "
+        footer = "#### 🐙 Docs, Workflows and Code: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI-Nodes) "
         footer += " 👁️ Tutorials: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n"
 
         desc = ""
@@ -39,35 +39,35 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
-from .nodes.audio.Audio_Reactive_Yvann import Audio_Reactive_Yvann
-from .nodes.audio.IPAdapter_Audio_Reactive_Yvann import IPAdapter_Audio_Reactive_Yvann
-from .nodes.audio.Audio_PromptSchedule_Yvann import Audio_PromptSchedule_Yvann
-from .nodes.utils.Floats_To_Weights_Strategy_Yvann import Floats_To_Weights_Strategy_Yvann
-from .nodes.utils.Invert_Floats_Yvann import Invert_Floats_Yvann
-from .nodes.utils.Floats_Visualizer_Yvann import Floats_Visualizer_Yvann
-from .nodes.utils.Mask_To_Float_Yvann import Mask_To_Float_Yvann
+from .nodes.audio.Audio_Analysis import Audio_Analysis
+from .nodes.audio.IPAdapter_Audio_Reactive import IPAdapter_Audio_Reactive
+from .nodes.audio.Audio_PromptSchedule import Audio_PromptSchedule
+from .nodes.utils.Floats_To_Weights_Strategy import Floats_To_Weights_Strategy
+from .nodes.utils.Invert_Floats import Invert_Floats
+from .nodes.utils.Floats_Visualizer import Floats_Visualizer
+from .nodes.utils.Mask_To_Float import Mask_To_Float
 
 
 NODE_CLASS_MAPPINGS = {
-    "Audio Reactive | Yvann": Audio_Reactive_Yvann,
-    "IPAdapter Audio Reactive | Yvann": IPAdapter_Audio_Reactive_Yvann,
-    "Audio Prompt Schedule | Yvann": Audio_PromptSchedule_Yvann,
-    "Floats To Weights Strategy | Yvann": Floats_To_Weights_Strategy_Yvann,
-    "Invert Floats | Yvann": Invert_Floats_Yvann,
-    "Floats Visualizer | Yvann": Floats_Visualizer_Yvann,
-    "Mask To Float | Yvann": Mask_To_Float_Yvann,
+    "Audio Analysis": Audio_Analysis,
+    "IPAdapter Audio Reactive": IPAdapter_Audio_Reactive,
+    "Audio Prompt Schedule": Audio_PromptSchedule,
+    "Floats To Weights Strategy": Floats_To_Weights_Strategy,
+    "Invert Floats": Invert_Floats,
+    "Floats Visualizer": Floats_Visualizer,
+    "Mask To Float": Mask_To_Float,
 }
 
 WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Audio Reactive | Yvann": "Audio Reactive | Yvann",
-    "IPAdapter Audio Reactive | Yvann": "IPAdapter Audio Reactive | Yvann",
-    "Audio Prompt Schedule | Yvann": "Audio Prompt Schedule | Yvann",
-    "Floats to Weights Strategy | Yvann": "Floats to Weights Strategy | Yvann",
-    "Invert Floats | Yvann": "Invert Floats | Yvann",
-    "Floats Visualizer | Yvann": "Floats Visualizer | Yvann",
-    "Mask To Float | Yvann":  "Mask To Float | Yvann",
+    "Audio Analysis": "Audio Analysis",
+    "IPAdapter Audio Reactive": "IPAdapter Audio Reactive",
+    "Audio Prompt Schedule": "Audio Prompt Schedule",
+    "Floats To Weights Strategy": "Floats To Weights Strategy",
+    "Invert Floats": "Invert Floats",
+    "Floats Visualizer": "Floats Visualizer",
+    "Mask To Float":  "Mask To Float",
 }
 
 Yvann_Print = """

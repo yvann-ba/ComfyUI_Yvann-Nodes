@@ -4,7 +4,7 @@ from ... import Yvann
 class UtilsNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
 
-class Mask_To_Float_Yvann(UtilsNodeBase):
+class Mask_To_Float(UtilsNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {

@@ -11,7 +11,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class IPAdapter_Audio_Reactive_Yvann(AudioNodeBase):
+class IPAdapter_Audio_Reactive(AudioNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {

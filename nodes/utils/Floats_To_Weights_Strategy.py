@@ -3,7 +3,7 @@ from ... import Yvann
 class UtilsNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
 
-class Floats_To_Weights_Strategy_Yvann(UtilsNodeBase):
+class Floats_To_Weights_Strategy(UtilsNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {

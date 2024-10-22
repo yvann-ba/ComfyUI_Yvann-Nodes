@@ -8,7 +8,7 @@ from ... import Yvann
 class UtilsNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
 
-class Floats_Visualizer_Yvann(UtilsNodeBase):
+class Floats_Visualizer(UtilsNodeBase):
 	# Define class variables for line styles and colors
 	line_styles = ["-", "--", "-."]
 	line_colors = ["blue", "green", "red"]

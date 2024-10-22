@@ -11,7 +11,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_Reactive_Yvann(AudioNodeBase):
+class Audio_Analysis(AudioNodeBase):
 	analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
 
 	@classmethod

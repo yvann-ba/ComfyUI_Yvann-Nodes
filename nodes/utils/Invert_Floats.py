@@ -5,7 +5,7 @@ import numpy as np
 class UtilsNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
 
-class Invert_Floats_Yvann(UtilsNodeBase):
+class Invert_Floats(UtilsNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {
