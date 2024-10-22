@@ -40,7 +40,7 @@ class Yvann(metaclass=CombinedMeta):
         return desc
 
 from .nodes.audio.Audio_Analysis import Audio_Analysis
-from .nodes.audio.IPAdapter_Audio_Reactive import IPAdapter_Audio_Reactive
+from .nodes.audio.IPAdapter_Audio_Transitions import IPAdapter_Audio_Transitions
 from .nodes.audio.Audio_PromptSchedule import Audio_PromptSchedule
 from .nodes.utils.Floats_To_Weights_Strategy import Floats_To_Weights_Strategy
 from .nodes.utils.Invert_Floats import Invert_Floats
@@ -50,7 +50,7 @@ from .nodes.utils.Mask_To_Float import Mask_To_Float
 
 NODE_CLASS_MAPPINGS = {
     "Audio Analysis": Audio_Analysis,
-    "IPAdapter Audio Reactive": IPAdapter_Audio_Reactive,
+    "IPAdapter Audio Transitions": IPAdapter_Audio_Transitions,
     "Audio Prompt Schedule": Audio_PromptSchedule,
     "Floats To Weights Strategy": Floats_To_Weights_Strategy,
     "Invert Floats": Invert_Floats,
@@ -62,7 +62,7 @@ WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
-    "IPAdapter Audio Reactive": "IPAdapter Audio Reactive",
+    "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
     "Audio Prompt Schedule": "Audio Prompt Schedule",
     "Floats To Weights Strategy": "Floats To Weights Strategy",
     "Invert Floats": "Invert Floats",

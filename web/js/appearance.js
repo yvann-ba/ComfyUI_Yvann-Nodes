@@ -6,7 +6,7 @@ const COLOR_THEMES = {
 
 const NODE_COLORS = {
     "Audio Analysis": "blue",
-    "IPAdapter Audio Reactive": "blue",
+    "IPAdapter Audio Transitions": "blue",
     "Audio Prompt Schedule": "blue",
     "Floats To Weights Strategy": "blue",
     "Invert Floats": "blue",
