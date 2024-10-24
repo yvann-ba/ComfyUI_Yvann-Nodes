@@ -43,6 +43,9 @@ from .nodes.audio.Audio_Analysis import Audio_Analysis
 from .nodes.audio.IPAdapter_Audio_Transitions import IPAdapter_Audio_Transitions
 from .nodes.audio.Audio_PromptSchedule import Audio_PromptSchedule
 from .nodes.audio.Audio_Peaks_Alternate import Audio_Peaks_Alternate
+from .nodes.audio.AnimateDiff_Audio_Reactive import AnimateDiff_Audio_Reactive
+from .nodes.audio.ControlNet_Audio_Reactive import ControlNet_Audio_Reactive
+
 from .nodes.utils.Floats_To_Weights_Strategy import Floats_To_Weights_Strategy
 from .nodes.utils.Invert_Floats import Invert_Floats
 from .nodes.utils.Floats_Visualizer import Floats_Visualizer
@@ -54,6 +57,8 @@ NODE_CLASS_MAPPINGS = {
     "IPAdapter Audio Transitions": IPAdapter_Audio_Transitions,
     "Audio Prompt Schedule": Audio_PromptSchedule,
     "Audio Peaks Alternate": Audio_Peaks_Alternate,
+    "AnimateDiff Audio Reactive": AnimateDiff_Audio_Reactive,
+    "ControlNet Audio Reactive": ControlNet_Audio_Reactive,
     "Floats To Weights Strategy": Floats_To_Weights_Strategy,
     "Invert Floats": Invert_Floats,
     "Floats Visualizer": Floats_Visualizer,
@@ -67,6 +72,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
     "Audio Prompt Schedule": "Audio Prompt Schedule",
     "Audio Peaks Alternate": "Audio Peaks Alternate",
+    "AnimateDiff Audio Reactive": "AnimateDiff Audio Reactive",
+    "ControlNet Audio Reactive": "ControlNet Audio Reactive",
     "Floats To Weights Strategy": "Floats To Weights Strategy",
     "Invert Floats": "Invert Floats",
     "Floats Visualizer": "Floats Visualizer",

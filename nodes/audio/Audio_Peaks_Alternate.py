@@ -16,7 +16,7 @@ class Audio_Peaks_Alternate(AudioNodeBase):
         return {
             "required": {
                 "audio_weights": ("FLOAT", {"forceInput": True}),
-                "threshold": ("FLOAT", {"default": 0.5}),
+                "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
             }
         }
 
