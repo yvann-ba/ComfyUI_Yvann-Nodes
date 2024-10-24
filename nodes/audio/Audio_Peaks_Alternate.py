@@ -1,0 +1,76 @@
+import torch
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator  # Import for integer x-axis labels
+import tempfile
+import numpy as np
+from PIL import Image
+from scipy.signal import find_peaks
+from ... import Yvann
+
+class AudioNodeBase(Yvann):
+    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
+
+class Audio_Peaks_Alternate(AudioNodeBase):
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio_weights": ("FLOAT", {"forceInput": True}),
+                "threshold": ("FLOAT", {"default": 0.5}),
+            }
+        }
+
+    RETURN_TYPES = ("INT", "IMAGE")
+    RETURN_NAMES = ("audio_peaks_binary", "graph_peaks")
+    FUNCTION = "detect_peaks"
+
+    def detect_peaks(self, audio_weights, threshold):
+        if not isinstance(audio_weights, (list, np.ndarray)):
+            print("Invalid audio_weights input")
+            return None, None
+
+        # Convert audio_weights to numpy array
+        audio_weights = np.array(audio_weights, dtype=np.float32)
+
+        # Use audio_weights directly without normalization
+        weights = audio_weights
+
+        # Detect peaks
+        peaks, _ = find_peaks(weights, height=threshold)
+
+        # Generate binary peaks array: 1 for peaks, 0 for non-peaks
+        peaks_binary = np.zeros_like(weights, dtype=int)
+        peaks_binary[peaks] = 1
+
+        # Generate visualization
+        try:
+            figsize = 12.0
+            plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
+            plt.plot(range(len(weights)), weights, label='Audio Weights', color='blue', alpha=0.5)
+            plt.scatter(peaks, weights[peaks], color='red', label='Detected Peaks')
+
+            plt.xlabel('Frame Number')
+            plt.ylabel('Audio Weights')
+            plt.title('Audio Weights and Detected Peaks')
+            plt.legend()
+            plt.grid(True)
+
+            # Ensure x-axis labels are integers
+            ax = plt.gca()
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                plt.savefig(tmpfile.name, format='png')
+                tmpfile_path = tmpfile.name
+            plt.close()
+
+            visualization = Image.open(tmpfile_path).convert("RGB")
+            visualization = np.array(visualization).astype(np.float32) / 255.0
+            visualization = torch.from_numpy(visualization).unsqueeze(0)  # Shape: [1, H, W, C]
+
+        except Exception as e:
+            print(f"Error in creating visualization: {e}")
+            visualization = None
+
+        # Return the binary peaks array and the visualization
+        return peaks_binary.tolist(), visualization
