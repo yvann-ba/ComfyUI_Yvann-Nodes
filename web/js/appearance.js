@@ -7,7 +7,7 @@ const COLOR_THEMES = {
 const NODE_COLORS = {
     "Audio Analysis": "blue",
     "IPAdapter Audio Transitions": "blue",
-    "Audio Prompt Schedule": "blue",
+    "Prompt Audio Schedule": "blue",
     "Audio Peaks Alternate": "blue",
     "AnimateDiff Audio Reactive": "blue",
     "ControlNet Audio Reactive": "blue",

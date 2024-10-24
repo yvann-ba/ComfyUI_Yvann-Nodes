@@ -9,7 +9,7 @@ class Yvann(metaclass=CombinedMeta):
     @classmethod
     def get_description(cls):
         footer = "\n\n"
-        footer = "#### 🐙 Docs, Workflows and Code: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI-Nodes) "
+        footer = "#### 🐙 Docs, Workflows and Code: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI_Yvann-Nodes) "
         footer += " 👁️ Tutorials: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n"
 
         desc = ""
@@ -41,7 +41,7 @@ class Yvann(metaclass=CombinedMeta):
 
 from .nodes.audio.Audio_Analysis import Audio_Analysis
 from .nodes.audio.IPAdapter_Audio_Transitions import IPAdapter_Audio_Transitions
-from .nodes.audio.Audio_PromptSchedule import Audio_PromptSchedule
+from .nodes.audio.Prompt_Audio_Schedule import Prompt_Audio_Schedule
 from .nodes.audio.Audio_Peaks_Alternate import Audio_Peaks_Alternate
 from .nodes.audio.AnimateDiff_Audio_Reactive import AnimateDiff_Audio_Reactive
 from .nodes.audio.ControlNet_Audio_Reactive import ControlNet_Audio_Reactive
@@ -55,7 +55,7 @@ from .nodes.utils.Mask_To_Float import Mask_To_Float
 NODE_CLASS_MAPPINGS = {
     "Audio Analysis": Audio_Analysis,
     "IPAdapter Audio Transitions": IPAdapter_Audio_Transitions,
-    "Audio Prompt Schedule": Audio_PromptSchedule,
+    "Prompt Audio Schedule": Prompt_Audio_Schedule,
     "Audio Peaks Alternate": Audio_Peaks_Alternate,
     "AnimateDiff Audio Reactive": AnimateDiff_Audio_Reactive,
     "ControlNet Audio Reactive": ControlNet_Audio_Reactive,
@@ -70,7 +70,7 @@ WEB_DIRECTORY = "./web/js"
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
     "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
-    "Audio Prompt Schedule": "Audio Prompt Schedule",
+    "Prompt Audio Schedule": "Prompt Audio Schedule",
     "Audio Peaks Alternate": "Audio Peaks Alternate",
     "AnimateDiff Audio Reactive": "AnimateDiff Audio Reactive",
     "ControlNet Audio Reactive": "ControlNet Audio Reactive",
