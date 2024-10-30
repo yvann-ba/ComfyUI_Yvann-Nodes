@@ -6,6 +6,8 @@ __pycache__/
 **/__pycache__
 **/.pytest_cache
 
+
+audio_learn.ipynb
 # C extensions
 *.so
 readme.md

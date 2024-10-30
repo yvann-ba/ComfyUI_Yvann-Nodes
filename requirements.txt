@@ -4,3 +4,5 @@ openunmix
 matplotlib
 pillow
 scipy.signal
+torchaudio
+scikit-learn

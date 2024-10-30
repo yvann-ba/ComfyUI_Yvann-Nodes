@@ -40,6 +40,7 @@ class Yvann(metaclass=CombinedMeta):
         return desc
 
 from .nodes.audio.Audio_Analysis import Audio_Analysis
+from .nodes.audio.Audio_Reactive_v112 import Audio_Reactive_v112
 from .nodes.audio.IPAdapter_Audio_Transitions import IPAdapter_Audio_Transitions
 from .nodes.audio.Prompt_Audio_Schedule import Prompt_Audio_Schedule
 from .nodes.audio.Audio_Peaks_Alternate import Audio_Peaks_Alternate
@@ -54,6 +55,7 @@ from .nodes.utils.Mask_To_Float import Mask_To_Float
 
 NODE_CLASS_MAPPINGS = {
     "Audio Analysis": Audio_Analysis,
+    "Audio_Reactive_v112": Audio_Reactive_v112,
     "IPAdapter Audio Transitions": IPAdapter_Audio_Transitions,
     "Prompt Audio Schedule": Prompt_Audio_Schedule,
     "Audio Peaks Alternate": Audio_Peaks_Alternate,
@@ -69,6 +71,7 @@ WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
+    "Audio_Reactive_v112": "Audio_Reactive_v112",
     "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
     "Prompt Audio Schedule": "Prompt Audio Schedule",
     "Audio Peaks Alternate": "Audio Peaks Alternate",
