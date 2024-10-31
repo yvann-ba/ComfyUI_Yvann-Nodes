@@ -1,12 +1,10 @@
 import torch
-import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import tempfile
 import numpy as np
 from PIL import Image
 from typing import Tuple, List, Dict
-import librosa
 from ... import Yvann
 import comfy.model_management as mm
 import torchaudio
@@ -17,8 +15,6 @@ class AudioNodeBase(Yvann):
 
 class Audio_Analysis(AudioNodeBase):
     analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
-
-
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -32,7 +28,7 @@ class Audio_Analysis(AudioNodeBase):
                 "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
             }
         }
-
+        
     RETURN_TYPES = ("IMAGE", "AUDIO", "AUDIO", "FLOAT",)
     RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
     FUNCTION = "process_audio"
@@ -86,11 +82,8 @@ class Audio_Analysis(AudioNodeBase):
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
 
-        # Get and normalize initial waveform
         waveform = audio['waveform']
         sample_rate = audio['sample_rate']
-
-        print(f"Initial waveform shape after normalization: {waveform.shape}")
 
         # Calculate total audio duration needed
         num_samples = waveform.shape[-1]
@@ -121,20 +114,15 @@ class Audio_Analysis(AudioNodeBase):
 
                 # Resample if necessary
                 if input_sample_rate != model_sample_rate:
-                    resample = torchaudio.transforms.Resample(
-                        orig_freq=input_sample_rate,
-                        new_freq=model_sample_rate
-                    ).to(device)
+                    resample = torchaudio.transforms.Resample(orig_freq=input_sample_rate, new_freq=model_sample_rate).to(device)
                     waveform = resample(waveform)
-
+                    
                 model_input = waveform
-                print(f"Model input shape: {model_input.shape}")
 
                 with torch.no_grad():
                     estimates = model(model_input)
-                print(f"Model output shape: {estimates.shape}")
 
-                #inverted because otherwise the output of bass was drums, quick fix
+                #inverted because otherwise the output of bass was drums
                 source_name_mapping = {
                     "Bass Only": "drums",
                     "Drums Only": "bass",
@@ -145,7 +133,6 @@ class Audio_Analysis(AudioNodeBase):
                 source_name = source_name_mapping.get(analysis_mode)
                 if source_name is not None:
                     source_index = model.sources.index(source_name)
-                    # Extract correct source and ensure 2D shape
                     processed_waveform = estimates[:, source_index]
                     processed_waveform = processed_waveform
                 else:
@@ -171,13 +158,10 @@ class Audio_Analysis(AudioNodeBase):
             'waveform': processed_waveform.cpu().detach(),
             'sample_rate': final_sample_rate
         }
-        print(f"Processed audio output shape: {processed_audio['waveform'].shape}")
-
         original_audio = {
             'waveform': original_waveform.cpu().detach(),
             'sample_rate': final_sample_rate
         }
-        print(f"Original audio output shape: {original_audio['waveform'].shape}")
 
 
         # Calculate audio weights using mean across channels if multi-channel
@@ -211,7 +195,7 @@ class Audio_Analysis(AudioNodeBase):
                 color='blue'
             )
 
-            plt.xlabel('Frame Number')
+            plt.xlabel(f'Batch Size (total = {batch_size})')
             plt.ylabel('Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode})')
             plt.legend()
