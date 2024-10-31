@@ -6,7 +6,7 @@ import tempfile
 import numpy as np
 from PIL import Image
 from typing import Tuple, List, Dict
-
+import librosa
 from ... import Yvann
 import comfy.model_management as mm
 import torchaudio
@@ -93,7 +93,12 @@ class Audio_Analysis(AudioNodeBase):
         print(f"Initial waveform shape after normalization: {waveform.shape}")
 
         # Calculate total audio duration needed
-        audio_duration = batch_size / fps
+        num_samples = waveform.shape[-1]
+        audio_duration = num_samples / sample_rate
+        if batch_size == 0:
+            batch_size = int(audio_duration * fps)
+        else:
+            audio_duration = batch_size / fps
         total_samples_needed = int(audio_duration * sample_rate)
 
         # Crop or pad audio to match required duration
