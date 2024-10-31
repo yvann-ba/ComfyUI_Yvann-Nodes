@@ -13,224 +13,265 @@ import torchaudio
 from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
 
 class AudioNodeBase(Yvann):
-	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
+    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
 class Audio_Analysis(AudioNodeBase):
-	analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
+    analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
 
-	@classmethod
-	def INPUT_TYPES(cls):
-		return {
-			"required": {
-				"batch_size": ("INT", {"forceInput": True}),
-				"fps": ("FLOAT", {"forceInput": True}),
-				"audio": ("AUDIO", {"forceInput": True}),
-				"analysis_mode": (cls.analysis_modes,),
-				"threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
-				"multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
-			}
-		}
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "batch_size": ("INT", {"forceInput": True}),
+                "fps": ("FLOAT", {"forceInput": True}),
+                "audio": ("AUDIO", {"forceInput": True}),
+                "analysis_mode": (cls.analysis_modes,),
+                "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
+                "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
+            }
+        }
 
-	RETURN_TYPES = ("IMAGE", "AUDIO", "AUDIO", "FLOAT",)
-	RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
-	FUNCTION = "process_audio"
+    RETURN_TYPES = ("IMAGE", "AUDIO", "AUDIO", "FLOAT",)
+    RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
+    FUNCTION = "process_audio"
 
-	def download_and_load_model(self):
-		device = mm.get_torch_device()
-		try:
-			print("Loading Hybrid Demucs model...")
-			bundle = HDEMUCS_HIGH_MUSDB_PLUS
-			model = bundle.get_model().to(device)
-			model.sample_rate = bundle.sample_rate
-			model.sources = ['bass', 'drums', 'other', 'vocals']
-			model.eval()
-			print("Hybrid Demucs model loaded successfully")
-		except Exception as e:
-			print(f"Error in loading Hybrid Demucs model: {e}")
-			raise RuntimeError("Error in loading Hybrid Demucs model")
-		return model
+    def download_and_load_model(self):
+        device = mm.get_torch_device()
+        try:
+            print("Loading Hybrid Demucs model...")
+            bundle = HDEMUCS_HIGH_MUSDB_PLUS
+            model = bundle.get_model().to(device)
+            model.sample_rate = bundle.sample_rate
+            model.sources = ['bass', 'drums', 'other', 'vocals']
+            model.eval()
+            print("Hybrid Demucs model loaded successfully")
+        except Exception as e:
+            print(f"Error in loading Hybrid Demucs model: {e}")
+            raise RuntimeError("Error in loading Hybrid Demucs model")
+        return model
 
-	def _get_audio_frame(self, waveform: torch.Tensor, i: int, samples_per_frame: int) -> np.ndarray:
-		start = i * samples_per_frame
-		end = min(start + samples_per_frame, waveform.shape[-1])
-		return waveform[..., start:end].cpu().numpy().squeeze()
+    def _get_audio_frame(self, waveform: torch.Tensor, i: int, samples_per_frame: int) -> np.ndarray:
+        start = i * samples_per_frame
+        end = min(start + samples_per_frame, waveform.shape[-1])
+        return waveform[..., start:end].cpu().numpy().squeeze()
 
-	def _rms_energy(self, waveform: torch.Tensor, batch_size: int, samples_per_frame: int) -> np.ndarray:
-		try:
-			rms_values = []
-			for i in range(batch_size):
-				frame = self._get_audio_frame(waveform, i, samples_per_frame)
-				if frame.size == 0:
-					rms = 0.0
-				else:
-					rms = np.sqrt(np.mean(frame ** 2))
-					rms = round(rms, 4)
-				rms_values.append(rms)
-			return np.array(rms_values)
-		except Exception as e:
-			print(f"Error in RMS energy calculation: {e}")
-			return np.zeros(batch_size)
+    def _rms_energy(self, waveform: torch.Tensor, batch_size: int, samples_per_frame: int) -> np.ndarray:
+        try:
+            rms_values = []
+            for i in range(batch_size):
+                frame = self._get_audio_frame(waveform, i, samples_per_frame)
+                if frame.size == 0:
+                    rms = 0.0
+                else:
+                    rms = np.sqrt(np.mean(frame ** 2))
+                    rms = round(rms, 4)
+                rms_values.append(rms)
+            return np.array(rms_values)
+        except Exception as e:
+            print(f"Error in RMS energy calculation: {e}")
+            return np.zeros(batch_size)
 
-	def process_audio(
-		self,
-		audio: Dict[str, torch.Tensor],
-		batch_size: int,
-		fps: float,
-		analysis_mode: str,
-		threshold: float,
-		multiply: float,
+    def normalize_audio_dimensions(self, waveform: torch.Tensor) -> torch.Tensor:
+        """Ensure audio tensor has shape (channels, samples)"""
+        print(f"Input waveform shape: {waveform.shape}")
+        
+        # If 1D, add channel dimension
+        if waveform.dim() == 1:
+            waveform = waveform.unsqueeze(0)
+            print(f"After adding channel dimension: {waveform.shape}")
+        
+        # If 3D with batch dimension, remove it
+        if waveform.dim() == 3:
+            waveform = waveform.squeeze(0)
+            print(f"After removing batch dimension: {waveform.shape}")
+        
+        # If still not 2D, something's wrong
+        if waveform.dim() != 2:
+            raise ValueError(f"Cannot normalize waveform of shape {waveform.shape} to 2D")
+            
+        # Ensure we have at least mono audio (1 channel)
+        if waveform.shape[0] == 0:
+            waveform = waveform.unsqueeze(0)
+            print(f"After ensuring at least one channel: {waveform.shape}")
+                
+        print(f"Final waveform shape: {waveform.shape}")
+        return waveform
 
-	) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
-		if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
-			raise ValueError("Invalid audio input")
+    def ensure_waveform_shape(self, waveform: torch.Tensor) -> torch.Tensor:
+        """Ensure waveform has shape (1, channels, samples)"""
+        if waveform.dim() == 1:
+            # (samples,) -> (1, 1, samples)
+            waveform = waveform.unsqueeze(0).unsqueeze(0)
+        elif waveform.dim() == 2:
+            # (channels, samples) -> (1, channels, samples)
+            waveform = waveform.unsqueeze(0)
+        elif waveform.dim() == 3:
+            # Already (batch_size, channels, samples)
+            pass
+        else:
+            raise ValueError(f"Unexpected waveform shape: {waveform.shape}")
+        return waveform
 
-		waveform = audio['waveform']
-		sample_rate = audio['sample_rate']
+    def process_audio(
+        self,
+        audio: Dict[str, torch.Tensor],
+        batch_size: int,
+        fps: float,
+        analysis_mode: str,
+        threshold: float,
+        multiply: float,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+        if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
+            raise ValueError("Invalid audio input")
 
-		if not isinstance(waveform, torch.Tensor):
-			raise TypeError("Waveform is not a torch.Tensor")
+        # Get and normalize initial waveform
+        waveform = self.normalize_audio_dimensions(audio['waveform'])
+        sample_rate = audio['sample_rate']
 
-		# Ensure waveform is at least 2D (channels x samples)
-		if waveform.dim() == 1:
-			waveform = waveform.unsqueeze(0)  # Add channel dimension
+        print(f"Initial waveform shape after normalization: {waveform.shape}")
 
-		# Calculate total audio duration needed
-		audio_duration = batch_size / fps
-		total_samples_needed = int(audio_duration * sample_rate)
+        # Calculate total audio duration needed
+        audio_duration = batch_size / fps
+        total_samples_needed = int(audio_duration * sample_rate)
 
-		# Crop or pad audio to match required duration
-		if waveform.shape[-1] > total_samples_needed:
-			waveform = waveform[..., :total_samples_needed]
-		elif waveform.shape[-1] < total_samples_needed:
-			pad_length = total_samples_needed - waveform.shape[-1]
-			waveform = torch.nn.functional.pad(waveform, (0, pad_length))
+        # Crop or pad audio to match required duration
+        if waveform.shape[-1] > total_samples_needed:
+            waveform = waveform[..., :total_samples_needed]
+        elif waveform.shape[-1] < total_samples_needed:
+            pad_length = total_samples_needed - waveform.shape[-1]
+            waveform = torch.nn.functional.pad(waveform, (0, pad_length))
 
-		samples_per_frame = total_samples_needed // batch_size
+        samples_per_frame = total_samples_needed // batch_size
 
-		# Apply audio separation if needed
-		if analysis_mode in ["Drums Only", "Vocals Only", "Bass Only", "Other Audio"]:
-			try:
-				model = self.download_and_load_model()
-				device = next(model.parameters()).device
-				waveform = waveform.to(device)
-				input_sample_rate = sample_rate
-				model_sample_rate = model.sample_rate
+        # Apply audio separation if needed
+        if analysis_mode != "Full Audio":
+            try:
+                model = self.download_and_load_model()
+                device = next(model.parameters()).device
+                waveform = waveform.to(device)
+                input_sample_rate = sample_rate
+                model_sample_rate = model.sample_rate
 
-				# Resample if necessary
-				if input_sample_rate != model_sample_rate:
-					resample = torchaudio.transforms.Resample(
-						orig_freq=input_sample_rate,
-						new_freq=model_sample_rate
-					).to(device)
-					waveform = resample(waveform)
+                # Resample if necessary
+                if input_sample_rate != model_sample_rate:
+                    resample = torchaudio.transforms.Resample(
+                        orig_freq=input_sample_rate,
+                        new_freq=model_sample_rate
+                    ).to(device)
+                    waveform = resample(waveform)
 
-				# Ensure waveform is 3D: [batch, channels, samples]
-				if waveform.dim() == 2:
-					waveform = waveform.unsqueeze(0)  # Add batch dimension
+                # Add batch dimension for model
+                model_input = waveform.unsqueeze(0)
+                print(f"Model input shape: {model_input.shape}")
 
-				with torch.no_grad():
-					estimates = model(waveform)  # Shape: [batch, sources, channels, samples]
+                with torch.no_grad():
+                    estimates = model(model_input)
+                print(f"Model output shape: {estimates.shape}")
 
-				source_name_mapping = {
-					"Bass Only": "bass",
-					"Drums Only": "drums",
-					"Other Audio": "other",
-					"Vocals Only": "vocals"
-				}
+                source_name_mapping = {
+                    "Bass Only": "bass",
+                    "Drums Only": "drums",
+                    "Other Audio": "other",
+                    "Vocals Only": "vocals"
+                }
 
-				source_name = source_name_mapping.get(analysis_mode, None)
-				if source_name is not None:
-					source_index = model.sources.index(source_name)
-					# Extract the desired source
-					processed_waveform = estimates[:, source_index, :, :]  # Shape: [1, channels, samples]
-					processed_waveform = processed_waveform.squeeze(0)  # Remove batch dimension
-				else:
-					raise ValueError(f"Analysis mode '{analysis_mode}' is not valid.")
-			except Exception as e:
-				print(f"Error in model processing: {e}")
-				raise
-		else:  # Full Audio
-			processed_waveform = waveform.to(waveform.device)  # Ensure it's on the correct device
+                source_name = source_name_mapping.get(analysis_mode)
+                if source_name is not None:
+                    source_index = model.sources.index(source_name)
+                    # Extract correct source and ensure 2D shape
+                    processed_waveform = estimates[:, source_index]
+                    processed_waveform = processed_waveform.squeeze(0)
+                    processed_waveform = self.normalize_audio_dimensions(processed_waveform)
+                else:
+                    raise ValueError(f"Analysis mode '{analysis_mode}' is not valid.")
+            except Exception as e:
+                print(f"Error in model processing: {e}")
+                raise
+        else:  # Full Audio
+            processed_waveform = waveform.clone()
 
-		# Ensure processed_waveform is 2D (channels x samples)
-		if processed_waveform.dim() == 1:
-			processed_waveform = processed_waveform.unsqueeze(0)
-		elif processed_waveform.dim() == 3 and processed_waveform.shape[0] == 1:
-			processed_waveform = processed_waveform.squeeze(0)
+        # Final normalization of processed waveform
+        processed_waveform = self.normalize_audio_dimensions(processed_waveform)
+        print(f"Processed waveform final shape: {processed_waveform.shape}")
 
-		# Ensure waveform is 2D (channels x samples)
-		if waveform.dim() == 1:
-			waveform = waveform.unsqueeze(0)
-		elif waveform.dim() == 3 and waveform.shape[0] == 1:
-			waveform = waveform.squeeze(0)
+        # Ensure the waveform is a FloatTensor
+        processed_waveform = processed_waveform.float()
+        original_waveform = self.normalize_audio_dimensions(waveform).float()
 
-		# Prepare audio outputs
-		processed_audio = {
-			'waveform': processed_waveform.cpu(),
-			'sample_rate': model_sample_rate if 'model_sample_rate' in locals() else sample_rate,
-		}
-		original_audio = {
-			'waveform': waveform.cpu(),
-			'sample_rate': sample_rate,
-		}
+        # Convert to Mono by averaging channels
+        processed_waveform = processed_waveform.mean(dim=0, keepdim=True)
+        original_waveform = original_waveform.mean(dim=0, keepdim=True)
 
-		# Calculate audio weights
-		waveform_for_rms = processed_waveform.mean(dim=0) if processed_waveform.dim() == 2 else processed_waveform
-		audio_weights = self._rms_energy(
-			waveform_for_rms, batch_size, samples_per_frame
-		)
-		if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
-			raise ValueError("Invalid audio weights calculated")
+        # Ensure waveform shape is (1, channels, samples)
+        processed_waveform = self.ensure_waveform_shape(processed_waveform)
+        original_waveform = self.ensure_waveform_shape(original_waveform)
 
-		# Normalize audio_weights to 0-1 range
-		min_weight = np.min(audio_weights)
-		max_weight = np.max(audio_weights)
-		if max_weight - min_weight != 0:
-			audio_weights_normalized = (audio_weights - min_weight) / (max_weight - min_weight)
-		else:
-			audio_weights_normalized = audio_weights - min_weight  # All values are the same
+        # Store the sample rate used for processed audio
+        final_sample_rate = model_sample_rate if 'model_sample_rate' in locals() else sample_rate
 
-		# Apply threshold
-		audio_weights_thresholded = np.where(audio_weights_normalized > threshold, audio_weights_normalized, 0)
+        # Prepare audio outputs with explicit shape checks
+        processed_audio = {
+            'waveform': processed_waveform.cpu().detach(),
+            'sample_rate': final_sample_rate
+        }
+        print(f"Processed audio output shape: {processed_audio['waveform'].shape}")
 
-		# Apply multiply
-		audio_weights_processed = audio_weights_thresholded * multiply
-		audio_weights_processed = np.clip(audio_weights_processed, 0, 1)
+        original_audio = {
+            'waveform': original_waveform.cpu().detach(),
+            'sample_rate': sample_rate
+        }
+        print(f"Original audio output shape: {original_audio['waveform'].shape}")
 
-		# Generate visualization
-		try:
-			figsize = 12.0
-			plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
-			plt.plot(
-				list(range(0, len(audio_weights_processed))),
-				audio_weights_processed,
-				label=f'{analysis_mode} Weights',
-				color='blue'
-			)
+        # Calculate audio weights using mean across channels if multi-channel
+        waveform_for_rms = processed_waveform.squeeze(0).squeeze(0)
+        audio_weights = self._rms_energy(waveform_for_rms, batch_size, samples_per_frame)
 
-			plt.xlabel('Frame Number')
-			plt.ylabel('Weights')
-			plt.title(f'Processed Audio Weights ({analysis_mode})')
-			plt.legend()
-			plt.grid(True)
+        if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
+            raise ValueError("Invalid audio weights calculated")
 
-			# Ensure x-axis labels are integers
-			ax = plt.gca()
-			ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        # Normalize and process weights
+        min_weight = np.min(audio_weights)
+        max_weight = np.max(audio_weights)
+        if max_weight - min_weight != 0:
+            audio_weights_normalized = (audio_weights - min_weight) / (max_weight - min_weight)
+        else:
+            audio_weights_normalized = audio_weights - min_weight
 
-			with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-				plt.savefig(tmpfile.name, format='png')
-				tmpfile_path = tmpfile.name
-			plt.close()
+        audio_weights_thresholded = np.where(audio_weights_normalized > threshold, audio_weights_normalized, 0)
+        audio_weights_processed = np.clip(audio_weights_thresholded * multiply, 0, 1)
 
-			weights_graph = Image.open(tmpfile_path).convert("RGB")
-			weights_graph = np.array(weights_graph).astype(np.float32) / 255.0
-			weights_graph = torch.from_numpy(weights_graph).permute(2, 0, 1).unsqueeze(0).permute(0, 2, 3, 1)
-		except Exception as e:
-			print(f"Error in creating weights graph: {e}")
-			weights_graph = None
+        # Generate visualization
+        try:
+            figsize = 12.0
+            plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
+            plt.plot(
+                list(range(0, len(audio_weights_processed))),
+                audio_weights_processed,
+                label=f'{analysis_mode} Weights',
+                color='blue'
+            )
 
-		audio_weights_processed = audio_weights_processed.tolist()
-		rounded_audio_weights = [round(elem, 3) for elem in audio_weights_processed]
+            plt.xlabel('Frame Number')
+            plt.ylabel('Weights')
+            plt.title(f'Processed Audio Weights ({analysis_mode})')
+            plt.legend()
+            plt.grid(True)
 
-		return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
+            ax = plt.gca()
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                plt.savefig(tmpfile.name, format='png')
+                tmpfile_path = tmpfile.name
+            plt.close()
+
+            weights_graph = Image.open(tmpfile_path).convert("RGB")
+            weights_graph = np.array(weights_graph).astype(np.float32) / 255.0
+            weights_graph = torch.from_numpy(weights_graph).permute(2, 0, 1).unsqueeze(0).permute(0, 2, 3, 1)
+        except Exception as e:
+            print(f"Error in creating weights graph: {e}")
+            weights_graph = torch.zeros((1, 400, 300, 3))
+
+        rounded_audio_weights = [round(float(x), 3) for x in audio_weights_processed]
+
+        return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
