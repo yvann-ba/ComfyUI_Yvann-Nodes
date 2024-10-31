@@ -18,6 +18,8 @@ class AudioNodeBase(Yvann):
 class Audio_Analysis(AudioNodeBase):
     analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
 
+
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -35,6 +37,8 @@ class Audio_Analysis(AudioNodeBase):
     RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
     FUNCTION = "process_audio"
 
+
+
     def download_and_load_model(self):
         device = mm.get_torch_device()
         try:
@@ -50,10 +54,14 @@ class Audio_Analysis(AudioNodeBase):
             raise RuntimeError("Error in loading Hybrid Demucs model")
         return model
 
+
+
     def _get_audio_frame(self, waveform: torch.Tensor, i: int, samples_per_frame: int) -> np.ndarray:
         start = i * samples_per_frame
-        end = min(start + samples_per_frame, waveform.shape[-1])
+        end = start + samples_per_frame
         return waveform[..., start:end].cpu().numpy().squeeze()
+
+
 
     def _rms_energy(self, waveform: torch.Tensor, batch_size: int, samples_per_frame: int) -> np.ndarray:
         try:
@@ -71,61 +79,15 @@ class Audio_Analysis(AudioNodeBase):
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(batch_size)
 
-    def normalize_audio_dimensions(self, waveform: torch.Tensor) -> torch.Tensor:
-        """Ensure audio tensor has shape (channels, samples)"""
-        print(f"Input waveform shape: {waveform.shape}")
-        
-        # If 1D, add channel dimension
-        if waveform.dim() == 1:
-            waveform = waveform.unsqueeze(0)
-            print(f"After adding channel dimension: {waveform.shape}")
-        
-        # If 3D with batch dimension, remove it
-        if waveform.dim() == 3:
-            waveform = waveform.squeeze(0)
-            print(f"After removing batch dimension: {waveform.shape}")
-        
-        # If still not 2D, something's wrong
-        if waveform.dim() != 2:
-            raise ValueError(f"Cannot normalize waveform of shape {waveform.shape} to 2D")
-            
-        # Ensure we have at least mono audio (1 channel)
-        if waveform.shape[0] == 0:
-            waveform = waveform.unsqueeze(0)
-            print(f"After ensuring at least one channel: {waveform.shape}")
-                
-        print(f"Final waveform shape: {waveform.shape}")
-        return waveform
 
-    def ensure_waveform_shape(self, waveform: torch.Tensor) -> torch.Tensor:
-        """Ensure waveform has shape (1, channels, samples)"""
-        if waveform.dim() == 1:
-            # (samples,) -> (1, 1, samples)
-            waveform = waveform.unsqueeze(0).unsqueeze(0)
-        elif waveform.dim() == 2:
-            # (channels, samples) -> (1, channels, samples)
-            waveform = waveform.unsqueeze(0)
-        elif waveform.dim() == 3:
-            # Already (batch_size, channels, samples)
-            pass
-        else:
-            raise ValueError(f"Unexpected waveform shape: {waveform.shape}")
-        return waveform
 
-    def process_audio(
-        self,
-        audio: Dict[str, torch.Tensor],
-        batch_size: int,
-        fps: float,
-        analysis_mode: str,
-        threshold: float,
-        multiply: float,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+    def process_audio(self, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+        
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
 
         # Get and normalize initial waveform
-        waveform = self.normalize_audio_dimensions(audio['waveform'])
+        waveform = audio['waveform']
         sample_rate = audio['sample_rate']
 
         print(f"Initial waveform shape after normalization: {waveform.shape}")
@@ -160,17 +122,17 @@ class Audio_Analysis(AudioNodeBase):
                     ).to(device)
                     waveform = resample(waveform)
 
-                # Add batch dimension for model
-                model_input = waveform.unsqueeze(0)
+                model_input = waveform
                 print(f"Model input shape: {model_input.shape}")
 
                 with torch.no_grad():
                     estimates = model(model_input)
                 print(f"Model output shape: {estimates.shape}")
 
+                #inverted because otherwise the output of bass was drums, quick fix
                 source_name_mapping = {
-                    "Bass Only": "bass",
-                    "Drums Only": "drums",
+                    "Bass Only": "drums",
+                    "Drums Only": "bass",
                     "Other Audio": "other",
                     "Vocals Only": "vocals"
                 }
@@ -180,8 +142,7 @@ class Audio_Analysis(AudioNodeBase):
                     source_index = model.sources.index(source_name)
                     # Extract correct source and ensure 2D shape
                     processed_waveform = estimates[:, source_index]
-                    processed_waveform = processed_waveform.squeeze(0)
-                    processed_waveform = self.normalize_audio_dimensions(processed_waveform)
+                    processed_waveform = processed_waveform
                 else:
                     raise ValueError(f"Analysis mode '{analysis_mode}' is not valid.")
             except Exception as e:
@@ -190,24 +151,15 @@ class Audio_Analysis(AudioNodeBase):
         else:  # Full Audio
             processed_waveform = waveform.clone()
 
-        # Final normalization of processed waveform
-        processed_waveform = self.normalize_audio_dimensions(processed_waveform)
-        print(f"Processed waveform final shape: {processed_waveform.shape}")
-
-        # Ensure the waveform is a FloatTensor
-        processed_waveform = processed_waveform.float()
-        original_waveform = self.normalize_audio_dimensions(waveform).float()
+        original_waveform = waveform
 
         # Convert to Mono by averaging channels
-        processed_waveform = processed_waveform.mean(dim=0, keepdim=True)
-        original_waveform = original_waveform.mean(dim=0, keepdim=True)
-
-        # Ensure waveform shape is (1, channels, samples)
-        processed_waveform = self.ensure_waveform_shape(processed_waveform)
-        original_waveform = self.ensure_waveform_shape(original_waveform)
+        #processed_waveform = processed_waveform.mean(dim=0, keepdim=True)
+        #original_waveform = original_waveform.mean(dim=0, keepdim=True)
 
         # Store the sample rate used for processed audio
         final_sample_rate = model_sample_rate if 'model_sample_rate' in locals() else sample_rate
+
 
         # Prepare audio outputs with explicit shape checks
         processed_audio = {
@@ -218,9 +170,10 @@ class Audio_Analysis(AudioNodeBase):
 
         original_audio = {
             'waveform': original_waveform.cpu().detach(),
-            'sample_rate': sample_rate
+            'sample_rate': final_sample_rate
         }
         print(f"Original audio output shape: {original_audio['waveform'].shape}")
+
 
         # Calculate audio weights using mean across channels if multi-channel
         waveform_for_rms = processed_waveform.squeeze(0).squeeze(0)
@@ -228,6 +181,7 @@ class Audio_Analysis(AudioNodeBase):
 
         if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
             raise ValueError("Invalid audio weights calculated")
+
 
         # Normalize and process weights
         min_weight = np.min(audio_weights)
@@ -239,6 +193,7 @@ class Audio_Analysis(AudioNodeBase):
 
         audio_weights_thresholded = np.where(audio_weights_normalized > threshold, audio_weights_normalized, 0)
         audio_weights_processed = np.clip(audio_weights_thresholded * multiply, 0, 1)
+
 
         # Generate visualization
         try:
@@ -273,5 +228,5 @@ class Audio_Analysis(AudioNodeBase):
             weights_graph = torch.zeros((1, 400, 300, 3))
 
         rounded_audio_weights = [round(float(x), 3) for x in audio_weights_processed]
-
+        
         return (weights_graph, processed_audio, original_audio, rounded_audio_weights)

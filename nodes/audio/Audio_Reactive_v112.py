@@ -36,6 +36,8 @@ class Audio_Reactive_v112(AudioNodeBase):
 	RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
 	FUNCTION = "process_audio"
 
+
+
 	def download_and_load_model(self):
 		device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		download_path = os.path.join(folder_paths.models_dir, "openunmix")
@@ -59,11 +61,15 @@ class Audio_Reactive_v112(AudioNodeBase):
 
 		return separator
 
+
+
 	def _get_audio_frame(self, waveform, i, samples_per_frame):
 		# Extract a single frame of audio from the waveform
 		start = i * samples_per_frame
 		end = start + samples_per_frame
 		return waveform[..., start:end].cpu().numpy().squeeze()
+
+
 
 	def _rms_energy(self, waveform, batch_size, samples_per_frame):
 		# Calculate the RMS energy for each audio frame
@@ -72,6 +78,8 @@ class Audio_Reactive_v112(AudioNodeBase):
 		except Exception as e:
 			print(f"Error in RMS energy calculation: {e}")
 			return np.zeros(batch_size)
+
+
 
 	def _apply_audio_processing(self, weights, threshold, add, smooth, multiply, ):
 		# Normalize weights to 0-1 range
