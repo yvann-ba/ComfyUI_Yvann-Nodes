@@ -195,7 +195,7 @@ class Audio_Analysis(AudioNodeBase):
                 color='blue'
             )
 
-            plt.xlabel(f'Batch Size (total = {batch_size})')
+            plt.xlabel(f'Frame Number (Batch Size = {batch_size})')
             plt.ylabel('Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode})')
             plt.legend()

@@ -18,7 +18,7 @@ class IPAdapter_Audio_Transitions(AudioNodeBase):
                 "images": ("IMAGE", {"forceInput": True}),
                 "audio_peaks_binary": ("INT", {"forceInput": True}),
                 "timing": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
-                "transition_frames": ("INT", {"default": 4, "min": 1, "step": 1}),
+                "transition_frames": ("INT", {"default": 4, "min": 2, "step": 1}),
                 "min_weights": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
                 "max_weights": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0}),
             }

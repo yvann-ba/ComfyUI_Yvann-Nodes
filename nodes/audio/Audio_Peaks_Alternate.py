@@ -17,6 +17,7 @@ class Audio_Peaks_Alternate(AudioNodeBase):
             "required": {
                 "audio_weights": ("FLOAT", {"forceInput": True}),
                 "threshold": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "min_peaks_distance": ("INT", {"default": 1, "min": 1,})
             }
         }
 
@@ -24,7 +25,7 @@ class Audio_Peaks_Alternate(AudioNodeBase):
     RETURN_NAMES = ("audio_peaks_binary", "graph_peaks")
     FUNCTION = "detect_peaks"
 
-    def detect_peaks(self, audio_weights, threshold):
+    def detect_peaks(self, audio_weights, threshold, min_peaks_distance):
         if not isinstance(audio_weights, (list, np.ndarray)):
             print("Invalid audio_weights input")
             return None, None
@@ -36,7 +37,7 @@ class Audio_Peaks_Alternate(AudioNodeBase):
         weights = audio_weights
 
         # Detect peaks
-        peaks, _ = find_peaks(weights, height=threshold)
+        peaks, _ = find_peaks(weights, height=threshold, distance=min_peaks_distance)
 
         # Generate binary peaks array: 1 for peaks, 0 for non-peaks
         peaks_binary = np.zeros_like(weights, dtype=int)
