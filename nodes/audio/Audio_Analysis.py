@@ -9,6 +9,7 @@ from ... import Yvann
 import comfy.model_management as mm
 import torchaudio
 from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
+from torchaudio.transforms import Fade, Resample
 
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
@@ -110,17 +111,15 @@ class Audio_Analysis(AudioNodeBase):
                 device = next(model.parameters()).device
                 waveform = waveform.to(device)
                 input_sample_rate = sample_rate
-                model_sample_rate = model.sample_rate
+                self.model_sample_rate = model.sample_rate
 
                 # Resample if necessary
-                if input_sample_rate != model_sample_rate:
-                    resample = torchaudio.transforms.Resample(orig_freq=input_sample_rate, new_freq=model_sample_rate).to(device)
+                if input_sample_rate != self.model_sample_rate:
+                    resample = torchaudio.transforms.Resample(orig_freq=input_sample_rate, new_freq=self.model_sample_rate).to(device)
                     waveform = resample(waveform)
-                    
-                model_input = waveform
 
                 with torch.no_grad():
-                    estimates = model(model_input)
+                    estimates = self.separate_sources(model=model, mix=waveform, segment=10.0, overlap=0.1, device=device)
 
                 #inverted because otherwise the output of bass was drums
                 source_name_mapping = {
@@ -150,7 +149,7 @@ class Audio_Analysis(AudioNodeBase):
         #original_waveform = original_waveform.mean(dim=0, keepdim=True)
 
         # Store the sample rate used for processed audio
-        final_sample_rate = model_sample_rate if 'model_sample_rate' in locals() else sample_rate
+        final_sample_rate = self.model_sample_rate if 'model_sample_rate' in locals() else sample_rate
 
 
         # Prepare audio outputs with explicit shape checks
@@ -219,3 +218,46 @@ class Audio_Analysis(AudioNodeBase):
         rounded_audio_weights = [round(float(x), 3) for x in audio_weights_processed]
         
         return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
+
+    def separate_sources(self, model, mix, segment=10.0, overlap=0.1, device=None,) :
+        """
+        Apply model to a given mixture. Use fade, and add segments together in order to add model segment by segment.
+
+        Args:
+            segment (int): segment length in seconds
+            device (torch.device, str, or None): if provided, device on which to
+                execute the computation, otherwise `mix.device` is assumed.
+                When `device` is different from `mix.device`, only local computations will
+                be on `device`, while the entire tracks will be stored on `mix.device`.
+        """
+        if device is None:
+            device = mix.device
+        else:
+            device = torch.device(device)
+
+        batch, channels, length = mix.shape
+        sample_rate = self.model_sample_rate
+
+        chunk_len = int(sample_rate * segment * (1 + overlap))
+        start = 0
+        end = chunk_len
+        overlap_frames = overlap * sample_rate
+        fade = Fade(fade_in_len=0, fade_out_len=int(overlap_frames), fade_shape="linear")
+
+        final = torch.zeros(batch, len(model.sources), channels, length, device=device)
+
+        while start < length - overlap_frames:
+            chunk = mix[:, :, start:end]
+            with torch.no_grad():
+                out = model.forward(chunk)
+            out = fade(out)
+            final[:, :, :, start:end] += out
+            if start == 0:
+                fade.fade_in_len = int(overlap_frames)
+                start += int(chunk_len - overlap_frames)
+            else:
+                start += chunk_len
+            end += chunk_len
+            if end >= length:
+                fade.fade_out_len = 0
+        return final

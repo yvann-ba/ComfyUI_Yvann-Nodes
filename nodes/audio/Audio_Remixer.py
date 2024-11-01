@@ -32,45 +32,45 @@ class Audio_Remixer(AudioNodeBase):
     RETURN_NAMES = ("base", "drums", "other", "vocal", "merge_audio")
     FUNCTION = "main"
 
-    def main(self, audio, Drums_volume, Vocals_volume, Bass_volume, Other_volume) -> tuple[Any, Any, Any, Any]:
-        # print(torch.__version__)
-        # print(torchaudio.__version__)
-        # print(f"Type of \"audio\": {type(audio)}")
+    def main(self, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[Any, Any, Any, Any]:
 
         device: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        waveform: torch.Tensor = audio['waveform'] # other data song
-        waveform = waveform.squeeze(0).to(device) #remove dim nb_chanel (mono, stereo, ect..)
-        self.audio_sample_rate: int = audio['sample_rate'] #sample rate
-        # print(f"file Waveform shape: {waveform.shape}, file Sample rate: {self.audio_sample_rate}")
+        waveform: torch.Tensor = audio['waveform']
+        waveform = waveform.squeeze(0).to(device)
+        self.audio_sample_rate: int = audio['sample_rate']
 
-
-        bundle = HDEMUCS_HIGH_MUSDB_PLUS
+        bundle: Any = HDEMUCS_HIGH_MUSDB_PLUS
         model: torch.nn.Module = bundle.get_model()
         model.to(device)
-        self.model_sample_rate = bundle.sample_rate
-        # print(f"Model sample rate: {self.model_sample_rate}")
+        self.model_sample_rate: int = bundle.sample_rate
 
-        if  self.audio_sample_rate != self.model_sample_rate:
-            resample = Resample( self.audio_sample_rate, self.model_sample_rate).to(device)
+        if self.audio_sample_rate != self.model_sample_rate:
+            resample: Resample = Resample(self.audio_sample_rate, self.model_sample_rate).to(device)
             waveform = resample(waveform)
 
-        ref = waveform.mean(0)
+        #----------------------
+
+        ref: torch.Tensor = waveform.mean(0)
         waveform = (waveform - ref.mean()) / ref.std()  # Z-score normalization
 
-        sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]
+        sources: torch.Tensor = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0] #Tensor which store 4 waveform separate.
 
-        sources = sources * ref.std() + ref.mean()
-        sources_list = model.sources
-        sources = list(sources)
+        sources = sources * ref.std() + ref.mean() #remake audio range at the same level that before
+        sources_list: list[str] = model.sources
+        sources: list[torch.Tensor] = list(sources)
 
-        Drums_volume = self.adjust_volume_range(Drums_volume)
-        Vocals_volume = self.adjust_volume_range(Vocals_volume)
-        Bass_volume = self.adjust_volume_range(Bass_volume)
-        Other_volume = self.adjust_volume_range(Other_volume)
-        print(f"\n\nvaluuuuuuuue: {Drums_volume}, {Vocals_volume}, {Bass_volume}, {Other_volume}\n\n")
+        #----------------------
+
+        Drums_volume: float = self.adjust_volume_range(Drums_volume)
+        Vocals_volume: float = self.adjust_volume_range(Vocals_volume)
+        Bass_volume: float = self.adjust_volume_range(Bass_volume)
+        Other_volume: float = self.adjust_volume_range(Other_volume)
+
         audios: Tuple[Any, Any, Any, Any] = self.sources_to_tuple(Drums_volume, Vocals_volume, Bass_volume, Other_volume, dict(zip(sources_list, sources)))
-        merge_audio = self.blend_audios([audios[0]["waveform"], audios[1]["waveform"], audios[2]["waveform"], audios[3]["waveform"]])
+        merge_audio: torch.Tensor = self.blend_audios([audios[0]["waveform"], audios[1]["waveform"], audios[2]["waveform"], audios[3]["waveform"]])
+        
         return audios[0], audios[1], audios[2], audios[3], merge_audio
+
 
     def adjust_volume_range(self, value):
         if value <= -10:
@@ -99,8 +99,12 @@ class Audio_Remixer(AudioNodeBase):
 
     def sources_to_tuple(self, Drums_volume, Vocals_volume, Bass_volume, Other_volume, sources: Dict[str, torch.Tensor]) -> Tuple[Any, Any, Any, Any]:
 
+        threshold = 0.00
+
+        # Define the expected output order
         output_order = ["bass", "drums", "other", "vocals"]
         outputs = []
+
         for source in output_order:
             if source not in sources:
                 raise ValueError(f"Missing source {source} in the output")
@@ -111,16 +115,17 @@ class Audio_Remixer(AudioNodeBase):
                 }
             )
 
-        print(f"--Type of \"TUPLE[audio]\": {type(outputs[0])}")
-        print(f"--Type of \"TUPLE[audio]\": {type(outputs[1])}")
-        print(f"--Type of \"TUPLE[audio]\": {type(outputs[2])}")
-        print(f"--Type of \"TUPLE[audio]\": {type(outputs[3])}")
-        print(Bass_volume, Drums_volume, Other_volume, Vocals_volume)
-        outputs[0]["waveform"] *= Bass_volume 
-        outputs[1]["waveform"] *= Drums_volume
-        outputs[2]["waveform"] *= Other_volume
-        outputs[3]["waveform"] *= Vocals_volume
-    
+        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[0])}")
+        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[1])}")
+        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[2])}")
+        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[3])}")
+        # print(Bass_volume, Drums_volume, Other_volume, Vocals_volume)
+
+        for i, volume in enumerate([Bass_volume, Drums_volume, Other_volume, Vocals_volume]):
+            waveform = outputs[i]["waveform"]  # Get the waveform and remove the extra dimension
+            mask = torch.abs(waveform) > threshold  # Create a boolean mask for samples above the threshold
+            outputs[i]["waveform"] = waveform * volume * mask.float() + waveform * (1 - mask.float())
+
         return tuple(outputs)
 
     def separate_sources(self, model, mix, segment=10.0, overlap=0.1, device=None,
