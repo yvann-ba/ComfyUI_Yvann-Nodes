@@ -43,7 +43,7 @@ class Audio_Peaks_Detection(AudioNodeBase):
         try:
             figsize = 12.0
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
-            plt.plot(range(len(audio_weights)), audio_weights, label='Audio Weights', color='blue', alpha=0.5)
+            plt.plot(range(1, len(audio_weights) + 1), audio_weights, label='Audio Weights', color='blue', alpha=0.5)
             plt.scatter(peaks, audio_weights[peaks], color='red', label='Detected Peaks')
 
             plt.xlabel('Frame Number')

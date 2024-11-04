@@ -189,12 +189,11 @@ class Audio_Analysis(AudioNodeBase):
             figsize = 12.0
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
             plt.plot(
-                list(range(0, len(audio_weights_processed))),
+                list(range(1, (len(audio_weights_processed)) + 1)),
                 audio_weights_processed,
                 label=f'{analysis_mode} Weights',
                 color='blue'
             )
-
             plt.xlabel(f'Frame Number (Batch Size = {batch_size})')
             plt.ylabel('Weights')
             plt.title(f'Processed Audio Weights ({analysis_mode})')

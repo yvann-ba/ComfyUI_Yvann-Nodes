@@ -125,7 +125,7 @@ class IPAdapter_Audio_Transitions(AudioNodeBase):
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
 
             blending_weights_array = np.array(blending_weights_raw)
-            plt.plot(range(len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
+            plt.plot(range(1, len(blending_weights_array) + 1), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
             plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transitions')
 
             plt.xlabel('Frame Number')
