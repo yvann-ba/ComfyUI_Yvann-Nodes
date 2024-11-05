@@ -21,7 +21,7 @@ class Audio_Peaks_Detection(AudioNodeBase):
             }
         }
 
-    RETURN_TYPES = ("INT", "INT", "IMAGE")
+    RETURN_TYPES = ("INT", "STRING", "IMAGE")
     RETURN_NAMES = ("peaks_weights", "peaks_index", "graph_peaks")
     FUNCTION = "detect_peaks"
 
@@ -39,6 +39,7 @@ class Audio_Peaks_Detection(AudioNodeBase):
         peaks_binary[peaks] = 1
 
         audio_peaks_index = np.array(peaks+1, dtype=int)
+        str_peaks_index = ', '.join(map(str, audio_peaks_index))
         # Generate visualization
         try:
             figsize = 12.0
@@ -69,4 +70,4 @@ class Audio_Peaks_Detection(AudioNodeBase):
             print(f"Error in creating visualization: {e}")
             visualization = None
 
-        return peaks_binary.tolist(), audio_peaks_index.tolist(), visualization
+        return peaks_binary.tolist(), str_peaks_index, visualization
