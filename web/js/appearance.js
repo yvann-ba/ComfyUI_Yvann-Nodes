@@ -9,7 +9,7 @@ const NODE_COLORS = {
     "IPAdapter Audio Transitions": "blue",
     "Prompt Audio Schedule": "blue",
     "Audio Peaks Alternate": "blue",
-    "Audio_Remixer": "blue",
+    "Audio Remixer": "blue",
     "AnimateDiff Audio Reactive": "blue",
     "ControlNet Audio Reactive": "blue",
     "Floats To Weights Strategy": "blue",
