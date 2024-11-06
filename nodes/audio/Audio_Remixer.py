@@ -24,92 +24,94 @@ class Audio_Remixer(AudioNodeBase):
             "required": {
                 "model": ("MODEL", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
-                "Bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.01}),
-                "Drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.01}),
-                "Other_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.01}),
-                "Vocals_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.01}),
+                "Bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
+                "Drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
+                "Other_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
+                "Vocals_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
             }
         }
     
-    RETURN_TYPES = ("AUDIO", "AUDIO", "AUDIO", "AUDIO","AUDIO")
-    RETURN_NAMES = ("base", "drums", "other", "vocal", "merge_audio")
+    RETURN_TYPES = ("AUDIO",)
+    RETURN_NAMES = ("merge_audio",)
     FUNCTION = "main"
 
 
-    def main(self, model, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[Any, Any, Any, Any]:
+    def main(self, model, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[torch.Tensor]:
+    
+        # 1. Prepare audio and device
+        device, waveform = self.prepare_audio_and_device(audio)
 
-        if model is None:
-            print(colored("Model not set.", 'red'))
-            return None
+        # 2. Apply model and extract sources
+        sources, sources_list = self.apply_model_and_extract_sources(model, waveform, device)
 
-        device: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        waveform: torch.Tensor = audio['waveform']
-        waveform = waveform.squeeze(0).to(device)
-        self.audio_sample_rate: int = audio['sample_rate']
-        self.model = model
+        if sources is None:
+            return None  # Return if the model is unrecognized
 
-        sources_list: list[str] = []
+        # 3. Adjust volumes and merge sources
+        merge_audio = self.process_and_merge_audio(sources, sources_list, Drums_volume, Vocals_volume, Bass_volume, Other_volume)
 
-        if isinstance(self.model, torch.nn.Module):
+        return (merge_audio,)
+
+
+    def prepare_audio_and_device(self, audio: Dict[str, torch.Tensor]) -> Tuple[torch.device, torch.Tensor]:
+        """Prepares the device (GPU or CPU) and sets up the audio waveform."""
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        waveform = audio['waveform'].squeeze(0).to(device)
+        self.audio_sample_rate = audio['sample_rate']
+        return device, waveform
+
+
+    def apply_model_and_extract_sources(self, model, waveform: torch.Tensor, device: torch.device) -> Tuple[torch.Tensor, list[str]]:
+        """Applies the model and extracts audio sources, handling both Open-Unmix and GDemucs cases."""
+        sources, sources_list = None, []
+
+        if isinstance(model, torch.nn.Module):  # Open-Unmix model
             print(colored("Applying Open_Unmix model on audio.", 'green'))
-            self.model_sample_rate = self.model.sample_rate
-            if hasattr(self.model, 'sample_rate') and self.audio_sample_rate != self.model_sample_rate:
-                print(colored(f"Resampling from {self.audio_sample_rate} to {self.model_sample_rate}", 'yellow'))
-                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
-            waveform = waveform.unsqueeze(0)
-            sources = model(waveform)
-            sources = sources.squeeze(0)
-            print(f"Shape of sources tensor: {sources.shape}")
-            model.sources = ['bass', 'drums', 'other', 'vocals']
-
-            sources_list = model.sources
-            print(colored(f"Sources list after Open-Unmix: {sources_list}", 'cyan'))
-
-        elif hasattr(self.model, "get_model"):
-            print(colored("Applying GDemucs model on audio.", 'green'))
-            self.model_sample_rate: int = model.sample_rate
-            model = model.get_model()
-            model.to(device)
+            self.model_sample_rate = model.sample_rate
 
             if self.audio_sample_rate != self.model_sample_rate:
                 waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
 
-            # Normalisation
-            ref: torch.Tensor = waveform.mean(0)
+            sources = model(waveform.unsqueeze(0)).squeeze(0)
+            sources_list = ['bass', 'drums', 'other', 'vocals']
+
+        elif hasattr(model, "get_model"):  # GDemucs model
+            print(colored("Applying GDemucs model on audio.", 'green'))
+            self.model_sample_rate = model.sample_rate
+            model = model.get_model().to(device)
+
+            if self.audio_sample_rate != self.model_sample_rate:
+                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
+
+            ref = waveform.mean(0)
             waveform = (waveform - ref.mean()) / ref.std()
-
-            sources: torch.Tensor = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]
-            print(f"Shape of sources tensor: {sources.shape}")
-            sources = sources * ref.std() + ref.mean() 
-
-            sources_list: list[str] = model.sources
-            sources: list[torch.Tensor] = list(sources)
+            sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]
+            sources = sources * ref.std() + ref.mean()
+            sources_list = model.sources
 
         else:
             print(colored("Unrecognized model type.", 'red'))
-            return None
+            return None, []
 
+        return sources, sources_list
+
+
+    def process_and_merge_audio(self, sources: torch.Tensor, sources_list: list[str], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> torch.Tensor:
+        """Adjusts source volumes and merges them into a single audio output."""
         required_sources = ['bass', 'drums', 'other', 'vocals']
         for source in required_sources:
             if source not in sources_list:
                 print(colored(f"Warning: '{source}' not found in sources_list.", 'yellow'))
-        
-        Drums_volume: float = self.adjust_volume_range(Drums_volume)
-        Vocals_volume: float = self.adjust_volume_range(Vocals_volume)
-        Bass_volume: float = self.adjust_volume_range(Bass_volume)
-        Other_volume: float = self.adjust_volume_range(Other_volume)
 
-        audios: Tuple[Any, Any, Any, Any] = self.sources_to_tuple(Drums_volume, Vocals_volume, Bass_volume, Other_volume, dict(zip(sources_list, sources)))
+        # Adjust volume levels
+        Drums_volume = self.adjust_volume_range(Drums_volume)
+        Vocals_volume = self.adjust_volume_range(Vocals_volume)
+        Bass_volume = self.adjust_volume_range(Bass_volume)
+        Other_volume = self.adjust_volume_range(Other_volume)
 
-        print(colored(f"Audios: {audios}", 'magenta'))
-
-        merge_audio: torch.Tensor = self.blend_audios([audios[0]["waveform"], audios[1]["waveform"], audios[2]["waveform"], audios[3]["waveform"]])
-        
-        return audios[0], audios[1], audios[2], audios[3], merge_audio
-
-
-
-
+        # Convert to tuple and blend
+        audios = self.sources_to_tuple(Drums_volume, Vocals_volume, Bass_volume, Other_volume, dict(zip(sources_list, sources)))
+        return self.blend_audios([audios[0]["waveform"], audios[1]["waveform"], audios[2]["waveform"], audios[3]["waveform"]])
 
     def adjust_volume_range(self, value):
         if value <= -10:
@@ -123,10 +125,6 @@ class Audio_Remixer(AudioNodeBase):
 
     def blend_audios(self, audio_tensors):
         blended_audio = sum(audio_tensors)
-        
-        #max_val = torch.max(torch.abs(blended_audio))
-        #if max_val > 1.0:
-        #    blended_audio = blended_audio / max_val
 
         if blended_audio.dim() == 2:
             blended_audio = blended_audio.unsqueeze(0)
@@ -140,7 +138,6 @@ class Audio_Remixer(AudioNodeBase):
 
         threshold = 0.00
 
-        # Define the expected output order
         output_order = ["bass", "drums", "other", "vocals"]
         outputs = []
 
@@ -154,15 +151,9 @@ class Audio_Remixer(AudioNodeBase):
                 }
             )
 
-        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[0])}")
-        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[1])}")
-        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[2])}")
-        # print(f"--Type of \"TUPLE[audio]\": {type(outputs[3])}")
-        # print(Bass_volume, Drums_volume, Other_volume, Vocals_volume)
-
         for i, volume in enumerate([Bass_volume, Drums_volume, Other_volume, Vocals_volume]):
-            waveform = outputs[i]["waveform"]  # Get the waveform and remove the extra dimension
-            mask = torch.abs(waveform) > threshold  # Create a boolean mask for samples above the threshold
+            waveform = outputs[i]["waveform"]
+            mask = torch.abs(waveform) > threshold
             outputs[i]["waveform"] = waveform * volume * mask.float() + waveform * (1 - mask.float())
 
         return tuple(outputs)
