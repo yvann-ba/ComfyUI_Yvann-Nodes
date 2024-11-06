@@ -42,7 +42,7 @@ class Load_Audio_Separation_Model(AudioNodeBase):
             print(f"Model saved to: {model_path}")
         else:
             print(f"Loading model from: {model_path}")
-            separator = torch.hub.load('sigsep/open-unmix-pytorch', model, device='cpu')
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxhq', device='cpu')
             separator.load_state_dict(torch.load(model_path, map_location='cpu'))
 
         separator = separator.to(device)
@@ -55,11 +55,11 @@ class Load_Audio_Separation_Model(AudioNodeBase):
         device: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         bundle: Any = HDEMUCS_HIGH_MUSDB_PLUS
-        model: torch.nn.Module = bundle.get_model()
-        model.to(device)
-        self.model_sample_rate: int = bundle.sample_rate
+        # model: torch.nn.Module = bundle.get_model()
+        # model.to(device)
+        # self.model_sample_rate: int = bundle.sample_rate
         print("HDemucs model is loaded")
-        return (model,)
+        return (bundle,)
 
 
     def main(self, model) -> None:
