@@ -16,9 +16,9 @@ class IPAdapter_Audio_Transitions(AudioNodeBase):
         return {
             "required": {
                 "images": ("IMAGE", {"forceInput": True}),
-                "audio_peaks_binary": ("INT", {"forceInput": True}),
+                "peaks_weights": ("INT", {"forceInput": True}),
                 "timing": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
-                "transition_frames": ("INT", {"default": 4, "min": 1, "step": 1}),
+                "transition_frames": ("INT", {"default": 4, "min": 2, "step": 1}),
                 "min_weights": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
                 "max_weights": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0}),
             }
@@ -28,10 +28,10 @@ class IPAdapter_Audio_Transitions(AudioNodeBase):
     RETURN_NAMES = ("image_1", "weights", "image_2", "weights_invert", "graph_transitions")
     FUNCTION = "process_transitions"
 
-    def process_transitions(self, images, audio_peaks_binary, timing, transition_frames, min_weights, max_weights):
+    def process_transitions(self, images, peaks_weights, timing, transition_frames, min_weights, max_weights):
 
-        if not isinstance(audio_peaks_binary, (list, np.ndarray)):
-            print("Invalid audio_peaks_binary input")
+        if not isinstance(peaks_weights, (list, np.ndarray)):
+            print("Invalid peaks_weights input")
             return None, None, None, None, None
 
         if images is None or not isinstance(images, torch.Tensor):
@@ -39,7 +39,7 @@ class IPAdapter_Audio_Transitions(AudioNodeBase):
             return None, None, None, None, None
 
         # Convert peaks to numpy array
-        peaks_binary = np.array(audio_peaks_binary, dtype=int)
+        peaks_binary = np.array(peaks_weights, dtype=int)
         total_frames = len(peaks_binary)
 
         # Generate switch indices by incrementing index at each peak
@@ -125,7 +125,7 @@ class IPAdapter_Audio_Transitions(AudioNodeBase):
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
 
             blending_weights_array = np.array(blending_weights_raw)
-            plt.plot(range(len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
+            plt.plot(range(1, len(blending_weights_array) + 1), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
             plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transitions')
 
             plt.xlabel('Frame Number')

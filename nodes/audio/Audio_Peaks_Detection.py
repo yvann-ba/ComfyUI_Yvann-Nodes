@@ -10,44 +10,42 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_Peaks_Alternate(AudioNodeBase):
+class Audio_Peaks_Detection(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "audio_weights": ("FLOAT", {"forceInput": True}),
                 "threshold": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "min_peaks_distance": ("INT", {"default": 1, "min": 1,})
             }
         }
 
-    RETURN_TYPES = ("INT", "IMAGE")
-    RETURN_NAMES = ("audio_peaks_binary", "graph_peaks")
+    RETURN_TYPES = ("INT", "STRING", "IMAGE")
+    RETURN_NAMES = ("peaks_weights", "peaks_index", "graph_peaks")
     FUNCTION = "detect_peaks"
 
-    def detect_peaks(self, audio_weights, threshold):
+    def detect_peaks(self, audio_weights, threshold, min_peaks_distance):
         if not isinstance(audio_weights, (list, np.ndarray)):
             print("Invalid audio_weights input")
             return None, None
 
-        # Convert audio_weights to numpy array
         audio_weights = np.array(audio_weights, dtype=np.float32)
 
-        # Use audio_weights directly without normalization
-        weights = audio_weights
-
-        # Detect peaks
-        peaks, _ = find_peaks(weights, height=threshold)
+        peaks, _ = find_peaks(audio_weights, height=threshold, distance=min_peaks_distance)
 
         # Generate binary peaks array: 1 for peaks, 0 for non-peaks
-        peaks_binary = np.zeros_like(weights, dtype=int)
+        peaks_binary = np.zeros_like(audio_weights, dtype=int)
         peaks_binary[peaks] = 1
 
+        audio_peaks_index = np.array(peaks+1, dtype=int)
+        str_peaks_index = ', '.join(map(str, audio_peaks_index))
         # Generate visualization
         try:
             figsize = 12.0
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
-            plt.plot(range(len(weights)), weights, label='Audio Weights', color='blue', alpha=0.5)
-            plt.scatter(peaks, weights[peaks], color='red', label='Detected Peaks')
+            plt.plot(range(1, len(audio_weights) + 1), audio_weights, label='Audio Weights', color='blue', alpha=0.5)
+            plt.scatter(peaks, audio_weights[peaks], color='red', label='Detected Peaks')
 
             plt.xlabel('Frame Number')
             plt.ylabel('Audio Weights')
@@ -72,5 +70,4 @@ class Audio_Peaks_Alternate(AudioNodeBase):
             print(f"Error in creating visualization: {e}")
             visualization = None
 
-        # Return the binary peaks array and the visualization
-        return peaks_binary.tolist(), visualization
+        return peaks_binary.tolist(), str_peaks_index, visualization

@@ -8,7 +8,7 @@ class Prompt_Audio_Schedule(AudioNodeBase):
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"audio_switch_weights": ("INT", {"forceInput": True}),
+				"peaks_index": ("INT", {"forceInput": True}),
 				"prompts": ("STRING", {"default": "", "multiline": True}),
 			}
 		}
@@ -17,8 +17,8 @@ class Prompt_Audio_Schedule(AudioNodeBase):
 	RETURN_NAMES = ("prompt_schedule",)
 	FUNCTION = "create_prompt_schedule"
 
-	def create_prompt_schedule(self, audio_switch_weights, prompts=""):
-		switch_index = audio_switch_weights
+	def create_prompt_schedule(self, peaks_index, prompts=""):
+		switch_index = peaks_index
 		if isinstance(switch_index, int):
 			switch_index = [int(switch_index)]
 		else:
