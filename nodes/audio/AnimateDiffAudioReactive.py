@@ -4,15 +4,15 @@ import numpy as np
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class ControlNet_Audio_Reactive(AudioNodeBase):
+class AnimateDiffAudioReactive(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "audio_signal": ("FLOAT", {"forceInput": True}),
                 "smooth": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_range": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 0.9}),
-                "max_range": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 1.0}),
+                "min_range": ("FLOAT", {"default": 0.9, "min": 0.7, "max": 1.4}),
+                "max_range": ("FLOAT", {"default": 1.2, "min": 0.8, "max": 1.5}),
             }
         }
 
@@ -51,4 +51,3 @@ class ControlNet_Audio_Reactive(AudioNodeBase):
         rounded_rescaled_signal = [round(elem, 3) for elem in rescaled_signal]
 
         return (rounded_rescaled_signal,)
-

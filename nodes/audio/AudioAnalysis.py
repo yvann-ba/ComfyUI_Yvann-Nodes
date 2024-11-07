@@ -13,7 +13,7 @@ from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_Analysis(AudioNodeBase):
+class AudioAnalysis(AudioNodeBase):
     analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
 
     @classmethod

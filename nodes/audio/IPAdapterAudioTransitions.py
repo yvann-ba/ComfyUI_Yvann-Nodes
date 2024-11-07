@@ -10,7 +10,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class IPAdapter_Audio_Transitions(AudioNodeBase):
+class IPAdapterAudioTransitions(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {

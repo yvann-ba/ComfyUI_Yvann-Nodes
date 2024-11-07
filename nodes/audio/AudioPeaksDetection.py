@@ -10,7 +10,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_Peaks_Detection(AudioNodeBase):
+class AudioPeaksDetection(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {

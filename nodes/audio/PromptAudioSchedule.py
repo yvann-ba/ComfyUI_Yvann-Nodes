@@ -3,7 +3,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Prompt_Audio_Schedule(AudioNodeBase):
+class PromptAudioSchedule(AudioNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {

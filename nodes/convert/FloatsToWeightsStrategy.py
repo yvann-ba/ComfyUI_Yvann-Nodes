@@ -1,9 +1,9 @@
 from ... import Yvann
 
-class UtilsNodeBase(Yvann):
-	CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
+class ConvertNodeBase(Yvann):
+	CATEGORY = "👁️ Yvann Nodes/🔄 Convert"
 
-class Floats_To_Weights_Strategy(UtilsNodeBase):
+class FloatsToWeightsStrategy(ConvertNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {

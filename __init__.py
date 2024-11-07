@@ -39,30 +39,36 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
-from .nodes.audio.Audio_Analysis import Audio_Analysis
-from .nodes.audio.IPAdapter_Audio_Transitions import IPAdapter_Audio_Transitions
-from .nodes.audio.Prompt_Audio_Schedule import Prompt_Audio_Schedule
-from .nodes.audio.Audio_Peaks_Detection import Audio_Peaks_Detection
-from .nodes.audio.AnimateDiff_Audio_Reactive import AnimateDiff_Audio_Reactive
-from .nodes.audio.ControlNet_Audio_Reactive import ControlNet_Audio_Reactive
+from .nodes.audio.AudioAnalysis import AudioAnalysis
+from .nodes.audio.IPAdapterAudioTransitions import IPAdapterAudioTransitions
+from .nodes.audio.PromptAudioSchedule import PromptAudioSchedule
+from .nodes.audio.AudioPeaksDetection import AudioPeaksDetection
+from .nodes.audio.AnimateDiffAudioReactive import AnimateDiffAudioReactive
+from .nodes.audio.ControlNetAudioReactive import ControlNetAudioReactive
 
-from .nodes.utils.Floats_To_Weights_Strategy import Floats_To_Weights_Strategy
-from .nodes.utils.Invert_Floats import Invert_Floats
-from .nodes.utils.Floats_Visualizer import Floats_Visualizer
-from .nodes.utils.Mask_To_Float import Mask_To_Float
+from .nodes.utils.InvertFloats import InvertFloats
+from .nodes.utils.FloatsVisualizer import FloatsVisualizer
+
+from .nodes.convert.FloatsToWeightsStrategy import FloatsToWeightsStrategy
+from .nodes.convert.MaskToFloat import MaskToFloat
+from .nodes.convert.BboxListToBboxListOfTuples import BboxListToBboxListOfTuples
+
 
 
 NODE_CLASS_MAPPINGS = {
-    "Audio Analysis": Audio_Analysis,
-    "IPAdapter Audio Transitions": IPAdapter_Audio_Transitions,
-    "Prompt Audio Schedule": Prompt_Audio_Schedule,
-    "Audio Peaks Detection": Audio_Peaks_Detection,
-    "AnimateDiff Audio Reactive": AnimateDiff_Audio_Reactive,
-    "ControlNet Audio Reactive": ControlNet_Audio_Reactive,
-    "Floats To Weights Strategy": Floats_To_Weights_Strategy,
-    "Invert Floats": Invert_Floats,
-    "Floats Visualizer": Floats_Visualizer,
-    "Mask To Float": Mask_To_Float,
+    "Audio Analysis": AudioAnalysis,
+    "IPAdapter Audio Transitions": IPAdapterAudioTransitions,
+    "Prompt Audio Schedule": PromptAudioSchedule,
+    "Audio Peaks Detection": AudioPeaksDetection,
+    "AnimateDiff Audio Reactive": AnimateDiffAudioReactive,
+    "ControlNet Audio Reactive": ControlNetAudioReactive,
+    
+    "Invert Floats": InvertFloats,
+    "Floats Visualizer": FloatsVisualizer,
+
+    "Mask To Float": MaskToFloat,
+    "Floats To Weights Strategy": FloatsToWeightsStrategy,
+    "Bbox List To Bbox Tuples": BboxListToBboxListOfTuples,
 }
 
 WEB_DIRECTORY = "./web/js"
@@ -74,10 +80,13 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Peaks Detection": "Audio Peaks Detection",
     "AnimateDiff Audio Reactive": "AnimateDiff Audio Reactive",
     "ControlNet Audio Reactive": "ControlNet Audio Reactive",
-    "Floats To Weights Strategy": "Floats To Weights Strategy",
+    
     "Invert Floats": "Invert Floats",
     "Floats Visualizer": "Floats Visualizer",
+
+    "Floats To Weights Strategy": "Floats To Weights Strategy",
     "Mask To Float":  "Mask To Float",
+    "Bbox List To Bbox Tuples": "Bbox List To Bbox Tuples",
 }
 
 Yvann_Print = """
