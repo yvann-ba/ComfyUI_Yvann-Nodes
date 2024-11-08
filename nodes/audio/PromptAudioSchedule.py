@@ -8,7 +8,7 @@ class PromptAudioSchedule(AudioNodeBase):
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"peaks_index": ("INT", {"forceInput": True}),
+				"peaks_index": ("STRING", {"forceInput": True}),
 				"prompts": ("STRING", {"default": "", "multiline": True}),
 			}
 		}

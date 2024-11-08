@@ -39,6 +39,8 @@ class AudioPeaksDetection(AudioNodeBase):
         peaks_binary[peaks] = 1
 
         audio_peaks_index = np.array(peaks+1, dtype=int)
+        audio_peaks_index = np.insert(audio_peaks_index, 0, 0)
+
         str_peaks_index = ', '.join(map(str, audio_peaks_index))
         # Generate visualization
         try:
