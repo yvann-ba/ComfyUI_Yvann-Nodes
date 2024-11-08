@@ -5,11 +5,13 @@ from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
 from torchaudio.utils import download_asset
 from typing import Any
 from ... import Yvann
+import comfy.model_management as mm
+
 
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Load_Audio_Separation_Model(AudioNodeBase):
+class LoadAudioSeparationModel(AudioNodeBase):
     audio_models = ["Open-Unmix", "GDemucs"]
 
     @classmethod
@@ -24,7 +26,7 @@ class Load_Audio_Separation_Model(AudioNodeBase):
     FUNCTION: str = "main"
     
     def load_OpenUnmix(self, model):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = mm.get_torch_device()
         download_path = os.path.join(folder_paths.models_dir, "openunmix")
         os.makedirs(download_path, exist_ok=True)
 
@@ -52,7 +54,7 @@ class Load_Audio_Separation_Model(AudioNodeBase):
     
     def load_GDemucs(self):
     
-        device: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        device: torch.device = mm.get_torch_device()
 
         bundle: Any = HDEMUCS_HIGH_MUSDB_PLUS
         # model: torch.nn.Module = bundle.get_model()

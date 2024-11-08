@@ -16,7 +16,7 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_Remixer(AudioNodeBase):
+class AudioRemixer(AudioNodeBase):
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -70,8 +70,8 @@ class Audio_Remixer(AudioNodeBase):
             self.model_sample_rate = model.sample_rate
 
             if self.audio_sample_rate != self.model_sample_rate:
-                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
-
+                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
+                waveform = resampler(waveform)
             sources = model(waveform.unsqueeze(0)).squeeze(0)
             sources_list = ['bass', 'drums', 'other', 'vocals']
 
@@ -81,8 +81,8 @@ class Audio_Remixer(AudioNodeBase):
             model = model.get_model().to(device)
 
             if self.audio_sample_rate != self.model_sample_rate:
-                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
-
+                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
+                waveform = resampler(waveform)
             ref = waveform.mean(0)
             waveform = (waveform - ref.mean()) / ref.std()
             sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]

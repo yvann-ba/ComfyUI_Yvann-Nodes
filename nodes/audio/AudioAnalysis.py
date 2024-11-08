@@ -80,7 +80,7 @@ class AudioAnalysis(AudioNodeBase):
 
     def prepare_audio_and_device(self, audio: Dict[str, torch.Tensor]) -> Tuple[torch.device, torch.Tensor]:
         """Prepares the device (GPU or CPU) and sets up the audio waveform."""
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        device = mm.get_torch_device()
         waveform = audio['waveform'].squeeze(0).to(device)
         self.audio_sample_rate = audio['sample_rate']
         return device, waveform
@@ -95,8 +95,8 @@ class AudioAnalysis(AudioNodeBase):
             self.model_sample_rate = model.sample_rate
 
             if self.audio_sample_rate != self.model_sample_rate:
-                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
-
+                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
+                waveform = resampler(waveform)
             sources = model(waveform.unsqueeze(0)).squeeze(0)
             sources_list = ['bass', 'drums', 'other', 'vocals']
 
@@ -106,8 +106,8 @@ class AudioAnalysis(AudioNodeBase):
             model = model.get_model().to(device)
 
             if self.audio_sample_rate != self.model_sample_rate:
-                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
-
+                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
+                waveform = resampler(waveform)
             ref = waveform.mean(0)
             waveform = (waveform - ref.mean()) / ref.std()
             sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]

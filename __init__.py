@@ -45,6 +45,8 @@ from .nodes.audio.PromptAudioSchedule import PromptAudioSchedule
 from .nodes.audio.AudioPeaksDetection import AudioPeaksDetection
 from .nodes.audio.AnimateDiffAudioReactive import AnimateDiffAudioReactive
 from .nodes.audio.ControlNetAudioReactive import ControlNetAudioReactive
+from .nodes.audio.AudioRemixer import AudioRemixer
+from .nodes.audio.LoadAudioSeparationModel import LoadAudioSeparationModel
 
 from .nodes.utils.InvertFloats import InvertFloats
 from .nodes.utils.FloatsVisualizer import FloatsVisualizer
@@ -61,6 +63,8 @@ NODE_CLASS_MAPPINGS = {
     "Audio Peaks Detection": AudioPeaksDetection,
     "AnimateDiff Audio Reactive": AnimateDiffAudioReactive,
     "ControlNet Audio Reactive": ControlNetAudioReactive,
+    "Audio Remixer": AudioRemixer,
+    "Load Audio Separation Model": LoadAudioSeparationModel,
     
     "Invert Floats": InvertFloats,
     "Floats Visualizer": FloatsVisualizer,
@@ -74,10 +78,11 @@ WEB_DIRECTORY = "./web/js"
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
     "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
-    "Audio_Remixer": "Audio_Remixer",
+    "Audio Remixer": "Audio Remixer",
     "Load Audio Separation Model": "Load_Audio_Separation_Model",
     "Prompt Audio Schedule": "Prompt Audio Schedule",
     "Audio Peaks Detection": "Audio Peaks Detection",
+    
     "AnimateDiff Audio Reactive": "AnimateDiff Audio Reactive",
     "ControlNet Audio Reactive": "ControlNet Audio Reactive",
     
