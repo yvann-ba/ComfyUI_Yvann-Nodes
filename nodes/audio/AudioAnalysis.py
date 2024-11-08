@@ -166,26 +166,22 @@ class AudioAnalysis(AudioNodeBase):
         return final
 
     def adjust_waveform_dimensions(self, waveform):
-        print(f"Waveform shape before adjustment: {waveform.shape}")
 
         # Ensure waveform is at least 2D (channels, frames)
         if waveform.ndim == 1:
             # If waveform is 1D (frames,), add channel dimension
             waveform = waveform.unsqueeze(0)
-            print(f"Added channel dimension, new shape: {waveform.shape}")
 
         # Ensure waveform has batch dimension
         if waveform.ndim == 2:
             # Add batch dimension
             waveform = waveform.unsqueeze(0)
-            print(f"Added batch dimension, new shape: {waveform.shape}")
         elif waveform.ndim == 3:
             # Waveform already has batch dimension
             pass
         else:
             raise ValueError(f"Waveform has unexpected dimensions: {waveform.shape}")
 
-        print(f"Waveform shape after adjustment: {waveform.shape}")
         return waveform
 
 
@@ -195,6 +191,9 @@ class AudioAnalysis(AudioNodeBase):
 
         waveform = audio['waveform']
         sample_rate = audio['sample_rate']
+        original_sample_rate = audio['sample_rate']
+        self.audio_sample_rate = original_sample_rate  # Store for later use
+        print(f"Sample Rate song: {audio['sample_rate']}")
 
         print(f"Initial waveform shape: {waveform.shape}")
 
@@ -206,11 +205,6 @@ class AudioAnalysis(AudioNodeBase):
             audio_duration = batch_size / fps
         total_samples_needed = int(audio_duration * sample_rate)
 
-        if waveform.shape[-1] > total_samples_needed:
-            waveform = waveform[..., :total_samples_needed]
-        elif waveform.shape[-1] < total_samples_needed:
-            pad_length = total_samples_needed - waveform.shape[-1]
-            waveform = torch.nn.functional.pad(waveform, (0, pad_length))
 
         samples_per_frame = total_samples_needed // batch_size
 
@@ -222,18 +216,22 @@ class AudioAnalysis(AudioNodeBase):
                     estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform, device)
                     print(colored(f"Available sources: {estimates_list}", 'green'))
 
-                if not estimates_list:
-                    print("Model has no defined sources. Using default values.")
-                    if isinstance(model, torch.nn.Module):
-                        estimates_list = ['bass', 'drums', 'other', 'vocals']
-                    elif hasattr(model, "get_model"):
-                        estimates_list = ['drums', 'bass', 'other', 'vocals']
+                
+                print("Model has no defined sources. Using default values.")
+                if isinstance(model, torch.nn.Module):
+                    print("HHHEJDWEFHBWEHFHEWHVFDWEVFJWE")
+                    estimates_list = ['other', 'vocals', 'bass', 'drums']
+                elif hasattr(model, "get_model"):
+                    print("pipipipipipipip")
+                    estimates_list = ['drums', 'bass', 'other', 'vocals']
+                else:
+                    print("I don't know")
 
                 source_name_mapping = {
-                    "Vocals Only": "vocals",
-                    "Bass Only": "bass",
+                    "Bass Only": "drums",
+                    "Drums Only": "bass",
                     "Other Audio": "other",
-                    "Drums Only": "drums"
+                    "Vocals Only": "vocals"
                 }
 
                 source_name = source_name_mapping.get(analysis_mode)
@@ -252,16 +250,35 @@ class AudioAnalysis(AudioNodeBase):
         else:
             processed_waveform = waveform.clone()
 
+        if waveform.shape[-1] > total_samples_needed:
+            waveform = waveform[..., :total_samples_needed]
+        elif waveform.shape[-1] < total_samples_needed:
+            pad_length = total_samples_needed - waveform.shape[-1]
+            waveform = torch.nn.functional.pad(waveform, (0, pad_length))
+
+        if processed_waveform.shape[-1] > total_samples_needed:
+            processed_waveform = processed_waveform[..., :total_samples_needed]
+        elif processed_waveform.shape[-1] < total_samples_needed:
+            pad_length = total_samples_needed - processed_waveform.shape[-1]
+            processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
         original_waveform = waveform
 
         processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
         original_waveform = self.adjust_waveform_dimensions(waveform.clone())
 
-        print(f"Processed audio waveform shape: {processed_waveform.shape}")
-        print(f"Original audio waveform shape: {original_waveform.shape}")
 
+        final_sample_rate = self.model_sample_rate if hasattr(self, 'model_sample_rate') else sample_rate
 
-        final_sample_rate = self.model_sample_rate if 'model_sample_rate' in locals() else sample_rate
+        if final_sample_rate != original_sample_rate:
+            print(f"Resampling processed audio from {final_sample_rate} Hz back to original sample rate {original_sample_rate} Hz.")
+            resampler = torchaudio.transforms.Resample(orig_freq=final_sample_rate, new_freq=original_sample_rate).to(processed_waveform.device)
+            # Reshape if necessary
+            processed_waveform = processed_waveform.squeeze(0)  # Remove batch dimension if present
+            processed_waveform = resampler(processed_waveform)
+            processed_waveform = processed_waveform.unsqueeze(0)  # Add batch dimension back
+            final_sample_rate = original_sample_rate  # Update the final sample rate
+        else:
+            print(f"No resampling needed. Final sample rate is {final_sample_rate} Hz.")
 
         processed_audio = {
             'waveform': processed_waveform.cpu().detach(),
@@ -279,6 +296,7 @@ class AudioAnalysis(AudioNodeBase):
         waveform_for_rms = processed_waveform.squeeze(0).squeeze(0)
         audio_weights = self._rms_energy(waveform_for_rms, batch_size, samples_per_frame)
 
+        
         if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
             raise ValueError("Invalid audio weights calculated")
 
