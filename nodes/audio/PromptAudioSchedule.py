@@ -19,8 +19,8 @@ class PromptAudioSchedule(AudioNodeBase):
 
 	def create_prompt_schedule(self, peaks_index, prompts=""):
 		switch_index = peaks_index
-		if isinstance(switch_index, int):
-			switch_index = [int(switch_index)]
+		if isinstance(switch_index, str):
+			switch_index = [int(idx.strip()) for idx in peaks_index.split(",")]
 		else:
 			switch_index = [int(idx) for idx in switch_index]
 
