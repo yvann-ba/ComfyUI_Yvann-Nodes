@@ -51,7 +51,6 @@ from .nodes.utils.FloatsVisualizer import FloatsVisualizer
 
 from .nodes.convert.FloatsToWeightsStrategy import FloatsToWeightsStrategy
 from .nodes.convert.MaskToFloat import MaskToFloat
-from .nodes.convert.BboxListToBboxListOfTuples import BboxListToBboxListOfTuples
 
 
 
@@ -68,7 +67,6 @@ NODE_CLASS_MAPPINGS = {
 
     "Mask To Float": MaskToFloat,
     "Floats To Weights Strategy": FloatsToWeightsStrategy,
-    "Bbox List To Bbox Tuples": BboxListToBboxListOfTuples,
 }
 
 WEB_DIRECTORY = "./web/js"
@@ -86,7 +84,6 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
     "Floats To Weights Strategy": "Floats To Weights Strategy",
     "Mask To Float":  "Mask To Float",
-    "Bbox List To Bbox Tuples": "Bbox List To Bbox Tuples",
 }
 
 Yvann_Print = """
