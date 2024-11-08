@@ -74,6 +74,8 @@ WEB_DIRECTORY = "./web/js"
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
     "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
+    "Audio_Remixer": "Audio_Remixer",
+    "Load Audio Separation Model": "Load_Audio_Separation_Model",
     "Prompt Audio Schedule": "Prompt Audio Schedule",
     "Audio Peaks Detection": "Audio Peaks Detection",
     "AnimateDiff Audio Reactive": "AnimateDiff Audio Reactive",

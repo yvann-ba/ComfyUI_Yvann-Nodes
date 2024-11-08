@@ -9,6 +9,8 @@ from ... import Yvann
 import comfy.model_management as mm
 import torchaudio
 from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
+from termcolor import colored
+from torchaudio.transforms import Fade, Resample
 
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
@@ -20,6 +22,7 @@ class AudioAnalysis(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "model": ("MODEL", {"forceInput": True}),
                 "batch_size": ("INT", {"forceInput": True}),
                 "fps": ("FLOAT", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
@@ -75,17 +78,126 @@ class AudioAnalysis(AudioNodeBase):
             print(f"Error in RMS energy calculation: {e}")
             return np.zeros(batch_size)
 
+    def prepare_audio_and_device(self, audio: Dict[str, torch.Tensor]) -> Tuple[torch.device, torch.Tensor]:
+        """Prepares the device (GPU or CPU) and sets up the audio waveform."""
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        waveform = audio['waveform'].squeeze(0).to(device)
+        self.audio_sample_rate = audio['sample_rate']
+        return device, waveform
 
-
-    def process_audio(self, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+    def apply_model_and_extract_sources(self, model, waveform: torch.Tensor, device: torch.device) -> Tuple[torch.Tensor, list[str]]:
+        """Applies the model and extracts audio sources, handling both Open-Unmix and GDemucs cases."""
+        sources, sources_list = None, []
         
+
+        if isinstance(model, torch.nn.Module):  # Open-Unmix model
+            print(colored("Applying Open_Unmix model on audio.", 'green'))
+            self.model_sample_rate = model.sample_rate
+
+            if self.audio_sample_rate != self.model_sample_rate:
+                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
+
+            sources = model(waveform.unsqueeze(0)).squeeze(0)
+            sources_list = ['bass', 'drums', 'other', 'vocals']
+
+        elif hasattr(model, "get_model"):  # GDemucs model
+            print(colored("Applying GDemucs model on audio.", 'green'))
+            self.model_sample_rate = model.sample_rate
+            model = model.get_model().to(device)
+
+            if self.audio_sample_rate != self.model_sample_rate:
+                waveform = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate)(waveform)
+
+            ref = waveform.mean(0)
+            waveform = (waveform - ref.mean()) / ref.std()
+            sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]
+            sources = sources * ref.std() + ref.mean()
+            
+            sources_list = getattr(model, 'sources', ['bass', 'drums', 'other', 'vocals'])
+
+        else:
+            print(colored("Unrecognized model type.", 'red'))
+            return None, []
+
+        return sources, sources_list
+
+    def separate_sources(self, model, mix, segment=10.0, overlap=0.1, device=None,
+    ):
+        """
+        Apply model to a given mixture. Use fade, and add segments together in order to add model segment by segment.
+
+        Args:
+            segment (int): segment length in seconds
+            device (torch.device, str, or None): if provided, device on which to
+                execute the computation, otherwise `mix.device` is assumed.
+                When `device` is different from `mix.device`, only local computations will
+                be on `device`, while the entire tracks will be stored on `mix.device`.
+        """
+        if device is None:
+            device = mix.device
+        else:
+            device = torch.device(device)
+
+        batch, channels, length = mix.shape
+        sample_rate = self.model_sample_rate
+
+        chunk_len = int(sample_rate * segment * (1 + overlap))
+        start = 0
+        end = chunk_len
+        overlap_frames = overlap * sample_rate
+        fade = Fade(fade_in_len=0, fade_out_len=int(overlap_frames), fade_shape="linear")
+
+        final = torch.zeros(batch, len(model.sources), channels, length, device=device)
+
+        while start < length - overlap_frames:
+            chunk = mix[:, :, start:end]
+            with torch.no_grad():
+                out = model.forward(chunk)
+            out = fade(out)
+            final[:, :, :, start:end] += out
+            if start == 0:
+                fade.fade_in_len = int(overlap_frames)
+                start += int(chunk_len - overlap_frames)
+            else:
+                start += chunk_len
+            end += chunk_len
+            if end >= length:
+                fade.fade_out_len = 0
+        return final
+
+    def adjust_waveform_dimensions(self, waveform):
+        print(f"Waveform shape before adjustment: {waveform.shape}")
+
+        # Ensure waveform is at least 2D (channels, frames)
+        if waveform.ndim == 1:
+            # If waveform is 1D (frames,), add channel dimension
+            waveform = waveform.unsqueeze(0)
+            print(f"Added channel dimension, new shape: {waveform.shape}")
+
+        # Ensure waveform has batch dimension
+        if waveform.ndim == 2:
+            # Add batch dimension
+            waveform = waveform.unsqueeze(0)
+            print(f"Added batch dimension, new shape: {waveform.shape}")
+        elif waveform.ndim == 3:
+            # Waveform already has batch dimension
+            pass
+        else:
+            raise ValueError(f"Waveform has unexpected dimensions: {waveform.shape}")
+
+        print(f"Waveform shape after adjustment: {waveform.shape}")
+        return waveform
+
+
+    def process_audio(self, model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
 
         waveform = audio['waveform']
         sample_rate = audio['sample_rate']
 
-        # Calculate total audio duration needed
+        print(f"Initial waveform shape: {waveform.shape}")
+
         num_samples = waveform.shape[-1]
         audio_duration = num_samples / sample_rate
         if batch_size == 0:
@@ -94,7 +206,6 @@ class AudioAnalysis(AudioNodeBase):
             audio_duration = batch_size / fps
         total_samples_needed = int(audio_duration * sample_rate)
 
-        # Crop or pad audio to match required duration
         if waveform.shape[-1] > total_samples_needed:
             waveform = waveform[..., :total_samples_needed]
         elif waveform.shape[-1] < total_samples_needed:
@@ -103,57 +214,55 @@ class AudioAnalysis(AudioNodeBase):
 
         samples_per_frame = total_samples_needed // batch_size
 
-        # Apply audio separation if needed
         if analysis_mode != "Full Audio":
             try:
-                model = self.download_and_load_model()
-                device = next(model.parameters()).device
-                waveform = waveform.to(device)
-                input_sample_rate = sample_rate
-                model_sample_rate = model.sample_rate
-
-                # Resample if necessary
-                if input_sample_rate != model_sample_rate:
-                    resample = torchaudio.transforms.Resample(orig_freq=input_sample_rate, new_freq=model_sample_rate).to(device)
-                    waveform = resample(waveform)
-                    
-                model_input = waveform
+                device, waveform = self.prepare_audio_and_device(audio)
 
                 with torch.no_grad():
-                    estimates = model(model_input)
+                    estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform, device)
+                    print(colored(f"Available sources: {estimates_list}", 'green'))
 
-                #inverted because otherwise the output of bass was drums
+                if not estimates_list:
+                    print("Model has no defined sources. Using default values.")
+                    if isinstance(model, torch.nn.Module):
+                        estimates_list = ['bass', 'drums', 'other', 'vocals']
+                    elif hasattr(model, "get_model"):
+                        estimates_list = ['drums', 'bass', 'other', 'vocals']
+
                 source_name_mapping = {
-                    "Bass Only": "drums",
-                    "Drums Only": "bass",
+                    "Vocals Only": "vocals",
+                    "Bass Only": "bass",
                     "Other Audio": "other",
-                    "Vocals Only": "vocals"
+                    "Drums Only": "drums"
                 }
 
                 source_name = source_name_mapping.get(analysis_mode)
                 if source_name is not None:
-                    source_index = model.sources.index(source_name)
-                    processed_waveform = estimates[:, source_index]
-                    processed_waveform = processed_waveform
+                    try:
+                        source_index = estimates_list.index(source_name)
+                        processed_waveform = estimates[source_index]
+                        print(colored("Checking sources in processed_waveform:", 'blue'))
+                    except ValueError:
+                        raise ValueError(f"Source '{source_name}' is not available in the model's provided sources.")
                 else:
-                    raise ValueError(f"Analysis mode '{analysis_mode}' is not valid.")
+                    raise ValueError(f"Analysis mode '{analysis_mode}' is invalid.")
             except Exception as e:
                 print(f"Error in model processing: {e}")
                 raise
-        else:  # Full Audio
+        else:
             processed_waveform = waveform.clone()
 
         original_waveform = waveform
 
-        # Convert to Mono by averaging channels
-        #processed_waveform = processed_waveform.mean(dim=0, keepdim=True)
-        #original_waveform = original_waveform.mean(dim=0, keepdim=True)
+        processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
+        original_waveform = self.adjust_waveform_dimensions(waveform.clone())
 
-        # Store the sample rate used for processed audio
-        final_sample_rate = model_sample_rate if 'model_sample_rate' in locals() else sample_rate
+        print(f"Processed audio waveform shape: {processed_waveform.shape}")
+        print(f"Original audio waveform shape: {original_waveform.shape}")
 
 
-        # Prepare audio outputs with explicit shape checks
+        final_sample_rate = self.model_sample_rate if 'model_sample_rate' in locals() else sample_rate
+
         processed_audio = {
             'waveform': processed_waveform.cpu().detach(),
             'sample_rate': final_sample_rate
@@ -164,15 +273,15 @@ class AudioAnalysis(AudioNodeBase):
         }
 
 
-        # Calculate audio weights using mean across channels if multi-channel
+        print(f"Processed audio waveform shape: {processed_audio['waveform'].shape}")
+        print(f"Original audio waveform shape: {original_audio['waveform'].shape}")
+
         waveform_for_rms = processed_waveform.squeeze(0).squeeze(0)
         audio_weights = self._rms_energy(waveform_for_rms, batch_size, samples_per_frame)
 
         if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
             raise ValueError("Invalid audio weights calculated")
 
-
-        # Normalize and process weights
         min_weight = np.min(audio_weights)
         max_weight = np.max(audio_weights)
         if max_weight - min_weight != 0:
@@ -183,8 +292,6 @@ class AudioAnalysis(AudioNodeBase):
         audio_weights_thresholded = np.where(audio_weights_normalized > threshold, audio_weights_normalized, 0)
         audio_weights_processed = np.clip(audio_weights_thresholded * multiply, 0, 1)
 
-
-        # Generate visualization
         try:
             figsize = 12.0
             plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
@@ -216,5 +323,5 @@ class AudioAnalysis(AudioNodeBase):
             weights_graph = torch.zeros((1, 400, 300, 3))
 
         rounded_audio_weights = [round(float(x), 3) for x in audio_weights_processed]
-        
+
         return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
