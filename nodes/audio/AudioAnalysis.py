@@ -190,6 +190,7 @@ class AudioAnalysis(AudioNodeBase):
             raise ValueError("Invalid audio input")
 
         waveform = audio['waveform']
+        self.audio_waveform = audio['waveform']
         sample_rate = audio['sample_rate']
         original_sample_rate = audio['sample_rate']
         self.audio_sample_rate = original_sample_rate  # Store for later use
@@ -264,37 +265,44 @@ class AudioAnalysis(AudioNodeBase):
             pad_length = total_samples_needed - waveform.shape[-1]
             waveform = torch.nn.functional.pad(waveform, (0, pad_length))
 
-        if processed_waveform.shape[-1] > total_samples_needed:
-            processed_waveform = processed_waveform[..., :total_samples_needed]
-        elif processed_waveform.shape[-1] < total_samples_needed:
-            pad_length = total_samples_needed - processed_waveform.shape[-1]
-            processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
-        original_waveform = waveform
+        if (analysis_mode != "Full Audio"):
+            if processed_waveform.shape[-1] > total_samples_needed:
+                processed_waveform = processed_waveform[..., :total_samples_needed]
+            elif processed_waveform.shape[-1] < total_samples_needed:
+                pad_length = total_samples_needed - processed_waveform.shape[-1]
+                processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
+            original_waveform = waveform
 
-        processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
-        original_waveform = self.adjust_waveform_dimensions(waveform.clone())
+            processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
+            original_waveform = self.adjust_waveform_dimensions(waveform.clone())
 
 
-        final_sample_rate = self.model_sample_rate if hasattr(self, 'model_sample_rate') else sample_rate
+            final_sample_rate = self.model_sample_rate if hasattr(self, 'model_sample_rate') else sample_rate
 
-        if final_sample_rate != original_sample_rate:
+            
             print(f"Resampling processed audio from {final_sample_rate} Hz back to original sample rate {original_sample_rate} Hz.")
             resampler = torchaudio.transforms.Resample(orig_freq=final_sample_rate, new_freq=original_sample_rate).to(processed_waveform.device)
-            # Reshape if necessary
-            processed_waveform = processed_waveform.squeeze(0)  # Remove batch dimension if present
+            processed_waveform = processed_waveform.squeeze(0)
             processed_waveform = resampler(processed_waveform)
-            processed_waveform = processed_waveform.unsqueeze(0)  # Add batch dimension back
-            final_sample_rate = original_sample_rate  # Update the final sample rate
-        else:
-            print(f"No resampling needed. Final sample rate is {final_sample_rate} Hz.")
+            processed_waveform = processed_waveform.unsqueeze(0)
+            
+            expected_num_samples = original_waveform.shape[-1]
+            actual_num_samples = processed_waveform.shape[-1]
+            if actual_num_samples > expected_num_samples:
+                processed_waveform = processed_waveform[..., :expected_num_samples]
+            elif actual_num_samples < expected_num_samples:
+                pad_length = expected_num_samples - actual_num_samples
+                processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
+            
+            final_sample_rate = original_sample_rate
 
         processed_audio = {
             'waveform': processed_waveform.cpu().detach(),
-            'sample_rate': final_sample_rate
+            'sample_rate': self.audio_sample_rate
         }
         original_audio = {
-            'waveform': original_waveform.cpu().detach(),
-            'sample_rate': final_sample_rate
+            'waveform': self.audio_waveform.cpu().detach(),
+            'sample_rate': self.audio_sample_rate
         }
 
 

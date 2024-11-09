@@ -31,7 +31,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
         download_path = os.path.join(folder_paths.models_dir, "openunmix")
         os.makedirs(download_path, exist_ok=True)
 
-        model_file = "umxhq.pth"
+        model_file = "umxl.pth"
         model_path = os.path.join(download_path, model_file)
 
         if not os.path.exists(model_path):
