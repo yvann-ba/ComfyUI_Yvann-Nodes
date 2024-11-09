@@ -193,7 +193,7 @@ class AudioAnalysis(AudioNodeBase):
         self.audio_waveform = audio['waveform']
         sample_rate = audio['sample_rate']
         original_sample_rate = audio['sample_rate']
-        self.audio_sample_rate = original_sample_rate  # Store for later use
+        self.audio_sample_rate = original_sample_rate
         print(f"Sample Rate song: {audio['sample_rate']}")
 
         print(f"Initial waveform shape: {waveform.shape}")
@@ -209,20 +209,20 @@ class AudioAnalysis(AudioNodeBase):
 
         samples_per_frame = total_samples_needed // batch_size
 
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+
         if analysis_mode != "Full Audio":
             try:
                 device, waveform = self.prepare_audio_and_device(audio)
 
                 with torch.no_grad():
                     estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform, device)
-                    print(colored(f"Available sources: {estimates_list}", 'green'))
 
-                
-                print("Model has no defined sources. Using default values.")
                 if isinstance(model, torch.nn.Module):
                     model.sources = ['bass', 'drums', 'other', 'vocals']
                 elif hasattr(model, "get_model"):
-                    print("pipipipipipipip")
                     estimates_list = ['drums', 'bass', 'other', 'vocals']
 
                 if isinstance(model, torch.nn.Module):
@@ -259,25 +259,29 @@ class AudioAnalysis(AudioNodeBase):
         else:
             processed_waveform = waveform.clone()
 
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+
+
         if waveform.shape[-1] > total_samples_needed:
             waveform = waveform[..., :total_samples_needed]
         elif waveform.shape[-1] < total_samples_needed:
             pad_length = total_samples_needed - waveform.shape[-1]
             waveform = torch.nn.functional.pad(waveform, (0, pad_length))
 
+        # if processed_waveform.shape[-1] > total_samples_needed:
+        #     processed_waveform = processed_waveform[..., :total_samples_needed]
+        # elif processed_waveform.shape[-1] < total_samples_needed:
+        #     pad_length = total_samples_needed - processed_waveform.shape[-1]
+        #     processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
+
+        processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
+        original_waveform = self.adjust_waveform_dimensions(waveform.clone())
+
+
+        final_sample_rate = self.model_sample_rate if hasattr(self, 'model_sample_rate') else sample_rate
         if (analysis_mode != "Full Audio"):
-            if processed_waveform.shape[-1] > total_samples_needed:
-                processed_waveform = processed_waveform[..., :total_samples_needed]
-            elif processed_waveform.shape[-1] < total_samples_needed:
-                pad_length = total_samples_needed - processed_waveform.shape[-1]
-                processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
-            original_waveform = waveform
-
-            processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
-            original_waveform = self.adjust_waveform_dimensions(waveform.clone())
-
-
-            final_sample_rate = self.model_sample_rate if hasattr(self, 'model_sample_rate') else sample_rate
 
             
             print(f"Resampling processed audio from {final_sample_rate} Hz back to original sample rate {original_sample_rate} Hz.")
@@ -286,28 +290,29 @@ class AudioAnalysis(AudioNodeBase):
             processed_waveform = resampler(processed_waveform)
             processed_waveform = processed_waveform.unsqueeze(0)
             
-            expected_num_samples = original_waveform.shape[-1]
-            actual_num_samples = processed_waveform.shape[-1]
-            if actual_num_samples > expected_num_samples:
-                processed_waveform = processed_waveform[..., :expected_num_samples]
-            elif actual_num_samples < expected_num_samples:
-                pad_length = expected_num_samples - actual_num_samples
-                processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
+        expected_num_samples = original_waveform.shape[-1]
+        actual_num_samples = processed_waveform.shape[-1]
+        original_audio_samples = original_waveform.shape[-1]
+        if actual_num_samples > expected_num_samples:
+            processed_waveform = processed_waveform[..., :expected_num_samples]
+        elif actual_num_samples < expected_num_samples:
+            pad_length = expected_num_samples - actual_num_samples
+            processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
             
-            final_sample_rate = original_sample_rate
+        final_sample_rate = original_sample_rate
 
         processed_audio = {
             'waveform': processed_waveform.cpu().detach(),
             'sample_rate': self.audio_sample_rate
         }
         original_audio = {
-            'waveform': self.audio_waveform.cpu().detach(),
+            'waveform': original_waveform.cpu().detach(),
             'sample_rate': self.audio_sample_rate
         }
 
-
-        print(f"Processed audio waveform shape: {processed_audio['waveform'].shape}")
-        print(f"Original audio waveform shape: {original_audio['waveform'].shape}")
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+        #--------------------------------------------------#
 
         waveform_for_rms = processed_waveform.squeeze(0).squeeze(0)
         audio_weights = self._rms_energy(waveform_for_rms, batch_size, samples_per_frame)
