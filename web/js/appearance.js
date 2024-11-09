@@ -6,12 +6,12 @@ const COLOR_THEMES = {
 
 const NODE_COLORS = {
     "Audio Analysis": "blue",
-    "IPAdapter Audio Transitions": "blue",
-    "Prompt Audio Schedule": "blue",
+    "Audio IPAdapter Transitions": "blue",
+    "Audio Prompt Schedule": "blue",
     "Audio Peaks Detection": "blue",
     "Audio Remixer": "blue",
-    "AnimateDiff Audio Reactive": "blue",
-    "ControlNet Audio Reactive": "blue",
+    "Audio AnimateDiff Schedule": "blue",
+    "Audio ControlNet Schedule": "blue",
     "Floats To Weights Strategy": "blue",
     "Invert Floats": "blue",
     "Floats Visualizer": "blue",

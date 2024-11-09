@@ -4,7 +4,7 @@ import numpy as np
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class ControlNetAudioReactive(AudioNodeBase):
+class AudioControlNetSchedule(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {

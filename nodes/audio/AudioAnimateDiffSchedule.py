@@ -4,7 +4,7 @@ import numpy as np
 class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class AnimateDiffAudioReactive(AudioNodeBase):
+class AudioAnimateDiffSchedule(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {

@@ -40,11 +40,11 @@ class Yvann(metaclass=CombinedMeta):
         return desc
 
 from .nodes.audio.AudioAnalysis import AudioAnalysis
-from .nodes.audio.IPAdapterAudioTransitions import IPAdapterAudioTransitions
-from .nodes.audio.PromptAudioSchedule import PromptAudioSchedule
+from .nodes.audio.AudioIPAdapterTransitions import AudioIPAdapterTransitions
+from .nodes.audio.AudioPromptSchedule import AudioPromptSchedule
 from .nodes.audio.AudioPeaksDetection import AudioPeaksDetection
-from .nodes.audio.AnimateDiffAudioReactive import AnimateDiffAudioReactive
-from .nodes.audio.ControlNetAudioReactive import ControlNetAudioReactive
+from .nodes.audio.AudioAnimateDiffSchedule import AudioAnimateDiffSchedule
+from .nodes.audio.AudioControlNetSchedule import AudioControlNetSchedule
 from .nodes.audio.AudioRemixer import AudioRemixer
 from .nodes.audio.LoadAudioSeparationModel import LoadAudioSeparationModel
 
@@ -58,11 +58,11 @@ from .nodes.convert.MaskToFloat import MaskToFloat
 
 NODE_CLASS_MAPPINGS = {
     "Audio Analysis": AudioAnalysis,
-    "IPAdapter Audio Transitions": IPAdapterAudioTransitions,
-    "Prompt Audio Schedule": PromptAudioSchedule,
+    "Audio IPAdapter Transitions": AudioIPAdapterTransitions,
+    "Audio Prompt Schedule": AudioPromptSchedule,
     "Audio Peaks Detection": AudioPeaksDetection,
-    "AnimateDiff Audio Reactive": AnimateDiffAudioReactive,
-    "ControlNet Audio Reactive": ControlNetAudioReactive,
+    "Audio AnimateDiff Schedule": AudioAnimateDiffSchedule,
+    "Audio ControlNet Schedule": AudioControlNetSchedule,
     "Audio Remixer": AudioRemixer,
     "Load Audio Separation Model": LoadAudioSeparationModel,
     
@@ -77,14 +77,14 @@ WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
-    "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
+    "Audio IPAdapter Transitions": "Audio IPAdapter Transitions",
     "Audio Remixer": "Audio Remixer",
     "Load Audio Separation Model": "Load Audio Separation Model",
-    "Prompt Audio Schedule": "Prompt Audio Schedule",
+    "Audio Prompt Schedule": "Audio Prompt Schedule",
     "Audio Peaks Detection": "Audio Peaks Detection",
     
-    "AnimateDiff Audio Reactive": "AnimateDiff Audio Reactive",
-    "ControlNet Audio Reactive": "ControlNet Audio Reactive",
+    "Audio AnimateDiff Schedule": "Audio AnimateDiff Schedule",
+    "Audio ControlNet Schedule": "Audio ControlNet Schedule",
     
     "Invert Floats": "Invert Floats",
     "Floats Visualizer": "Floats Visualizer",
