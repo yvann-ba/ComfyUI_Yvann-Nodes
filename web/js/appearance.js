@@ -16,6 +16,7 @@ const NODE_COLORS = {
     "Invert Floats": "blue",
     "Floats Visualizer": "blue",
     "Mask To Float": "blue",
+    "Repeat Image To Count": "blue"
 };
 
 function shuffleArray(array) {

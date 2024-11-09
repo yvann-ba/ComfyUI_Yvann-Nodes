@@ -39,17 +39,18 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
+from .nodes.audio.LoadAudioSeparationModel import LoadAudioSeparationModel
 from .nodes.audio.AudioAnalysis import AudioAnalysis
-from .nodes.audio.AudioIPAdapterTransitions import AudioIPAdapterTransitions
-from .nodes.audio.AudioPromptSchedule import AudioPromptSchedule
+from .nodes.audio.AudioRemixer import AudioRemixer
 from .nodes.audio.AudioPeaksDetection import AudioPeaksDetection
+from .nodes.audio.AudioPromptSchedule import AudioPromptSchedule
+from .nodes.audio.AudioIPAdapterTransitions import AudioIPAdapterTransitions
 from .nodes.audio.AudioAnimateDiffSchedule import AudioAnimateDiffSchedule
 from .nodes.audio.AudioControlNetSchedule import AudioControlNetSchedule
-from .nodes.audio.AudioRemixer import AudioRemixer
-from .nodes.audio.LoadAudioSeparationModel import LoadAudioSeparationModel
 
 from .nodes.utils.InvertFloats import InvertFloats
 from .nodes.utils.FloatsVisualizer import FloatsVisualizer
+from .nodes.utils.RepeatImageToCount import RepeatImageToCount
 
 from .nodes.convert.FloatsToWeightsStrategy import FloatsToWeightsStrategy
 from .nodes.convert.MaskToFloat import MaskToFloat
@@ -57,17 +58,18 @@ from .nodes.convert.MaskToFloat import MaskToFloat
 
 
 NODE_CLASS_MAPPINGS = {
+    "Load Audio Separation Model": LoadAudioSeparationModel,
     "Audio Analysis": AudioAnalysis,
-    "Audio IPAdapter Transitions": AudioIPAdapterTransitions,
-    "Audio Prompt Schedule": AudioPromptSchedule,
+    "Audio Remixer": AudioRemixer,
     "Audio Peaks Detection": AudioPeaksDetection,
+    "Audio Prompt Schedule": AudioPromptSchedule,
+    "Audio IPAdapter Transitions": AudioIPAdapterTransitions,
     "Audio AnimateDiff Schedule": AudioAnimateDiffSchedule,
     "Audio ControlNet Schedule": AudioControlNetSchedule,
-    "Audio Remixer": AudioRemixer,
-    "Load Audio Separation Model": LoadAudioSeparationModel,
     
     "Invert Floats": InvertFloats,
     "Floats Visualizer": FloatsVisualizer,
+    "Repeat Image To Count": RepeatImageToCount,
 
     "Mask To Float": MaskToFloat,
     "Floats To Weights Strategy": FloatsToWeightsStrategy,
@@ -76,18 +78,18 @@ NODE_CLASS_MAPPINGS = {
 WEB_DIRECTORY = "./web/js"
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Audio Analysis": "Audio Analysis",
-    "Audio IPAdapter Transitions": "Audio IPAdapter Transitions",
-    "Audio Remixer": "Audio Remixer",
     "Load Audio Separation Model": "Load Audio Separation Model",
-    "Audio Prompt Schedule": "Audio Prompt Schedule",
+    "Audio Analysis": "Audio Analysis",
+    "Audio Remixer": "Audio Remixer",
     "Audio Peaks Detection": "Audio Peaks Detection",
-    
+    "Audio Prompt Schedule": "Audio Prompt Schedule",
+    "Audio IPAdapter Transitions": "Audio IPAdapter Transitions",
     "Audio AnimateDiff Schedule": "Audio AnimateDiff Schedule",
     "Audio ControlNet Schedule": "Audio ControlNet Schedule",
     
     "Invert Floats": "Invert Floats",
     "Floats Visualizer": "Floats Visualizer",
+    "Repeat Image To Count": "Repeat Image To Count",
 
     "Floats To Weights Strategy": "Floats To Weights Strategy",
     "Mask To Float":  "Mask To Float",
