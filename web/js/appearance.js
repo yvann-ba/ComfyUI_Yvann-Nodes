@@ -12,6 +12,7 @@ const NODE_COLORS = {
     "Audio Remixer": "blue",
     "Audio AnimateDiff Schedule": "blue",
     "Audio ControlNet Schedule": "blue",
+    "Load Audio Separation Model": "blue",
     "Floats To Weights Strategy": "blue",
     "Invert Floats": "blue",
     "Floats Visualizer": "blue",

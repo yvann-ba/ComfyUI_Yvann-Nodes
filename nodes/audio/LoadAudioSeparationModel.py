@@ -12,7 +12,7 @@ class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
 class LoadAudioSeparationModel(AudioNodeBase):
-    audio_models = ["Open-Unmix", "GDemucs"]
+    audio_models = ["Hybrid Demucs", "Open-Unmix"]
 
     @classmethod
     def INPUT_TYPES(cls) -> dict[str, dict[str, tuple]]:
@@ -53,7 +53,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
 
         return (separator,)
     
-    def load_GDemucs(self):
+    def load_HDemucs(self):
     
         device: torch.device = mm.get_torch_device()
 
@@ -61,7 +61,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
         # model: torch.nn.Module = bundle.get_model()
         # model.to(device)
         # self.model_sample_rate: int = bundle.sample_rate
-        print("HDemucs model is loaded")
+        print("Hybrid Demucs model is loaded")
         return (bundle,)
 
 
@@ -71,9 +71,9 @@ class LoadAudioSeparationModel(AudioNodeBase):
             print("Open-Unmix selected")
             return (self.load_OpenUnmix(model))
              
-        elif model == "GDemucs":
-            print("GDemucs selected")
-            return (self.load_GDemucs())
+        elif model == "Hybrid Demucs":
+            print("Hybrid Demucs selected")
+            return (self.load_HDemucs())
         else:
             print("Invalid selection")
 

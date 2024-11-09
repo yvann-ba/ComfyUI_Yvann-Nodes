@@ -22,7 +22,7 @@ class AudioAnalysis(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
+                "audio_separation_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "batch_size": ("INT", {"forceInput": True}),
                 "fps": ("FLOAT", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
@@ -185,10 +185,11 @@ class AudioAnalysis(AudioNodeBase):
         return waveform
 
 
-    def process_audio(self, model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+    def process_audio(self, audio_separation_model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
 
+        model = audio_separation_model
         waveform = audio['waveform']
         self.audio_waveform = audio['waveform']
         sample_rate = audio['sample_rate']
@@ -209,10 +210,12 @@ class AudioAnalysis(AudioNodeBase):
 
         samples_per_frame = total_samples_needed // batch_size
 
-        #--------------------------------------------------#
-        #--------------------------------------------------#
-        #--------------------------------------------------#
 
+
+        """
+        here we do that
+        
+        """
         if analysis_mode != "Full Audio":
             try:
                 device, waveform = self.prepare_audio_and_device(audio)
