@@ -22,7 +22,7 @@ class AudioAnalysis(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": ("MODEL", {"forceInput": True}),
+                "model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "batch_size": ("INT", {"forceInput": True}),
                 "fps": ("FLOAT", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
@@ -219,25 +219,33 @@ class AudioAnalysis(AudioNodeBase):
                 
                 print("Model has no defined sources. Using default values.")
                 if isinstance(model, torch.nn.Module):
-                    print("HHHEJDWEFHBWEHFHEWHVFDWEVFJWE")
-                    estimates_list = ['other', 'vocals', 'bass', 'drums']
+                    model.sources = ['bass', 'drums', 'other', 'vocals']
                 elif hasattr(model, "get_model"):
                     print("pipipipipipipip")
                     estimates_list = ['drums', 'bass', 'other', 'vocals']
-                else:
-                    print("I don't know")
 
-                source_name_mapping = {
-                    "Bass Only": "drums",
-                    "Drums Only": "bass",
-                    "Other Audio": "other",
-                    "Vocals Only": "vocals"
-                }
-
+                if isinstance(model, torch.nn.Module):
+                    print("rfwerfwfwefwefwefefwef")
+                    source_name_mapping = {
+                        "Other Audio": "vocals",
+                        "Bass Only": "other",
+                        "Drums Only": "drums",
+                        "Vocals Only": "bass"
+                    }
+                elif hasattr(model, "get_model"):
+                    source_name_mapping = {
+                        "Drums Only": "drums",
+                        "Bass Only": "bass",
+                        "Other Audio": "other",
+                        "Vocals Only": "vocals"
+                    }
+    
+                print(f"estimate liste = {estimates_list[0], estimates_list[1], estimates_list[2], estimates_list[3]}")
                 source_name = source_name_mapping.get(analysis_mode)
                 if source_name is not None:
                     try:
                         source_index = estimates_list.index(source_name)
+                        print(f"THE INDEX IS : {source_index}")
                         processed_waveform = estimates[source_index]
                         print(colored("Checking sources in processed_waveform:", 'blue'))
                     except ValueError:
