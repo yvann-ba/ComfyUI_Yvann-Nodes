@@ -13,7 +13,7 @@ class RepeatImageToCount(UtilsNodeBase):
             }
         }
     RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("image",)
+    RETURN_NAMES = ("images",)
     FUNCTION = "repeat_image_to_count"
     
     def repeat_image_to_count(self, image, count):
