@@ -17,10 +17,10 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 			"required": {
 				"images": ("IMAGE", {"forceInput": True}),
 				"peaks_alternate_weights": ("FLOAT", {"forceInput": True}),
-				"timing": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
-				"transition_frames": ("INT", {"default": 4, "min": 2, "step": 1}),
-				"min_weights": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
-				"max_weights": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0}),
+				"blend_mode": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
+				"transitions_length": ("INT", {"default": 5, "min": 1, "step": 2}),
+				"min_IPA_weight": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
+				"max_IPA_weight": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0}),
 			}
 		}
 
@@ -28,7 +28,7 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 	RETURN_NAMES = ("image_1", "weights", "image_2", "weights_invert", "graph_transitions")
 	FUNCTION = "process_transitions"
 
-	def process_transitions(self, images, peaks_alternate_weights, timing, transition_frames, min_weights, max_weights):
+	def process_transitions(self, images, peaks_alternate_weights, blend_mode, transitions_length, min_IPA_weight, max_IPA_weight):
 
 		if not isinstance(peaks_alternate_weights, (list, np.ndarray)):
 			print("Invalid peaks_alternate_weights input")
@@ -59,13 +59,12 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 		# Identify frames where switch state changes
 		change_frames = [i for i in range(1, total_frames) if switch_states[i] != switch_states[i - 1]]
 
-		# Initialize blending weights
 		blending_weights = np.zeros(total_frames, dtype=np.float32)
 
 		# For each transition, compute blending weights
 		for change_frame in change_frames:
-			start = max(0, change_frame - transition_frames // 2)
-			end = min(total_frames, change_frame + (transition_frames + 1) // 2)
+			start = max(0, change_frame - transitions_length // 2)
+			end = min(total_frames, change_frame + (transitions_length + 1) // 2)
 			n = end - start - 1
 			idx_prev = image_indices[change_frame - 1]
 			idx_next = image_indices[change_frame]
@@ -73,21 +72,20 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 			for i in range(start, end):
 				t = (i - start) / n if n > 0 else 1.0
 
-				# Compute blending weight based on timing
-				if timing == "linear":
+				# Compute blending weight based on blend_mode
+				if blend_mode == "linear":
 					blending_weight = t
-				elif timing == "ease_in_out":
+				elif blend_mode == "ease_in_out":
 					blending_weight = (1 - math.cos(t * math.pi)) / 2
-				elif timing == "ease_in":
+				elif blend_mode == "ease_in":
 					blending_weight = math.sin(t * math.pi / 2)
-				elif timing == "ease_out":
+				elif blend_mode == "ease_out":
 					blending_weight = 1 - math.cos(t * math.pi / 2)
 				else:
 					blending_weight = t
 
 				blending_weight = min(max(blending_weight, 0.0), 1.0)
 
-				# Update blending weights
 				blending_weights[i] = blending_weight
 
 				# Update images1 and images2 for blending
@@ -96,9 +94,9 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 
 		# Apply custom range to weights
 		blending_weights_raw = blending_weights.copy()  # Keep the raw weights for internal use
-		blending_weights = blending_weights * (max_weights - min_weights) + min_weights
+		blending_weights = blending_weights * (max_IPA_weight - min_IPA_weight) + min_IPA_weight
 		blending_weights = [round(w, 6) for w in blending_weights]
-		weights_invert = [(max_weights + min_weights) - w for w in blending_weights]
+		weights_invert = [(max_IPA_weight + min_IPA_weight) - w for w in blending_weights]
 		weights_invert = [round(w, 6) for w in weights_invert]
 
 		# Convert lists to tensors
@@ -144,4 +142,4 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 			visualization = None
 
 		# Return values with adjusted weights and images
-		return images2, blending_weights, images1, weights_invert, visualization
+		return (images2, blending_weights, images1, weights_invert, visualization)
