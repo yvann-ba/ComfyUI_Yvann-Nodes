@@ -22,7 +22,7 @@ class AudioRemixer(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": ("MODEL", {"forceInput": True}),
+                "model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
                 "Bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
                 "Drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),

@@ -22,7 +22,8 @@ class LoadAudioSeparationModel(AudioNodeBase):
             }
         }
 
-    RETURN_TYPES: tuple[str] = ("MODEL",)
+    RETURN_TYPES = ("AUDIO_SEPARATION_MODEL",)
+    RETURN_NAMES = ("model",)
     FUNCTION: str = "main"
     
     def load_OpenUnmix(self, model):
@@ -30,13 +31,13 @@ class LoadAudioSeparationModel(AudioNodeBase):
         download_path = os.path.join(folder_paths.models_dir, "openunmix")
         os.makedirs(download_path, exist_ok=True)
 
-        model_file = "umxhq.pth"
+        model_file = "umxl.pth"
         model_path = os.path.join(download_path, model_file)
 
         if not os.path.exists(model_path):
             print(f"Downloading {model} model...")
             try:
-                separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxhq', device='cpu')
+                separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
             except RuntimeError as e:
                 print(f"Error during download model : {e}")
                 return None
@@ -44,7 +45,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
             print(f"Model saved to: {model_path}")
         else:
             print(f"Loading model from: {model_path}")
-            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxhq', device='cpu')
+            separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
             separator.load_state_dict(torch.load(model_path, map_location='cpu'))
 
         separator = separator.to(device)
