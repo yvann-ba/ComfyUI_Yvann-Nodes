@@ -21,8 +21,8 @@ class AudioPeaksDetection(AudioNodeBase):
             }
         }
 
-    RETURN_TYPES = ("INT", "STRING", "IMAGE")
-    RETURN_NAMES = ("peaks_weights", "peaks_index", "graph_peaks")
+    RETURN_TYPES = ("FLOAT", "STRING", "FLOAT", "IMAGE")
+    RETURN_NAMES = ("peaks_weights", "peaks_index", "peaks_switch", "graph_peaks")
     FUNCTION = "detect_peaks"
 
     def detect_peaks(self, audio_weights, threshold, min_peaks_distance):
@@ -37,8 +37,15 @@ class AudioPeaksDetection(AudioNodeBase):
         # Generate binary peaks array: 1 for peaks, 0 for non-peaks
         peaks_binary = np.zeros_like(audio_weights, dtype=int)
         peaks_binary[peaks] = 1
+        
+        actual_value = 0
+        peaks_switch = np.zeros_like(peaks_binary)
+        for i in range (len(peaks_binary)):
+            if peaks_binary[i] == 1:
+                actual_value = 1 - actual_value
+            peaks_switch[i] = actual_value
 
-        audio_peaks_index = np.array(peaks+1, dtype=int)
+        audio_peaks_index = np.array(peaks, dtype=int)
         audio_peaks_index = np.insert(audio_peaks_index, 0, 0)
 
         str_peaks_index = ', '.join(map(str, audio_peaks_index))
@@ -72,4 +79,4 @@ class AudioPeaksDetection(AudioNodeBase):
             print(f"Error in creating visualization: {e}")
             visualization = None
 
-        return peaks_binary.tolist(), str_peaks_index, visualization
+        return (peaks_binary.tolist(), str_peaks_index, peaks_switch.tolist(), visualization)

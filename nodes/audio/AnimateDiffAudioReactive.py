@@ -11,8 +11,8 @@ class AnimateDiffAudioReactive(AudioNodeBase):
             "required": {
                 "audio_signal": ("FLOAT", {"forceInput": True}),
                 "smooth": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_range": ("FLOAT", {"default": 0.9, "min": 0.7, "max": 1.4}),
-                "max_range": ("FLOAT", {"default": 1.2, "min": 0.8, "max": 1.5}),
+                "min_range": ("FLOAT", {"default": 0.9, "min": 0.0, "max": 1.4, "step": 0.01}),
+                "max_range": ("FLOAT", {"default": 1.2, "min": 0.0, "max": 1.5, "step": 0.01}),
             }
         }
 

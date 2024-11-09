@@ -16,7 +16,7 @@ class IPAdapterAudioTransitions(AudioNodeBase):
         return {
             "required": {
                 "images": ("IMAGE", {"forceInput": True}),
-                "peaks_weights": ("INT", {"forceInput": True}),
+                "peaks_weights": ("FLOAT", {"forceInput": True}),
                 "timing": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
                 "transition_frames": ("INT", {"default": 4, "min": 2, "step": 1}),
                 "min_weights": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
@@ -38,10 +38,15 @@ class IPAdapterAudioTransitions(AudioNodeBase):
             print("Invalid or empty images input")
             return None, None, None, None, None
 
+        print(" peaks weights : " )
+        print(peaks_weights)
         # Convert peaks to numpy array
         peaks_binary = np.array(peaks_weights, dtype=int)
         total_frames = len(peaks_binary)
 
+
+        print(" peaks binary : " )
+        print(peaks_binary)
         # Generate switch indices by incrementing index at each peak
         switch_indices = []
         index_value = 0
@@ -107,9 +112,9 @@ class IPAdapterAudioTransitions(AudioNodeBase):
 
         # Apply custom range to weights
         blending_weights = blending_weights * (max_weights - min_weights) + min_weights
-        blending_weights = [round(w, 3) for w in blending_weights]
+        blending_weights = [round(w, 6) for w in blending_weights]
         weights_invert = [(max_weights + min_weights) - w for w in blending_weights]
-        weights_invert = [round(w, 3) for w in weights_invert]
+        weights_invert = [round(w, 6) for w in weights_invert]
 
         # Convert lists to tensors
         images1 = torch.stack(images1)

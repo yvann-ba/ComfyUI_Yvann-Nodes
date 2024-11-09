@@ -79,7 +79,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Analysis": "Audio Analysis",
     "IPAdapter Audio Transitions": "IPAdapter Audio Transitions",
     "Audio Remixer": "Audio Remixer",
-    "Load Audio Separation Model": "Load_Audio_Separation_Model",
+    "Load Audio Separation Model": "Load Audio Separation Model",
     "Prompt Audio Schedule": "Prompt Audio Schedule",
     "Audio Peaks Detection": "Audio Peaks Detection",
     
