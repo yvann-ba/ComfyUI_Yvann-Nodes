@@ -184,14 +184,39 @@ class AudioAnalysis(AudioNodeBase):
 
         return waveform
 
+    def convert_audio_format(self, audio, mode: int) -> torch.Tensor:
+  
+        if mode == 1:
+            if audio['waveform'].shape[1] == 1:
+                audio['waveform'] = audio['waveform'].repeat(1, 2, 1)
+                print("Converted from mono to stereo.")
+            else:
+                print("The signal is already in stereo.")
+
+        elif mode == 2:
+            if audio['waveform'].shape[1] == 2:
+                audio['waveform'] = audio['waveform'].mean(dim=1, keepdim=True)
+                print("Converted from stereo to mono.")
+            else:
+                print("The signal is already in mono.")
+
+        else:
+            print("Invalid mode. Please use 1 for mono to stereo or 2 for stereo to mono.")
+        
+        return audio
 
     def process_audio(self, audio_separation_model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+        
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
 
+        isMono = False
+        if audio['waveform'].shape[1] == 1:
+            audio = self.convert_audio_format(audio, 1)
+            isMono = True
+
         model = audio_separation_model
         waveform = audio['waveform']
-        self.audio_waveform = audio['waveform']
         sample_rate = audio['sample_rate']
         original_sample_rate = audio['sample_rate']
         self.audio_sample_rate = original_sample_rate
@@ -211,11 +236,11 @@ class AudioAnalysis(AudioNodeBase):
         samples_per_frame = total_samples_needed // batch_size
 
 
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+        #--------------------------------------------------#
+    
 
-        """
-        here we do that
-        
-        """
         if analysis_mode != "Full Audio":
             try:
                 device, waveform = self.prepare_audio_and_device(audio)
@@ -262,6 +287,7 @@ class AudioAnalysis(AudioNodeBase):
         else:
             processed_waveform = waveform.clone()
 
+
         #--------------------------------------------------#
         #--------------------------------------------------#
         #--------------------------------------------------#
@@ -272,12 +298,6 @@ class AudioAnalysis(AudioNodeBase):
         elif waveform.shape[-1] < total_samples_needed:
             pad_length = total_samples_needed - waveform.shape[-1]
             waveform = torch.nn.functional.pad(waveform, (0, pad_length))
-
-        # if processed_waveform.shape[-1] > total_samples_needed:
-        #     processed_waveform = processed_waveform[..., :total_samples_needed]
-        # elif processed_waveform.shape[-1] < total_samples_needed:
-        #     pad_length = total_samples_needed - processed_waveform.shape[-1]
-        #     processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
 
         processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
         original_waveform = self.adjust_waveform_dimensions(waveform.clone())
@@ -295,7 +315,6 @@ class AudioAnalysis(AudioNodeBase):
             
         expected_num_samples = original_waveform.shape[-1]
         actual_num_samples = processed_waveform.shape[-1]
-        original_audio_samples = original_waveform.shape[-1]
         if actual_num_samples > expected_num_samples:
             processed_waveform = processed_waveform[..., :expected_num_samples]
         elif actual_num_samples < expected_num_samples:
@@ -365,5 +384,9 @@ class AudioAnalysis(AudioNodeBase):
             weights_graph = torch.zeros((1, 400, 300, 3))
 
         rounded_audio_weights = [round(float(x), 3) for x in audio_weights_processed]
+
+        if (isMono == True):
+            self.convert_audio_format(processed_audio, 2)
+            self.convert_audio_format(original_audio, 2)
 
         return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
