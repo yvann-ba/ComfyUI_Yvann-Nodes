@@ -16,7 +16,7 @@ def add_node_config(node_name, config):
 
 NODE_CONFIGS = {}
 
-add_node_config("IPAdapter_Audio_Reactive", {
+add_node_config("IPAdapterAudioReactive", {
     "BASE_DESCRIPTION": """
 Receives audio-reactive weights to control blending and switching between images based on audio peaks.\n
 Returns images and associated weights to use with two IPAdapter batches, inspired by "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus).
@@ -28,9 +28,11 @@ Returns images and associated weights to use with two IPAdapter batches, inspire
 
 **Parameters:**
 
-- **timing**: Blending timing function; different modes smooth weights differently
-- **transition_frames**: Frames over which to blend between images
+- **blend_mode**: Blending timing function; different modes smooth weights differently
+- **transition_length**: Frames over which to blend between images
 - **threshold**: Minimum height for a peak to be considered
+- **image_2**: The ending image for a transition, connect it to the second IPadapter batch in the image input
+- **max_IPA_weight**: the range end value for IPAdapter weights, 1 by default, 1.3 for strong style transfer
 
 **Outputs:**
 
@@ -43,7 +45,7 @@ Returns images and associated weights to use with two IPAdapter batches, inspire
 })
 
 
-add_node_config("Audio_Analysis", {
+add_node_config("AudioAnalysis", {
     "BASE_DESCRIPTION": """
 Analyzes audio input to generate audio-reactive weights and visualizations.\n
 It can extract specific elements from the audio, such as drums, vocals, bass, or analyze the full audio.\n
@@ -51,6 +53,7 @@ Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix
 
 **Inputs:**
 
+- **audio_separation_model**: Load audio seperation model by the node in the node pack 
 - **audio**: Input audio file
 - **batch_size**: Number of audio frames to process
 - **fps**: Frames per second for processing audio weights; should match your animation's fps
@@ -59,10 +62,7 @@ Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix
 
 - **analysis_mode**: Selects the audio component to analyze
 - **threshold**: Only weights above this value pass through
-- **smooth**: Reduces sharp transitions between weights
 - **multiply**: Amplifies the weights by this factor, applied before normalization
-- **min_range**: Minimum value for scaling the audio weights
-- **max_range**: Maximum value for scaling the audio weights
 
 **Outputs:**
 
@@ -74,7 +74,7 @@ Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix
 })
 
 
-add_node_config("Audio_PromptSchedule", {
+add_node_config("AudioPromptSchedule", {
     "BASE_DESCRIPTION": """
 Associates input prompts with floats into a scheduled prompt format.\n
 Connect the output to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes).\n
@@ -82,7 +82,7 @@ Make sure to include an empty lines between each differents prompts
 
 **Inputs:**
 
-- **switch_index**: Indices where prompts will change (FLOAT)
+- **peaks_index**: Indices where prompts will change (FLOAT)
 - **prompts**: Multiline string of prompts to use at each index
 
 **Outputs:**
@@ -91,7 +91,7 @@ Make sure to include an empty lines between each differents prompts
 """
 })
 
-add_node_config("Floats_To_Weights_Strategy", {
+add_node_config("FloatsToWeightsStrategy", {
     "BASE_DESCRIPTION": """
 Converts a list of floats into an IPAdapter weights strategy.\n
 Use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Strategy" to pass audio weights or any float list to the IPAdapter pipeline.
@@ -102,15 +102,13 @@ Use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Stra
 
 **Parameters:**
 
-- **batch_size**: Number of frames to process
-
 **Outputs:**
 
 - **WEIGHTS_STRATEGY**: Dictionary containing the weights strategy for IPAdapter
 """
 })
 
-add_node_config("Invert_Floats", {
+add_node_config("InvertFloats", {
     "BASE_DESCRIPTION": """
 Inverts all individual values of a list of floats.
 
@@ -124,7 +122,7 @@ Inverts all individual values of a list of floats.
 """
 })
 
-add_node_config("Floats_Visualizer", {
+add_node_config("FloatsVisualizer", {
     "BASE_DESCRIPTION": """
 Generates a graph from one or more lists of floats to visually compare data.\n
 Useful for comparing audio weights from different Audio Reactive nodes.
@@ -147,7 +145,7 @@ Useful for comparing audio weights from different Audio Reactive nodes.
 """
 })
 
-add_node_config("Mask_To_Float", {
+add_node_config("MaskToFloat", {
     "BASE_DESCRIPTION": """
 Converts mask inputs into float values by computing the mean pixel value of each mask.
 
