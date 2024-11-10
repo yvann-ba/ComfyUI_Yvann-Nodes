@@ -16,7 +16,7 @@ class AudioNodeBase(Yvann):
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
 class AudioAnalysis(AudioNodeBase):
-    analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Other Audio"]
+    analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Others Audio"]
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -45,12 +45,11 @@ class AudioAnalysis(AudioNodeBase):
             bundle = HDEMUCS_HIGH_MUSDB_PLUS
             model = bundle.get_model().to(device)
             model.sample_rate = bundle.sample_rate
-            model.sources = ['bass', 'drums', 'other', 'vocals']
+            model.sources = ['bass', 'drums', 'others', 'vocals']
             model.eval()
             print("Hybrid Demucs model loaded successfully")
         except Exception as e:
             print(f"Error in loading Hybrid Demucs model: {e}")
-            raise RuntimeError("Error in loading Hybrid Demucs model")
         return model
 
 
@@ -91,17 +90,17 @@ class AudioAnalysis(AudioNodeBase):
         
 
         if isinstance(model, torch.nn.Module):  # Open-Unmix model
-            print(colored("Applying Open_Unmix model on audio.", 'green'))
+            print(colored("Applying Open_Unmix model on audio", 'green'))
             self.model_sample_rate = model.sample_rate
 
             if self.audio_sample_rate != self.model_sample_rate:
                 resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
                 waveform = resampler(waveform)
             sources = model(waveform.unsqueeze(0)).squeeze(0)
-            sources_list = ['bass', 'drums', 'other', 'vocals']
+            sources_list = ['bass', 'drums', 'others', 'vocals']
 
         elif hasattr(model, "get_model"):  # GDemucs model
-            print(colored("Applying GDemucs model on audio.", 'green'))
+            print(colored("Applying GDemucs model on audio", 'green'))
             self.model_sample_rate = model.sample_rate
             model = model.get_model().to(device)
 
@@ -113,10 +112,10 @@ class AudioAnalysis(AudioNodeBase):
             sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]
             sources = sources * ref.std() + ref.mean()
             
-            sources_list = getattr(model, 'sources', ['bass', 'drums', 'other', 'vocals'])
+            sources_list = getattr(model, 'sources', ['bass', 'drums', 'others', 'vocals'])
 
         else:
-            print(colored("Unrecognized model type.", 'red'))
+            print(colored("Unrecognized model type", 'red'))
             return None, []
 
         return sources, sources_list
@@ -195,9 +194,6 @@ class AudioAnalysis(AudioNodeBase):
         sample_rate = audio['sample_rate']
         original_sample_rate = audio['sample_rate']
         self.audio_sample_rate = original_sample_rate
-        print(f"Sample Rate song: {audio['sample_rate']}")
-
-        print(f"Initial waveform shape: {waveform.shape}")
 
         num_samples = waveform.shape[-1]
         audio_duration = num_samples / sample_rate
@@ -224,15 +220,14 @@ class AudioAnalysis(AudioNodeBase):
                     estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform, device)
 
                 if isinstance(model, torch.nn.Module):
-                    model.sources = ['bass', 'drums', 'other', 'vocals']
+                    model.sources = ['bass', 'drums', 'others', 'vocals']
                 elif hasattr(model, "get_model"):
-                    estimates_list = ['drums', 'bass', 'other', 'vocals']
+                    estimates_list = ['drums', 'bass', 'others', 'vocals']
 
                 if isinstance(model, torch.nn.Module):
-                    print("rfwerfwfwefwefwefefwef")
                     source_name_mapping = {
-                        "Other Audio": "vocals",
-                        "Bass Only": "other",
+                        "Others Audio": "vocals",
+                        "Bass Only": "others",
                         "Drums Only": "drums",
                         "Vocals Only": "bass"
                     }
@@ -240,16 +235,14 @@ class AudioAnalysis(AudioNodeBase):
                     source_name_mapping = {
                         "Drums Only": "drums",
                         "Bass Only": "bass",
-                        "Other Audio": "other",
+                        "Others Audio": "others",
                         "Vocals Only": "vocals"
                     }
     
-                print(f"estimate liste = {estimates_list[0], estimates_list[1], estimates_list[2], estimates_list[3]}")
                 source_name = source_name_mapping.get(analysis_mode)
                 if source_name is not None:
                     try:
                         source_index = estimates_list.index(source_name)
-                        print(f"THE INDEX IS : {source_index}")
                         processed_waveform = estimates[source_index]
                         print(colored("Checking sources in processed_waveform:", 'blue'))
                     except ValueError:
