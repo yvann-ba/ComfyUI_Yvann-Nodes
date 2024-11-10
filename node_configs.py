@@ -16,31 +16,30 @@ def add_node_config(node_name, config):
 
 NODE_CONFIGS = {}
 
-add_node_config("IPAdapterAudioReactive", {
+add_node_config("AudioIPAdapterTransitions", {
     "BASE_DESCRIPTION": """
-Receives audio-reactive weights to control blending and switching between images based on audio peaks.\n
+Receives "peaks_weights" from "Audio Peaks Detection" Node to control blending and switching between images based on audio peaks.\n
 Returns images and associated weights to use with two IPAdapter batches, inspired by "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus).
 
 **Inputs:**
 
-- **images**: Batch of images for transitions; each switches on an audio peak
-- **audio_weights**: List of audio-reactive weights from the "Audio Reactive" node
+- **images**: Batch of images for transitions; each switches on an audio peak, the inputs images loop to match the number of peaks
+- **peaks_weights**: List of audio peaks from "Audio Peaks Detection" Node
 
 **Parameters:**
 
-- **blend_mode**: Blending timing function; different modes smooth weights differently
-- **transition_length**: Frames over which to blend between images
-- **threshold**: Minimum height for a peak to be considered
-- **image_2**: The ending image for a transition, connect it to the second IPadapter batch in the image input
-- **max_IPA_weight**: the range end value for IPAdapter weights, 1 by default, 1.3 for strong style transfer
+- **blend_mode**: Blending timing function; each modes smooth weights in a different way
+- **transitions_length**: Number of frames used to blend between images
+- **min_IPA_weight**: Affect "weights" and "weights_invert" list; correspond to the min weights that IPA gonna applies on each scheduled frame
+- **max_IPA_weight**: Same as "min_IPA_weight" but for max
 
 **Outputs:**
 
 - **image_1**: Starting image for a transition; connect to first IPAdapter batch image input
 - **weights**: Blending weights for image transitions; connect to first IPAdapter batch weight input
 - **image_2**: Ending image for a transition; connect to second IPAdapter batch image input
-- **weights_invert**: Inverse blending weights; connect to second IPAdapter batch weight input
-- **graph_audio_index**: Visualization of audio weights, detected peaks, and image transitions
+- **weights_invert**: Inversed weights; connect to second IPAdapter batch weight input
+- **graph_transitions**: Visualization of weights transitions scheduled over frames
 """
 })
 
@@ -53,20 +52,20 @@ Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix
 
 **Inputs:**
 
-- **audio_separation_model**: Load audio seperation model by the node in the node pack 
+- **audio_separation_model**: Load model from "Load Audio Separation Model" Node, currently support HybridDemucs and Open-Unmix
 - **audio**: Input audio file
-- **batch_size**: Number of audio frames to process
-- **fps**: Frames per second for processing audio weights; should match your animation's fps
+- **batch_size**: Number of frames to associates audio weights with
+- **fps**: Frames per second for processing audio weights
 
 **Parameters:**
 
 - **analysis_mode**: Selects the audio component to analyze
-- **threshold**: Only weights above this value pass through
+- **threshold**: Only weights detected in the audio above this value pass through
 - **multiply**: Amplifies the weights by this factor, applied before normalization
 
 **Outputs:**
 
-- **graph_audio**: Image displaying a graph of the audio weights over time
+- **graph_audio**: Image displaying a graph of the audio weights over each frames
 - **processed_audio**: The separated or processed audio (e.g., drums, vocals) used in the analysis
 - **original_audio**: The original audio input without modifications
 - **audio_weights**: A list of audio-reactive float weights based on the processed audio

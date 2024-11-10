@@ -130,7 +130,7 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 			plt.plot(range(0, len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
 			plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transitions')
 
-			plt.xlabel('Frame Number')
+			plt.xlabel('Frames')
 			plt.title('Image Transitions with Blending Weights')
 			plt.legend()
 			plt.grid(True)

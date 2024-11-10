@@ -57,7 +57,7 @@ class AudioPeaksDetection(AudioNodeBase):
             plt.plot(range(0, len(audio_weights)), audio_weights, label='Audio Weights', color='blue', alpha=0.5)
             plt.scatter(peaks, audio_weights[peaks], color='red', label='Detected Peaks')
 
-            plt.xlabel('Frame Number')
+            plt.xlabel('Frames')
             plt.ylabel('Audio Weights')
             plt.title('Audio Weights and Detected Peaks')
             plt.legend()
