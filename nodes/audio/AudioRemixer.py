@@ -22,7 +22,7 @@ class AudioRemixer(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
+                "audio_separation_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
                 "Bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
                 "Drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
@@ -32,12 +32,13 @@ class AudioRemixer(AudioNodeBase):
         }
     
     RETURN_TYPES = ("AUDIO",)
-    RETURN_NAMES = ("merge_audio",)
+    RETURN_NAMES = ("merged_audio",)
     FUNCTION = "main"
 
 
-    def main(self, model, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[torch.Tensor]:
+    def main(self, audio_separation_model, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[torch.Tensor]:
     
+        model = audio_separation_model
         # 1. Prepare audio and device
         device, waveform = self.prepare_audio_and_device(audio)
 
@@ -90,18 +91,18 @@ class AudioRemixer(AudioNodeBase):
             sources_list = model.sources
 
         else:
-            print(colored("Unrecognized model type.", 'red'))
+            print(colored("Unrecognized model type", 'red'))
             return None, []
 
         return sources, sources_list
 
 
     def process_and_merge_audio(self, sources: torch.Tensor, sources_list: list[str], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> torch.Tensor:
-        """Adjusts source volumes and merges them into a single audio output."""
+        """Adjusts source volumes and merges them into a single audio output"""
         required_sources = ['bass', 'drums', 'other', 'vocals']
         for source in required_sources:
             if source not in sources_list:
-                print(colored(f"Warning: '{source}' not found in sources_list.", 'yellow'))
+                print(colored(f"Warning: '{source}' not found in sources_list", 'yellow'))
 
         # Adjust volume levels
         Drums_volume = self.adjust_volume_range(Drums_volume)

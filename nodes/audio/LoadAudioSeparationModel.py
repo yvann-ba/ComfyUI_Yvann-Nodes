@@ -23,8 +23,8 @@ class LoadAudioSeparationModel(AudioNodeBase):
         }
 
     RETURN_TYPES = ("AUDIO_SEPARATION_MODEL",)
-    RETURN_NAMES = ("model",)
-    FUNCTION: str = "main"
+    RETURN_NAMES = ("audio_separation_model",)
+    FUNCTION = "main"
     
     def load_OpenUnmix(self, model):
         device = mm.get_torch_device()
@@ -39,7 +39,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
             try:
                 separator = torch.hub.load('sigsep/open-unmix-pytorch', 'umxl', device='cpu')
             except RuntimeError as e:
-                print(f"Error during download model : {e}")
+                print(f"Failed to download model : {e}")
                 return None
             torch.save(separator.state_dict(), model_path)
             print(f"Model saved to: {model_path}")
@@ -54,26 +54,15 @@ class LoadAudioSeparationModel(AudioNodeBase):
         return (separator,)
     
     def load_HDemucs(self):
-    
-        device: torch.device = mm.get_torch_device()
-
+        
         bundle: Any = HDEMUCS_HIGH_MUSDB_PLUS
-        # model: torch.nn.Module = bundle.get_model()
-        # model.to(device)
-        # self.model_sample_rate: int = bundle.sample_rate
         print("Hybrid Demucs model is loaded")
         return (bundle,)
 
 
-    def main(self, model) -> None:
+    def main(self, model):
 
         if model == "Open-Unmix":
-            print("Open-Unmix selected")
             return (self.load_OpenUnmix(model))
-             
-        elif model == "Hybrid Demucs":
-            print("Hybrid Demucs selected")
-            return (self.load_HDemucs())
         else:
-            print("Invalid selection")
-
+            return (self.load_HDemucs())

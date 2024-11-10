@@ -9,33 +9,33 @@ class AudioControlNetSchedule(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_signal": ("FLOAT", {"forceInput": True}),
+                "any_audio_weights": ("FLOAT", {"forceInput": True}),
                 "smooth": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_range": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 0.9}),
-                "max_range": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 1.0}),
+                "min_range": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 0.99, "step": 0.01}),
+                "max_range": ("FLOAT", {"default": 1.0, "min": 0.01, "max": 1.0,  "step": 0.01}),
             }
         }
 
     RETURN_TYPES = ("FLOAT",)
     RETURN_NAMES = ("processed_weights",)
-    FUNCTION = "process_audio_signal"
+    FUNCTION = "process_any_audio_weights"
 
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-    def process_audio_signal(self, audio_signal, smooth, min_range, max_range):
-        if not isinstance(audio_signal, (list, np.ndarray)):
-            print("Invalid audio_signal input")
+    def process_any_audio_weights(self, any_audio_weights, smooth, min_range, max_range):
+        if not isinstance(any_audio_weights, (list, np.ndarray)):
+            print("Invalid any_audio_weights input")
             return None
 
-        audio_signal = np.array(audio_signal, dtype=np.float32)
+        any_audio_weights = np.array(any_audio_weights, dtype=np.float32)
 
         # Apply smoothing
-        smoothed_signal = np.zeros_like(audio_signal)
-        for i in range(len(audio_signal)):
+        smoothed_signal = np.zeros_like(any_audio_weights)
+        for i in range(len(any_audio_weights)):
             if i == 0:
-                smoothed_signal[i] = audio_signal[i]
+                smoothed_signal[i] = any_audio_weights[i]
             else:
-                smoothed_signal[i] = smoothed_signal[i-1] * smooth + audio_signal[i] * (1 - smooth)
+                smoothed_signal[i] = smoothed_signal[i-1] * smooth + any_audio_weights[i] * (1 - smooth)
 
         # Normalize the smoothed signal
         min_val = np.min(smoothed_signal)
