@@ -124,14 +124,14 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 		# Generate visualization of transitions
 		try:
 			figsize = 12.0
-			plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
+			plt.figure(figsize=(figsize, 8), facecolor='white')
 
 			blending_weights_array = np.array(blending_weights_raw)
-			plt.plot(range(0, len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
-			plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transitions')
+			plt.plot(range(0, len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.7)
+			plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transition')
 
-			plt.xlabel('Frames')
-			plt.title('Image Transitions with Blending Weights')
+			plt.xlabel('Frames', fontsize=12)
+			plt.title('Images Transitions over Frames', fontsize=14)
 			plt.legend()
 			plt.grid(True)
 
@@ -140,7 +140,7 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 
 			# Ensure x-axis labels are integers
 			ax = plt.gca()
-			ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+			ax.xaxis.set_major_locator(MaxNLocator(integer=True, prune='both'))
 
 			with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
 				plt.savefig(tmpfile.name, format='png')
