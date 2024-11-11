@@ -55,9 +55,15 @@ class LoadAudioSeparationModel(AudioNodeBase):
     
     def load_HDemucs(self):
         
+        device = mm.get_torch_device()
         bundle: Any = HDEMUCS_HIGH_MUSDB_PLUS
         print("Hybrid Demucs model is loaded")
-        return (bundle,)
+        model_info = {
+            "demucs": True,
+            "model": bundle.get_model().to(device),
+            "sample_rate": bundle.sample_rate
+        }
+        return (model_info,)
 
 
     def main(self, model):
