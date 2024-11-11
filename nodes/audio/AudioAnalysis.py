@@ -36,30 +36,10 @@ class AudioAnalysis(AudioNodeBase):
     RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
     FUNCTION = "process_audio"
 
-
-
-    def download_and_load_model(self):
-        device = mm.get_torch_device()
-        try:
-            print("Loading Hybrid Demucs model...")
-            bundle = HDEMUCS_HIGH_MUSDB_PLUS
-            model = bundle.get_model().to(device)
-            model.sample_rate = bundle.sample_rate
-            model.sources = ['bass', 'drums', 'others', 'vocals']
-            model.eval()
-            print("Hybrid Demucs model loaded successfully")
-        except Exception as e:
-            print(f"Error in loading Hybrid Demucs model: {e}")
-        return model
-
-
-
     def _get_audio_frame(self, waveform: torch.Tensor, i: int, samples_per_frame: int) -> np.ndarray:
         start = i * samples_per_frame
         end = start + samples_per_frame
         return waveform[..., start:end].cpu().numpy().squeeze()
-
-
 
     def _rms_energy(self, waveform: torch.Tensor, batch_size: int, samples_per_frame: int) -> np.ndarray:
         try:
@@ -99,10 +79,10 @@ class AudioAnalysis(AudioNodeBase):
             sources = model(waveform.unsqueeze(0)).squeeze(0)
             sources_list = ['bass', 'drums', 'others', 'vocals']
 
-        elif hasattr(model, "get_model"):  # GDemucs model
+        elif "demucs" in model and model["demucs"]:  # GDemucs model
             print(colored("Applying GDemucs model on audio", 'green'))
-            self.model_sample_rate = model.sample_rate
-            model = model.get_model().to(device)
+            self.model_sample_rate = model["sample_rate"]
+            model = model["model"]
 
             if self.audio_sample_rate != self.model_sample_rate:
                 resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
@@ -258,7 +238,7 @@ class AudioAnalysis(AudioNodeBase):
                         "Drums Only": "drums",
                         "Vocals Only": "bass"
                     }
-                elif hasattr(model, "get_model"):
+                elif "demucs" in model and model["demucs"]:
                     source_name_mapping = {
                         "Drums Only": "drums",
                         "Bass Only": "bass",

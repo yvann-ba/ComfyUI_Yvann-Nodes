@@ -76,10 +76,10 @@ class AudioRemixer(AudioNodeBase):
             sources = model(waveform.unsqueeze(0)).squeeze(0)
             sources_list = ['bass', 'drums', 'other', 'vocals']
 
-        elif hasattr(model, "get_model"):  # GDemucs model
-            print(colored("Applying GDemucs model on audio.", 'green'))
-            self.model_sample_rate = model.sample_rate
-            model = model.get_model().to(device)
+        elif "demucs" in model and model["demucs"]:  # GDemucs model
+            print(colored("Applying GDemucs model on audio", 'green'))
+            self.model_sample_rate = model["sample_rate"]
+            model = model["model"]
 
             if self.audio_sample_rate != self.model_sample_rate:
                 resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
