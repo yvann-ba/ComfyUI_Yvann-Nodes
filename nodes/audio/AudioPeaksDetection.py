@@ -16,8 +16,8 @@ class AudioPeaksDetection(AudioNodeBase):
         return {
             "required": {
                 "audio_weights": ("FLOAT", {"forceInput": True}),
-                "peaks_threshold": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_peaks_distance": ("INT", {"default": 1, "min": 1,})
+                "peaks_threshold": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "min_peaks_distance": ("INT", {"default": 5, "min": 1, "max":100})
             }
         }
 
@@ -68,7 +68,7 @@ class AudioPeaksDetection(AudioNodeBase):
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-                plt.savefig(tmpfile.name, format='png')
+                plt.savefig(tmpfile.name, format='png', bbox_inches='tight')
                 tmpfile_path = tmpfile.name
             plt.close()
 

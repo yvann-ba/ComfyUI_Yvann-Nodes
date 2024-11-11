@@ -28,7 +28,7 @@ class AudioAnalysis(AudioNodeBase):
                 "audio": ("AUDIO", {"forceInput": True}),
                 "analysis_mode": (cls.analysis_modes,),
                 "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
-                "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
+                "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.01}),
             }
         }
         
@@ -351,9 +351,9 @@ class AudioAnalysis(AudioNodeBase):
                 label=f'{analysis_mode} Weights',
                 color='blue'
             )
-            plt.xlabel(f'Frames  (batch_size = {batch_size})')
+            plt.xlabel(f'Frames (batch_size = {batch_size})')
             plt.ylabel('Audio Weights')
-            plt.title(f'Audio Weights Over Frames({analysis_mode})')
+            plt.title(f'Audio Weights Over Frames ({analysis_mode})')
             plt.legend()
             plt.grid(True)
 
@@ -361,7 +361,7 @@ class AudioAnalysis(AudioNodeBase):
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-                plt.savefig(tmpfile.name, format='png')
+                plt.savefig(tmpfile.name, format='png', bbox_inches='tight')
                 tmpfile_path = tmpfile.name
             plt.close()
 

@@ -14,7 +14,7 @@ class InvertFloats(UtilsNodeBase):
 			}
 		}
 	RETURN_TYPES = ("FLOAT",)
-	RETURN_NAMES = ("floats_invert",)
+	RETURN_NAMES = ("inverted_floats",)
 	FUNCTION = "invert_floats"
 
 	def invert_floats(self, floats):

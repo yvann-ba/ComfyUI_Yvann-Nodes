@@ -18,9 +18,9 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 				"images": ("IMAGE", {"forceInput": True}),
 				"peaks_weights": ("FLOAT", {"forceInput": True}),
 				"blend_mode": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
-				"transitions_length": ("INT", {"default": 5, "min": 1, "step": 2}),
-				"min_IPA_weight": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
-				"max_IPA_weight": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0}),
+				"transitions_length": ("INT", {"default": 5, "min": 1, "max":100, "step": 2}),
+				"min_IPA_weight": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.99, "step": 0.01}),
+				"max_IPA_weight": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0, "step": 0.01}),
 			}
 		}
 
@@ -143,7 +143,7 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 			ax.xaxis.set_major_locator(MaxNLocator(integer=True, prune='both'))
 
 			with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-				plt.savefig(tmpfile.name, format='png')
+				plt.savefig(tmpfile.name, format='png', bbox_inches='tight')
 				tmpfile_path = tmpfile.name
 			plt.close()
 
