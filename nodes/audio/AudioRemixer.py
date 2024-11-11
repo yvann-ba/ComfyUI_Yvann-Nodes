@@ -22,7 +22,7 @@ class AudioRemixer(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_separation_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
+                "audio_sep_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
                 "Bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
                 "Drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
@@ -36,9 +36,9 @@ class AudioRemixer(AudioNodeBase):
     FUNCTION = "main"
 
 
-    def main(self, audio_separation_model, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[torch.Tensor]:
+    def main(self, audio_sep_model, audio: Dict[str, torch.Tensor], Drums_volume: float, Vocals_volume: float, Bass_volume: float, Other_volume: float) -> tuple[torch.Tensor]:
     
-        model = audio_separation_model
+        model = audio_sep_model
         # 1. Prepare audio and device
         device, waveform = self.prepare_audio_and_device(audio)
 

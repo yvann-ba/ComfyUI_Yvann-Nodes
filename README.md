@@ -1,5 +1,5 @@
 # 👁️ ComfyUI_Yvann-Nodes  [![Instagram](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=instagram&logoColor=E4405F)](https://www.instagram.com/yvann.mp4/) [![YouTube](https://img.shields.io/badge/yvann.mp4-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann.mp4)
-AAAAAAAAAAAAA
+
 #### Made with the help of [Lilien](https://github.com/Lilien86) [![X Badge](https://img.shields.io/badge/lilien.rig-white?style=flat&logo=x&logoColor=black)](https://x.com/Lilien_RIG)
 
 #### **With this pack of nodes, you can analyze audio, extract drums, bass, vocal tracks, and use the scheduled masks and weights to create AI generated audio-reactive animations in ComfyUI**

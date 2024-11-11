@@ -22,7 +22,7 @@ class AudioAnalysis(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_separation_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
+                "audio_sep_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "batch_size": ("INT", {"forceInput": True}),
                 "fps": ("FLOAT", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
@@ -32,8 +32,8 @@ class AudioAnalysis(AudioNodeBase):
             }
         }
         
-    RETURN_TYPES = ("IMAGE", "AUDIO", "AUDIO", "FLOAT",)
-    RETURN_NAMES = ("graph_audio", "processed_audio", "original_audio", "audio_weights")
+    RETURN_TYPES = ("AUDIO", "AUDIO", "FLOAT", "IMAGE")
+    RETURN_NAMES = ("processed_audio", "original_audio", "audio_weights", "graph_audio")
     FUNCTION = "process_audio"
 
     def _get_audio_frame(self, waveform: torch.Tensor, i: int, samples_per_frame: int) -> np.ndarray:
@@ -184,7 +184,7 @@ class AudioAnalysis(AudioNodeBase):
         
         return audio
 
-    def process_audio(self, audio_separation_model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
+    def process_audio(self, audio_sep_model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
         
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
@@ -194,7 +194,7 @@ class AudioAnalysis(AudioNodeBase):
             audio = self.convert_audio_format(audio, 1)
             isMono = True
 
-        model = audio_separation_model
+        model = audio_sep_model
         waveform = audio['waveform']
         sample_rate = audio['sample_rate']
         original_sample_rate = audio['sample_rate']
@@ -358,4 +358,4 @@ class AudioAnalysis(AudioNodeBase):
             self.convert_audio_format(processed_audio, 2)
             self.convert_audio_format(original_audio, 2)
 
-        return (weights_graph, processed_audio, original_audio, rounded_audio_weights)
+        return (processed_audio, original_audio, rounded_audio_weights, weights_graph)

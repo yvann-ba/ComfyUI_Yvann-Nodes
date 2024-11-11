@@ -23,7 +23,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
         }
 
     RETURN_TYPES = ("AUDIO_SEPARATION_MODEL",)
-    RETURN_NAMES = ("audio_separation_model",)
+    RETURN_NAMES = ("audio_sep_model",)
     FUNCTION = "main"
     
     def load_OpenUnmix(self, model):

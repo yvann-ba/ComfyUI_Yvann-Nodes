@@ -17,7 +17,7 @@ class AudioAnimateDiffSchedule(AudioNodeBase):
         }
 
     RETURN_TYPES = ("FLOAT",)
-    RETURN_NAMES = ("processed_weights",)
+    RETURN_NAMES = ("float_val",)
     FUNCTION = "process_any_audio_weights"
 
     CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
