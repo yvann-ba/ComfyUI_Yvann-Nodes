@@ -48,7 +48,7 @@ class AudioControlNetSchedule(AudioNodeBase):
         # Rescale to specified range
         rescaled_signal = normalized_signal * (max_range - min_range) + min_range
         rescaled_signal.tolist()
-        rounded_rescaled_signal = [round(elem, 3) for elem in rescaled_signal]
+        rounded_rescaled_signal = [round(elem, 6) for elem in rescaled_signal]
 
         return (rounded_rescaled_signal,)
 

@@ -28,7 +28,7 @@ class AudioAnalysis(AudioNodeBase):
                 "audio": ("AUDIO", {"forceInput": True}),
                 "analysis_mode": (cls.analysis_modes,),
                 "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
-                "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1}),
+                "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.01}),
             }
         }
         
@@ -50,7 +50,7 @@ class AudioAnalysis(AudioNodeBase):
                     rms = 0.0
                 else:
                     rms = np.sqrt(np.mean(frame ** 2))
-                    rms = round(rms, 4)
+                    rms = round(rms, 6)
                 rms_values.append(rms)
             return np.array(rms_values)
         except Exception as e:
@@ -331,9 +331,9 @@ class AudioAnalysis(AudioNodeBase):
                 label=f'{analysis_mode} Weights',
                 color='blue'
             )
-            plt.xlabel(f'Frame Number (Batch Size = {batch_size})')
-            plt.ylabel('Weights')
-            plt.title(f'Processed Audio Weights ({analysis_mode})')
+            plt.xlabel(f'Frames (batch_size = {batch_size})')
+            plt.ylabel('Audio Weights')
+            plt.title(f'Audio Weights Over Frames ({analysis_mode})')
             plt.legend()
             plt.grid(True)
 
@@ -341,18 +341,18 @@ class AudioAnalysis(AudioNodeBase):
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-                plt.savefig(tmpfile.name, format='png')
+                plt.savefig(tmpfile.name, format='png', bbox_inches='tight')
                 tmpfile_path = tmpfile.name
             plt.close()
 
             weights_graph = Image.open(tmpfile_path).convert("RGB")
             weights_graph = np.array(weights_graph).astype(np.float32) / 255.0
-            weights_graph = torch.from_numpy(weights_graph).permute(2, 0, 1).unsqueeze(0).permute(0, 2, 3, 1)
+            weights_graph = torch.from_numpy(weights_graph).unsqueeze(0)
         except Exception as e:
             print(f"Error in creating weights graph: {e}")
             weights_graph = torch.zeros((1, 400, 300, 3))
 
-        rounded_audio_weights = [round(float(x), 3) for x in audio_weights_processed]
+        rounded_audio_weights = [round(float(x), 6) for x in audio_weights_processed]
 
         if (isMono == True):
             self.convert_audio_format(processed_audio, 2)

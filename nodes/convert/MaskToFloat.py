@@ -33,7 +33,7 @@ class MaskToFloat(ConvertNodeBase):
 
 		for i in range(batch_size):
 			single_mask = mask[i]  # shape [H, W]
-			mean_value = round(single_mask.mean().item(), 3)  # Compute mean pixel value
+			mean_value = round(single_mask.mean().item(), 6)  # Compute mean pixel value
 			output_values.append(mean_value)
 
 		return (output_values,)

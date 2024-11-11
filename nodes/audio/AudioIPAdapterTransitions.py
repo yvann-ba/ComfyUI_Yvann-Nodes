@@ -18,9 +18,9 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 				"images": ("IMAGE", {"forceInput": True}),
 				"peaks_weights": ("FLOAT", {"forceInput": True}),
 				"blend_mode": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
-				"transitions_length": ("INT", {"default": 5, "min": 1, "step": 2}),
-				"min_IPA_weight": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.9}),
-				"max_IPA_weight": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0}),
+				"transitions_length": ("INT", {"default": 5, "min": 1, "max":100, "step": 2}),
+				"min_IPA_weight": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.99, "step": 0.01}),
+				"max_IPA_weight": ("FLOAT", {"default": 1.0, "min": 0.1, "max": 2.0, "step": 0.01}),
 			}
 		}
 
@@ -124,14 +124,14 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 		# Generate visualization of transitions
 		try:
 			figsize = 12.0
-			plt.figure(figsize=(figsize, figsize * 0.6), facecolor='white')
+			plt.figure(figsize=(figsize, 8), facecolor='white')
 
 			blending_weights_array = np.array(blending_weights_raw)
-			plt.plot(range(0, len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.5)
-			plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transitions')
+			plt.plot(range(0, len(blending_weights_array)), blending_weights_array, label='Blending Weights', color='green', alpha=0.7)
+			plt.scatter(change_frames, blending_weights_array[change_frames], color='red', label='Transition')
 
-			plt.xlabel('Frame Number')
-			plt.title('Image Transitions with Blending Weights')
+			plt.xlabel('Frames', fontsize=12)
+			plt.title('Images Transitions over Frames', fontsize=14)
 			plt.legend()
 			plt.grid(True)
 
@@ -140,10 +140,10 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 
 			# Ensure x-axis labels are integers
 			ax = plt.gca()
-			ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+			ax.xaxis.set_major_locator(MaxNLocator(integer=True, prune='both'))
 
 			with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-				plt.savefig(tmpfile.name, format='png')
+				plt.savefig(tmpfile.name, format='png', bbox_inches='tight')
 				tmpfile_path = tmpfile.name
 			plt.close()
 
