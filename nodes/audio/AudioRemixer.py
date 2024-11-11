@@ -24,10 +24,10 @@ class AudioRemixer(AudioNodeBase):
             "required": {
                 "audio_separation_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
                 "audio": ("AUDIO", {"forceInput": True}),
-                "bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
                 "drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
-                "other_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
                 "vocals_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
+                "bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
+                "others_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
             }
         }
     
@@ -36,7 +36,7 @@ class AudioRemixer(AudioNodeBase):
     FUNCTION = "main"
 
 
-    def main(self, audio_separation_model, audio: Dict[str, torch.Tensor], drums_volume: float, vocals_volume: float, bass_volume: float, other_volume: float) -> tuple[torch.Tensor]:
+    def main(self, audio_separation_model, audio: Dict[str, torch.Tensor], drums_volume: float, vocals_volume: float, bass_volume: float, others_volume: float) -> tuple[torch.Tensor]:
     
         model = audio_separation_model
         # 1. Prepare audio and device
@@ -49,7 +49,7 @@ class AudioRemixer(AudioNodeBase):
             return None  # Return if the model is unrecognized
 
         # 3. Adjust volumes and merge sources
-        merge_audio = self.process_and_merge_audio(sources, sources_list, drums_volume, vocals_volume, bass_volume, other_volume)
+        merge_audio = self.process_and_merge_audio(sources, sources_list, drums_volume, vocals_volume, bass_volume, others_volume)
 
         return (merge_audio,)
 
@@ -97,7 +97,7 @@ class AudioRemixer(AudioNodeBase):
         return sources, sources_list
 
 
-    def process_and_merge_audio(self, sources: torch.Tensor, sources_list: list[str], drums_volume: float, vocals_volume: float, bass_volume: float, other_volume: float) -> torch.Tensor:
+    def process_and_merge_audio(self, sources: torch.Tensor, sources_list: list[str], drums_volume: float, vocals_volume: float, bass_volume: float, others_volume: float) -> torch.Tensor:
         """Adjusts source volumes and merges them into a single audio output"""
         required_sources = ['bass', 'drums', 'other', 'vocals']
         for source in required_sources:
@@ -108,10 +108,10 @@ class AudioRemixer(AudioNodeBase):
         drums_volume = self.adjust_volume_range(drums_volume)
         vocals_volume = self.adjust_volume_range(vocals_volume)
         bass_volume = self.adjust_volume_range(bass_volume)
-        other_volume = self.adjust_volume_range(other_volume)
+        others_volume = self.adjust_volume_range(others_volume)
 
         # Convert to tuple and blend
-        audios = self.sources_to_tuple(drums_volume, vocals_volume, bass_volume, other_volume, dict(zip(sources_list, sources)))
+        audios = self.sources_to_tuple(drums_volume, vocals_volume, bass_volume, others_volume, dict(zip(sources_list, sources)))
         return self.blend_audios([audios[0]["waveform"], audios[1]["waveform"], audios[2]["waveform"], audios[3]["waveform"]])
 
     def adjust_volume_range(self, value):
@@ -135,7 +135,7 @@ class AudioRemixer(AudioNodeBase):
             "sample_rate": self.model_sample_rate,
         }
 
-    def sources_to_tuple(self, drums_volume, vocals_volume, bass_volume, other_volume, sources: Dict[str, torch.Tensor]) -> Tuple[Any, Any, Any, Any]:
+    def sources_to_tuple(self, drums_volume, vocals_volume, bass_volume, others_volume, sources: Dict[str, torch.Tensor]) -> Tuple[Any, Any, Any, Any]:
 
         threshold = 0.00
 
@@ -152,7 +152,7 @@ class AudioRemixer(AudioNodeBase):
                 }
             )
 
-        for i, volume in enumerate([bass_volume, drums_volume, other_volume, vocals_volume]):
+        for i, volume in enumerate([bass_volume, drums_volume, others_volume, vocals_volume]):
             waveform = outputs[i]["waveform"]
             mask = torch.abs(waveform) > threshold
             outputs[i]["waveform"] = waveform * volume * mask.float() + waveform * (1 - mask.float())
