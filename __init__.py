@@ -44,7 +44,7 @@ from .nodes.audio.AudioAnalysis import AudioAnalysis
 from .nodes.audio.AudioPeaksDetection import AudioPeaksDetection
 from .nodes.audio.AudioIPAdapterTransitions import AudioIPAdapterTransitions
 from .nodes.audio.AudioPromptSchedule import AudioPromptSchedule
-from .nodes.audio.AudioAnimateDiffSchedule import AudioAnimateDiffSchedule
+from .nodes.audio.EditAudioWeights import EditAudioWeights
 from .nodes.audio.AudioRemixer import AudioRemixer
 #from .nodes.audio.AudioControlNetSchedule import AudioControlNetSchedule
 
@@ -62,7 +62,7 @@ NODE_CLASS_MAPPINGS = {
     "Audio Peaks Detection": AudioPeaksDetection,
     "Audio IPAdapter Transitions": AudioIPAdapterTransitions,
     "Audio Prompt Schedule": AudioPromptSchedule,
-    "Audio AnimateDiff Schedule": AudioAnimateDiffSchedule,
+    "Edit Audio Weights": EditAudioWeights,
     "Audio Remixer": AudioRemixer,
     
     "Repeat Image To Count": RepeatImageToCount,
@@ -82,7 +82,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Audio Peaks Detection": "Audio Peaks Detection",
     "Audio IPAdapter Transitions": "Audio IPAdapter Transitions",
     "Audio Prompt Schedule": "Audio Prompt Schedule",
-    "Audio AnimateDiff Schedule": "Audio AnimateDiff Schedule",
+    "Edit Audio Weights": "Edit Audio Weights",
     "Audio Remixer": "Audio Remixer",
     
     "Repeat Image To Count": "Repeat Image To Count",

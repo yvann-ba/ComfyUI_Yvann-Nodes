@@ -10,7 +10,7 @@ const NODE_COLORS = {
     "Audio Prompt Schedule": "blue",
     "Audio Peaks Detection": "blue",
     "Audio Remixer": "blue",
-    "Audio AnimateDiff Schedule": "blue",
+    "Edit Audio Weights": "blue",
     "Audio ControlNet Schedule": "blue",
     "Load Audio Separation Model": "blue",
     "Floats To Weights Strategy": "blue",

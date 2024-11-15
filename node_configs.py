@@ -131,10 +131,11 @@ add an empty line between each individual prompts
     """
 })
 
-add_node_config("AudioAnimateDiffSchedule", {
+add_node_config("EditAudioWeights", {
     "BASE_DESCRIPTION": """
 Smooths and rescales audio weights, Connect to "Multival [Float List]"<br>
-from [AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) to schedule motion with audio
+from [AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) to schedule motion with audio<br>
+or to "Latent Keyframe From List" to schedule ControlNet Apply
 
 **Inputs:**
 
