@@ -32,7 +32,7 @@ class EditAudioWeights(AudioNodeBase):
             print("Invalid any_audio_weights input")
             return None
 
-        any_audio_weights = np.array(any_audio_weights)
+        any_audio_weights = np.array(any_audio_weights, dtype=np.float32)
 
         # Apply smoothing
         smoothed_signal = np.zeros_like(any_audio_weights)
@@ -52,7 +52,9 @@ class EditAudioWeights(AudioNodeBase):
 
         # Rescale to specified range
         rescaled_signal = normalized_signal * (max_range - min_range) + min_range
-        rounded_rescaled_signal = [round(elem, 6) for elem in rescaled_signal]
+        rescaled_signal.tolist()
+
+        rounded_rescaled_signal = [round(float(elem), 6) for elem in rescaled_signal]
 
         # Plot the rescaled signal
         try:

@@ -54,6 +54,7 @@ from .nodes.utils.FloatsVisualizer import FloatsVisualizer
 
 from .nodes.convert.MaskToFloat import MaskToFloat
 from .nodes.convert.FloatsToWeightsStrategy import FloatsToWeightsStrategy
+from .nodes.convert.FloatToInt import FloatToInt
 
 #"Audio ControlNet Schedule": AudioControlNetSchedule,
 NODE_CLASS_MAPPINGS = {
@@ -71,6 +72,7 @@ NODE_CLASS_MAPPINGS = {
 
     "Mask To Float": MaskToFloat,
     "Floats To Weights Strategy": FloatsToWeightsStrategy,
+    "Float to Int": FloatToInt
 }
 
 WEB_DIRECTORY = "./web/js"
@@ -91,6 +93,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
     "Mask To Float":  "Mask To Float",
     "Floats To Weights Strategy": "Floats To Weights Strategy",
+    "Float to Int" : "Float to Int",
 }
 
 Yvann_Print = """
