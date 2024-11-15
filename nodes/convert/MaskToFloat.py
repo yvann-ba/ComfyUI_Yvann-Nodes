@@ -1,10 +1,10 @@
 from ... import Yvann
 
 # To do the opposite (Float To Mask), you can install the node pack "ComfyUI-KJNodes"
-class UtilsNodeBase(Yvann):
-	CATEGORY = "👁️ Yvann Nodes/🛠️ Utils"
+class ConvertNodeBase(Yvann):
+	CATEGORY = "👁️ Yvann Nodes/🔄 Convert"
 
-class Mask_To_Float_Yvann(UtilsNodeBase):
+class MaskToFloat(ConvertNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {
@@ -33,7 +33,7 @@ class Mask_To_Float_Yvann(UtilsNodeBase):
 
 		for i in range(batch_size):
 			single_mask = mask[i]  # shape [H, W]
-			mean_value = round(single_mask.mean().item(), 3)  # Compute mean pixel value
+			mean_value = round(single_mask.mean().item(), 6)  # Compute mean pixel value
 			output_values.append(mean_value)
 
 		return (output_values,)

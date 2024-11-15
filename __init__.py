@@ -39,35 +39,61 @@ class Yvann(metaclass=CombinedMeta):
         desc += footer
         return desc
 
-from .nodes.audio.Audio_Reactive_Yvann import Audio_Reactive_Yvann
-from .nodes.audio.IPAdapter_Audio_Reactive_Yvann import IPAdapter_Audio_Reactive_Yvann
-from .nodes.audio.Audio_PromptSchedule_Yvann import Audio_PromptSchedule_Yvann
-from .nodes.utils.Floats_To_Weights_Strategy_Yvann import Floats_To_Weights_Strategy_Yvann
-from .nodes.utils.Invert_Floats_Yvann import Invert_Floats_Yvann
-from .nodes.utils.Floats_Visualizer_Yvann import Floats_Visualizer_Yvann
-from .nodes.utils.Mask_To_Float_Yvann import Mask_To_Float_Yvann
+from .nodes.audio.LoadAudioSeparationModel import LoadAudioSeparationModel
+from .nodes.audio.AudioAnalysis import AudioAnalysis
+from .nodes.audio.AudioPeaksDetection import AudioPeaksDetection
+from .nodes.audio.AudioIPAdapterTransitions import AudioIPAdapterTransitions
+from .nodes.audio.AudioPromptSchedule import AudioPromptSchedule
+from .nodes.audio.EditAudioWeights import EditAudioWeights
+from .nodes.audio.AudioRemixer import AudioRemixer
+#from .nodes.audio.AudioControlNetSchedule import AudioControlNetSchedule
 
+from .nodes.utils.RepeatImageToCount import RepeatImageToCount
+from .nodes.utils.InvertFloats import InvertFloats
+from .nodes.utils.FloatsVisualizer import FloatsVisualizer
 
+from .nodes.convert.MaskToFloat import MaskToFloat
+from .nodes.convert.FloatsToWeightsStrategy import FloatsToWeightsStrategy
+from .nodes.convert.FloatToInt import FloatToInt
+
+#"Audio ControlNet Schedule": AudioControlNetSchedule,
 NODE_CLASS_MAPPINGS = {
-    "Audio Reactive | Yvann": Audio_Reactive_Yvann,
-    "IPAdapter Audio Reactive | Yvann": IPAdapter_Audio_Reactive_Yvann,
-    "Audio Prompt Schedule | Yvann": Audio_PromptSchedule_Yvann,
-    "Floats To Weights Strategy | Yvann": Floats_To_Weights_Strategy_Yvann,
-    "Invert Floats | Yvann": Invert_Floats_Yvann,
-    "Floats Visualizer | Yvann": Floats_Visualizer_Yvann,
-    "Mask To Float | Yvann": Mask_To_Float_Yvann,
+    "Load Audio Separation Model": LoadAudioSeparationModel,
+    "Audio Analysis": AudioAnalysis,
+    "Audio Peaks Detection": AudioPeaksDetection,
+    "Audio IPAdapter Transitions": AudioIPAdapterTransitions,
+    "Audio Prompt Schedule": AudioPromptSchedule,
+    "Edit Audio Weights": EditAudioWeights,
+    "Audio Remixer": AudioRemixer,
+    
+    "Repeat Image To Count": RepeatImageToCount,
+    "Invert Floats": InvertFloats,
+    "Floats Visualizer": FloatsVisualizer,
+
+    "Mask To Float": MaskToFloat,
+    "Floats To Weights Strategy": FloatsToWeightsStrategy,
+    "Float to Int": FloatToInt
 }
 
 WEB_DIRECTORY = "./web/js"
 
+#"Audio ControlNet Schedule": "Audio ControlNet Schedule",
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Audio Reactive | Yvann": "Audio Reactive | Yvann",
-    "IPAdapter Audio Reactive | Yvann": "IPAdapter Audio Reactive | Yvann",
-    "Audio Prompt Schedule | Yvann": "Audio Prompt Schedule | Yvann",
-    "Floats to Weights Strategy | Yvann": "Floats to Weights Strategy | Yvann",
-    "Invert Floats | Yvann": "Invert Floats | Yvann",
-    "Floats Visualizer | Yvann": "Floats Visualizer | Yvann",
-    "Mask To Float | Yvann":  "Mask To Float | Yvann",
+    "Load Audio Separation Model": "Load Audio Separation Model",
+    "Audio Analysis": "Audio Analysis",
+    "Audio Peaks Detection": "Audio Peaks Detection",
+    "Audio IPAdapter Transitions": "Audio IPAdapter Transitions",
+    "Audio Prompt Schedule": "Audio Prompt Schedule",
+    "Edit Audio Weights": "Edit Audio Weights",
+    "Audio Remixer": "Audio Remixer",
+    
+    "Repeat Image To Count": "Repeat Image To Count",
+    "Invert Floats": "Invert Floats",
+    "Floats Visualizer": "Floats Visualizer",
+
+    "Mask To Float":  "Mask To Float",
+    "Floats To Weights Strategy": "Floats To Weights Strategy",
+    "Float to Int" : "Float to Int",
 }
 
 Yvann_Print = """

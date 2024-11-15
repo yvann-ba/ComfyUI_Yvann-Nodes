@@ -3,12 +3,12 @@ from ... import Yvann
 class AudioNodeBase(Yvann):
 	CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
-class Audio_PromptSchedule_Yvann(AudioNodeBase):
+class AudioPromptSchedule(AudioNodeBase):
 	@classmethod
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"switch_index": ("FLOAT", {"forceInput": True}),
+				"peaks_index": ("STRING", {"forceInput": True}),
 				"prompts": ("STRING", {"default": "", "multiline": True}),
 			}
 		}
@@ -17,9 +17,10 @@ class Audio_PromptSchedule_Yvann(AudioNodeBase):
 	RETURN_NAMES = ("prompt_schedule",)
 	FUNCTION = "create_prompt_schedule"
 
-	def create_prompt_schedule(self, switch_index, prompts=""):
-		if isinstance(switch_index, float) or isinstance(switch_index, int):
-			switch_index = [int(switch_index)]
+	def create_prompt_schedule(self, peaks_index, prompts=""):
+		switch_index = peaks_index
+		if isinstance(switch_index, str):
+			switch_index = [int(idx.strip()) for idx in peaks_index.split(",")]
 		else:
 			switch_index = [int(idx) for idx in switch_index]
 

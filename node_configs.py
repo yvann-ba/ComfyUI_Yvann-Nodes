@@ -16,105 +16,185 @@ def add_node_config(node_name, config):
 
 NODE_CONFIGS = {}
 
-add_node_config("Audio_Reactive_Yvann", {
+add_node_config("LoadAudioSeparationModel", {
     "BASE_DESCRIPTION": """
-Analyzes audio input to generate audio-reactive weights and visualizations.\n
-It can extract specific elements from the audio, such as drums, vocals, bass, or analyze the full audio.\n
-Using AI-based audio separator [open-unmix](https://github.com/sigsep/open-unmix-pytorch), the parameters allows manual control over the audio weights
+Load an audio separation model, If unavailable :<br>
+downloads to `ComfyUI/models/audio_separation_model/
+
+**Parameters:**
+
+- **model**: Audio separation model to load
+  - [HybridDemucs](https://github.com/facebookresearch/demucs): Most accurate fastest and lightweight
+  - [OpenUnmix](https://github.com/sigsep/open-unmix-pytorch): Alternative model
+
+**Outputs:**
+
+- **audio_sep_model**: Loaded audio separation model<br>
+Connect it to "Audio Analysis" or "Audio Remixer"
+    """
+})
+
+add_node_config("AudioAnalysis", {
+    "BASE_DESCRIPTION": """
+Analyzes audio to generate reactive weights and graph<br>
+Can extract specific elements like drums, vocals, bass<br>
+Parameters allow manual control over audio weights
 
 **Inputs:**
 
+- **audio_sep_model**: Loaded model from "Load Audio Separation Model"
 - **audio**: Input audio file
-- **analysis_mode**: Selects the audio component to analyze
+- **batch_size**: Number of frames to associate with audio weights
+- **fps**: Frames per second for processing audio weights
 
 **Parameters:**
 
-- **batch_size**: Number of audio frames to process
-- **fps**: Frames per second for processing audio weights; should match your animation's fps
-- **threshold**: Only weights above this value pass through
-- **add**: Adds a constant value to all weights
-- **smooth**: Reduces sharp transitions between weights
-- **multiply**: Amplifies the weights by this factor
-- **add_range**: Expands the weights' dynamic range
-- **invert_weights**: Inverts the audio weights
+- **analysis_mode**: Select audio component to analyze
+- **threshold**: Minimum weight value to pass through
+- **multiply**: Amplification factor for weights before normalization
 
 **Outputs:**
 
-- **graph_audio**: Image displaying a graph of the audio weights over time
-- **processed_audio**: The separated or processed audio (e.g., drums, vocals) used in the analysis
-- **original_audio**: The original audio input without modifications
-- **audio_weights**: A list of audio-reactive float weights based on the processed audio
-"""
+- **graph_audio**: Graph image of audio weights over frames
+- **processed_audio**: Separated or processed audio (e.g., drums vocals)
+- **original_audio**: Original unmodified audio input
+- **audio_weights**: List of audio-reactive weights based on processed audio
+    """
 })
 
-add_node_config("IPAdapter_Audio_Reactive_Yvann", {
+add_node_config("AudioPeaksDetection", {
     "BASE_DESCRIPTION": """
-Receives audio-reactive weights to control blending and switching between images based on audio peaks.\n
-Returns images and associated weights to use with two IPAdapter batches, inspired by "IPAdapter Weights" from [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus).
+Detects peaks in audio weights based on a threshold and minimum distance<br>
+Identifies significant audio events to trigger visual changes or actions
 
 **Inputs:**
 
-- **images**: Batch of images for transitions; each switches on an audio peak
-- **audio_weights**: List of audio-reactive weights from the "Audio Reactive" node
+- **audio_weights**: "audio_weights" from "Audio Analysis"
 
 **Parameters:**
 
-- **timing**: Blending timing function; different modes smooth weights differently
-- **transition_frames**: Frames over which to blend between images
-- **threshold**: Minimum height for a peak to be considered
-- **distance**: Minimum frames between peaks
-- **prominence**: Relative importance of a peak
+- **peaks_threshold**: Threshold for peak detection
+- **min_peaks_distance**: Minimum frames between consecutive peaks<br>
+help remove close unwanted peaks around big peaks
 
 **Outputs:**
 
-- **switch_index**: Frame indices where image transitions occur; connect to "Audio Prompt Schedule" node
-- **image_1**: Starting image for a transition; connect to first IPAdapter batch image input
-- **weights**: Blending weights for image transitions; connect to first IPAdapter batch weight input
-- **image_2**: Ending image for a transition; connect to second IPAdapter batch image input
-- **weights_invert**: Inverse blending weights; connect to second IPAdapter batch weight input
-- **graph_audio_index**: Visualization of audio weights, detected peaks, and image transitions
-"""
+- **peaks_weights**: Binary list indicating peak presence (1 for peak 0 otherwise)
+- **peaks_alternate_weights**: Alternating binary list based on detected peaks
+- **peaks_index**: String of peak indices
+- **peaks_count**: Total number of detected peaks
+- **graph_peaks**: Visualization image of detected peaks over audio weights
+    """
 })
 
-add_node_config("Audio_PromptSchedule_Yvann", {
+add_node_config("AudioIPAdapterTransitions", {
     "BASE_DESCRIPTION": """
-Associates input prompts with floats into a scheduled prompt format.\n
-Connect the output to a batch prompt schedule from [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes).\n
-Make sure to include an empty lines between each differents prompts
+Uses "peaks_weights" from "Audio Peaks Detection" to control image transitions based on audio peaks<br>
+Outputs images and weights for two IPAdapter batches, logic from "IPAdapter Weights", [IPAdapter_Plus](https://github.com/cubiq/ComfyUI_IPAdapter_plus)
 
 **Inputs:**
 
-- **switch_index**: Indices where prompts will change (FLOAT)
-- **prompts**: Multiline string of prompts to use at each index
-
-**Outputs:**
-
-- **prompt_schedule**: String representation of the prompt schedule; associates each index with a prompt
-"""
-})
-
-add_node_config("Floats_To_Weights_Strategy_Yvann", {
-    "BASE_DESCRIPTION": """
-Converts a list of floats into an IPAdapter weights strategy.\n
-Use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Strategy" to pass audio weights or any float list to the IPAdapter pipeline.
-
-**Inputs:**
-
-- **floats**: List of float values to convert into a weights strategy
+- **images**: Batch of images for transitions, Loops images to match peak count
+- **peaks_weights**: List of audio peaks from "Audio Peaks Detection"
 
 **Parameters:**
 
-- **batch_size**: Number of frames to process
+- **blend_mode**: transition method applied to weights
+- **transitions_length**: Frames used to blend between images
+- **min_IPA_weight**: Minimum weight applied by IPAdapter per frame
+- **max_IPA_weight**: Maximum weight applied by IPAdapter per frame
 
 **Outputs:**
 
-- **WEIGHTS_STRATEGY**: Dictionary containing the weights strategy for IPAdapter
-"""
+- **image_1**: Starting image for transition Connect to first IPAdapter batch "image"
+- **weights**: Blending weights for transitions Connect to first IPAdapter batch "weight"
+- **image_2**: Ending image for transition Connect to second IPAdapter batch "image"
+- **weights_invert**: Inversed weights Connect to second IPAdapter batch "weight"
+- **graph_transitions**: Visualization of weight transitions over frames
+    """
 })
 
-add_node_config("Invert_Floats_Yvann", {
+add_node_config("AudioPromptSchedule", {
     "BASE_DESCRIPTION": """
-Inverts all individual values of a list of floats.
+Associates "prompts" with "peaks_index" into a scheduled format<br>
+Connect output to "batch prompt schedule" of [Fizz Nodes](https://github.com/FizzleDorf/ComfyUI_FizzNodes)<br>
+add an empty line between each individual prompts
+
+**Inputs:**
+
+- **peaks_index**: frames where peaks occurs from "Audio Peaks Detections" 
+- **prompts**: Multiline string of prompts for each index
+
+**Outputs:**
+
+- **prompt_schedule**: String mapping each audio index to a prompt
+    """
+})
+
+add_node_config("EditAudioWeights", {
+    "BASE_DESCRIPTION": """
+Smooths and rescales audio weights, Connect to "Multival [Float List]"<br>
+from [AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved) to schedule motion with audio<br>
+or to "Latent Keyframe From List" to schedule ControlNet Apply
+
+**Inputs:**
+
+- **any_audio_weights**: audio weights from "Audio Peaks Detection"<br>
+or "Audio Analysis", basically any *_weights audio
+
+**Parameters:**
+
+- **smooth**: Smoothing factor (0.0 to 1.0) Higher values result in smoother transitions
+- **min_range**: Minimum value of the rescaled weights<br>
+AnimateDiff multival works better between 0.9 and 1.3 range
+- **max_range**: Maximum value of the rescaled weights
+
+**Outputs:**
+
+- **float_val**: Smoothed and rescaled audio weights<br>
+connect it to AD multival to influence the motion with audio
+    """
+})
+
+add_node_config("AudioRemixer", {
+    "BASE_DESCRIPTION": """
+Modify input audio by adjusting the intensity of drums bass vocals or others elements
+
+**Inputs:**
+
+- **audio_sep_model**: Loaded model from "Load Audio Separation Model"
+- **audio**: Input audio file
+
+**Parameters:**
+
+- **bass_volume**: Adjusts bass volume
+- **drums_volume**: Adjusts drums volume
+- **others_volume**: Adjusts others elements' volume
+- **vocals_volume**: Adjusts vocals volume
+
+**Outputs:**
+
+- **merged_audio**: Composition of separated tracks with applied modifications
+    """
+})
+
+add_node_config("RepeatImageToCount", {
+    "BASE_DESCRIPTION": """
+ Repeats images N times, Cycles inputs if N > images
+**Inputs:**
+
+- **image**: Batch of input images to repeat
+- **count**: Number of repetitions
+
+**Outputs:**
+
+- **images**: Batch of repeated images matching the specified count
+    """
+})
+
+add_node_config("InvertFloats", {
+    "BASE_DESCRIPTION": """
+Inverts each value in a list of floats
 
 **Inputs:**
 
@@ -122,20 +202,20 @@ Inverts all individual values of a list of floats.
 
 **Outputs:**
 
-- **floats_invert**: Inverted list of float values
-"""
+- **inverted_floats**: Inverted list of float values
+    """
 })
 
-add_node_config("Floats_Visualizer_Yvann", {
+add_node_config("FloatsVisualizer", {
     "BASE_DESCRIPTION": """
-Generates a graph from one or more lists of floats to visually compare data.\n
-Useful for comparing audio weights from different Audio Reactive nodes.
+Generates a graph from floats for visual data comparison<br>
+Useful to compare audio weights
 
 **Inputs:**
 
-- **floats**: Primary list of float values to visualize
-- **floats_optional2**: (Optional) Second list of float values
-- **floats_optional3**: (Optional) Third list of float values
+- **floats**: Primary list of floats to visualize
+- **floats_optional1**: (Optional) Second list of floats
+- **floats_optional2**: (Optional) Third list of floats
 
 **Parameters:**
 
@@ -145,20 +225,36 @@ Useful for comparing audio weights from different Audio Reactive nodes.
 
 **Outputs:**
 
-- **visual_graph**: Image displaying the graph of the provided float sequences
-"""
+- **visual_graph**: Visual graph of provided floats
+    """
 })
 
-add_node_config("Mask_To_Float_Yvann", {
+add_node_config("MaskToFloat", {
     "BASE_DESCRIPTION": """
-Converts mask inputs into float values by computing the mean pixel value of each mask.
-
+Converts mask into float<br>
+works with batch of mask
 **Inputs:**
 
-- **mask**: Mask input to compute the float value from
+- **mask**: Mask input to convert
 
 **Outputs:**
 
-- **float**: Float representing the average value of the mask
-"""
+- **float**: Float value
+    """
+})
+
+add_node_config("FloatsToWeightsStrategy", {
+    "BASE_DESCRIPTION": """
+Converts a list of floats into an IPAdapter weights strategy format<br>
+Use with "IPAdapter Weights From Strategy" or "Prompt Schedule From Weights Strategy"<br>
+to integrate output into [IPAdapter](https://github.com/cubiq/ComfyUI_IPAdapter_plus) pipeline
+
+**Inputs:**
+
+- **floats**: List of float values to convert
+
+**Outputs:**
+
+- **WEIGHTS_STRATEGY**: Dictionary of the weights strategy
+    """
 })
