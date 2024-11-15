@@ -11,8 +11,8 @@ class AudioAnimateDiffSchedule(AudioNodeBase):
             "required": {
                 "any_audio_weights": ("FLOAT", {"forceInput": True}),
                 "smooth": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_range": ("FLOAT", {"default": 0.95, "min": 0.8, "max": 1.49, "step": 0.01}),
-                "max_range": ("FLOAT", {"default": 1.25, "min": 0.81, "max": 1.5, "step": 0.01}),
+                "min_range": ("FLOAT", {"default": 0.95, "min": 0.0, "max": 2.99, "step": 0.01}),
+                "max_range": ("FLOAT", {"default": 1.25, "min": 0.01, "max": 3, "step": 0.01}),
             }
         }
 
@@ -27,7 +27,7 @@ class AudioAnimateDiffSchedule(AudioNodeBase):
             print("Invalid any_audio_weights input")
             return None
 
-        any_audio_weights = np.array(any_audio_weights, dtype=np.float32)
+        any_audio_weights = np.array(any_audio_weights)
 
         # Apply smoothing
         smoothed_signal = np.zeros_like(any_audio_weights)
