@@ -14,24 +14,36 @@
 
 ## Workflows
 
-### AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps :
 
-##### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
-
-https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
+### Audio Reactive Images To Video :
 
 ##### Workflow File (download it and drop it into ComfyUI) 📜
-[AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
+[AudioReactive_ImagesToVideo_Yvann.json](AudioReactive_Workflows/AudioReactive_ImagesToVideo_Yvann.json)
 
-
-##### Youtube Tutorial (Click on the image)
-[![Video](https://img.youtube.com/vi/BiQHWKP3q0c/maxresdefault.jpg)](https://www.youtube.com/watch?v=BiQHWKP3q0c)
 ##### Workflow Preview
-![wf-screen-ipadapterswitchsd15](assets/wf_previews/Preview_AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.png)
-[CIVITAI Workflow Page](https://civitai.com/models/867298)
+![imagesToVidWF_Preview](https://github.com/user-attachments/assets/ba274901-9d50-477b-becf-7d48f6cdbbfc)
 
-##### Details ☝️🤓
-Synchronize any number of image inputs with audio input (e.g., switch images based on bass or drums) throughout your animation, with the help of IPAdapter to diffuse the style of your audio-reactive input images. There are also ControlNet included to control the composition of your animation based on an input video, making styles and shapes audio-reactive and controllable. The workflow uses Stable Diffusion 1.5 and HyperSD (8 steps) for efficient, high-quality animations, even on a low VRAM/GPU setup
+><details>
+>  <summary><i>AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps</i></summary>
+>
+>##### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
+>
+>https://github.com/user-attachments/assets/6b0aa544-aa20-4257-b6be-28673082c7ef
+>
+>##### Workflow File (download it and drop it into ComfyUI) 📜
+>[AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json](./AudioReactive_Workflows/AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.json)
+>
+>
+>##### Youtube Tutorial (Click on the image)
+>[![Video](https://img.youtube.com/vi/BiQHWKP3q0c/maxresdefault.jpg)](https://www.youtube.com/watch?v=BiQHWKP3q0c)
+>##### Workflow Preview
+>![wf-screen-ipadapterswitchsd15](assets/wf_previews/Preview_AudioReactive_Vid2Vid_IPAdapter-Switch_sd15-8steps_YVANN.png)
+>[CIVITAI Workflow Page](https://civitai.com/models/867298)
+>
+>##### Details ☝️🤓
+>Synchronize any number of image inputs with audio input (e.g., switch images based on bass or drums) throughout your animation, with the help of IPAdapter to diffuse the style of your audio-reactive input images. There are also ControlNet included to control the composition of your animation based on an input video, making styles and shapes audio-reactive and controllable. The workflow uses Stable Diffusion 1.5 and HyperSD (8 steps) for efficient, high-quality animations, even on a low VRAM/GPU setup
+>
+></details>
 
 ---
 
