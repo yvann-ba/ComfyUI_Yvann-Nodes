@@ -295,8 +295,4 @@ Converts a list of floats into an IPAdapter weights strategy format. Use with "I
 >   - **WEIGHTS_STRATEGY**: Dictionary of the weights strategy
 
 ---
-
-You can easily find all my nodes in ComfyUI by double-clicking with the left mouse button on the ComfyUI Canvas and typing "yva" in the search box.
-
----
 #### *Giving a ⭐ to this repo is the best way to support us (:*
