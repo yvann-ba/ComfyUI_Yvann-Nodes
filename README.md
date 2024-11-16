@@ -27,7 +27,6 @@
 
 https://github.com/user-attachments/assets/1e6590fc-e0d7-42d7-a205-433adf6c405c
 
-
 ><details>
 >  <summary><i>AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps</i></summary>
 >
