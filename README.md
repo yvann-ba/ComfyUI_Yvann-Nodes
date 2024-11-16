@@ -295,4 +295,12 @@ Converts a list of floats into an IPAdapter weights strategy format. Use with "I
 >   - **WEIGHTS_STRATEGY**: Dictionary of the weights strategy
 
 ---
+
+### Installation
+1. Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) & [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
+2. Launch ComfyUI
+3. Click on "🧩 Manager" -> "Custom Nodes Manager"
+4. Search for `ComfyUI_Yvann-Nodes` in the manager and install it
+
+---
 #### *Giving a ⭐ to this repo is the best way to support us (:*
