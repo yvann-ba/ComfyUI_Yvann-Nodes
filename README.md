@@ -20,8 +20,13 @@
 ##### Workflow File (download it and drop it into ComfyUI) 📜
 [AudioReactive_ImagesToVideo_Yvann.json](AudioReactive_Workflows/AudioReactive_ImagesToVideo_Yvann.json)
 
-##### Workflow Preview
-![imagesToVidWF_Preview](https://github.com/user-attachments/assets/ba274901-9d50-477b-becf-7d48f6cdbbfc)
+##### Youtube Tutorial (Click on the image)
+[![Video](https://img.youtube.com/vi/O2s6NseXlMc/maxresdefault.jpg)](https://www.youtube.com/watch?v=O2s6NseXlMc)
+
+##### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
+
+https://github.com/user-attachments/assets/1e6590fc-e0d7-42d7-a205-433adf6c405c
+
 
 ><details>
 >  <summary><i>AudioReactive Vid2Vid IPAdapter-Switch sd15-8steps</i></summary>
