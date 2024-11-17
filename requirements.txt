@@ -4,3 +4,4 @@ openunmix
 matplotlib
 pillow
 torchaudio
+termcolor
