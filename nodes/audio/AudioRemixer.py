@@ -8,7 +8,6 @@ from torchaudio.utils import download_asset
 
 from typing import Dict, Tuple, Any
 from torchaudio.transforms import Fade, Resample
-
 from termcolor import colored
 
 from ... import Yvann
@@ -68,7 +67,7 @@ class AudioRemixer(AudioNodeBase):
 
         if isinstance(model, torch.nn.Module):  # Open-Unmix model
             print(colored("Applying Open_Unmix model on audio.", 'green'))
-            self.model_sample_rate = model.sample_rate
+            self.model_sample_rate = int(model.sample_rate)
 
             if self.audio_sample_rate != self.model_sample_rate:
                 resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
@@ -78,7 +77,7 @@ class AudioRemixer(AudioNodeBase):
 
         elif "demucs" in model and model["demucs"]:  # GDemucs model
             print(colored("Applying GDemucs model on audio", 'green'))
-            self.model_sample_rate = model["sample_rate"]
+            self.model_sample_rate = int(model["sample_rate"])
             model = model["model"]
 
             if self.audio_sample_rate != self.model_sample_rate:
