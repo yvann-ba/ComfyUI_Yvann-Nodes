@@ -226,17 +226,14 @@ class AudioAnalysis(AudioNodeBase):
                 with torch.no_grad():
                     estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform, device)
 
-                if isinstance(model, torch.nn.Module):
-                    model.sources = ['bass', 'drums', 'others', 'vocals']
-                elif hasattr(model, "get_model"):
-                    estimates_list = ['drums', 'bass', 'others', 'vocals']
+                estimates_list = ['drums', 'bass', 'others', 'vocals']
 
                 if isinstance(model, torch.nn.Module):
                     source_name_mapping = {
                         "Others Audio": "vocals",
                         "Bass Only": "others",
-                        "Drums Only": "drums",
-                        "Vocals Only": "bass"
+                        "Drums Only": "bass",
+                        "Vocals Only": "drums"
                     }
                 elif "demucs" in model and model["demucs"]:
                     source_name_mapping = {
