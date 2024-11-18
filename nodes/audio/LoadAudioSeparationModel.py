@@ -26,8 +26,18 @@ class LoadAudioSeparationModel(AudioNodeBase):
     RETURN_NAMES = ("audio_sep_model",)
     FUNCTION = "main"
     
+    def personal_get_torch_device(self):
+
+        if torch.cuda.is_available():
+            device_name = torch.cuda.get_device_name(0).lower()
+            if "nvidia" not in device_name:
+                print(f"Non-NVIDIA GPU detected ({device_name}), forcing CPU.")
+                return torch.device("cpu")
+        return torch.device(torch.cuda.current_device())
+
     def load_OpenUnmix(self, model):
         device = mm.get_torch_device()
+        device = self.personal_get_torch_device()
         download_path = os.path.join(folder_paths.models_dir, "openunmix")
         os.makedirs(download_path, exist_ok=True)
 
@@ -56,6 +66,7 @@ class LoadAudioSeparationModel(AudioNodeBase):
     def load_HDemucs(self):
         
         device = mm.get_torch_device()
+        device = self.personal_get_torch_device()
         bundle: Any = HDEMUCS_HIGH_MUSDB_PLUS
         print("Hybrid Demucs model is loaded")
         model_info = {
