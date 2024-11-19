@@ -17,7 +17,7 @@
 
 ### Audio Reactive Images To Video :
 
-##### Workflow File (click on the link, then on the "download raw file" button at the right and drop it into ComfyUI) 📜
+##### Workflow File (click on the link, then on "download raw file" button at the right and drop the file into ComfyUI) 📜
 [AudioReactive_ImagesToVideo_Yvann.json](WORKFLOW_AUDIO_REACTIVE/AudioReactive_ImagesToVideo_Yvann.json)
 
 ##### Youtube Tutorial (Click on the image)
@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/1e6590fc-e0d7-42d7-a205-433adf6c405c
 ><details>
 >  <summary><i>AudioReactive VideoToVideo</i></summary>
 >
->##### Workflow File (click on the link, then on the "download raw file" button at the right and drop it into ComfyUI) 📜
+>##### Workflow File (click on the link, then on "download raw file" button at the right and drop the file into ComfyUI) 📜
 >[AudioReactive_VideoToVideo_Yvann.json](./WORKFLOW_AUDIO_REACTIVE/AudioReactive_VideoToVideo_Yvann.json)
 >
 >##### Workflow Demo Render *(ENABLE VIDEO SOUND)* 🔊
