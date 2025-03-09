@@ -1,7 +1,6 @@
 # 🔊 ComfyUI_Yvann-Nodes [![Check the Tutorial](https://img.shields.io/badge/Workflows_Tutorial-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann_ba)
 
-#### Made with the help of [Lilien](https://x.com/Lilien_RIG) <a href="https://x.com/Lilien_RIG"><img src="https://github.com/user-attachments/assets/26a483b9-cfe6-4666-af0d-52d40ee65dcf" alt="unnamed" width="35"></a>
-
+#### Made with the great help of [Lilien](https://x.com/Lilien_RIG) 😎
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
 ---
