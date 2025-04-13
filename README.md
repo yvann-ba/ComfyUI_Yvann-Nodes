@@ -252,7 +252,17 @@ Transforms float lists into an IPAdapter “weight strategy.”
 </details>
 
 ---
+<h3 align="center">
+  Please give a ⭐ on GitHub it helps us enhance our Tool and it's Free !! (:
+</h3>
+<p align="center">
+  <a href="https://github.com/yvann-ba/ComfyUI_Yvann-Nodes/stargazers">
+    <img src="https://reporoster.com/stars/dark/yvann-ba/ComfyUI_Yvann-Nodes" alt="Stargazers" width="50%">
+  </a>
+</p>
 
-## 6. Thank You!
-
-Please give a **⭐ on GitHub** it helps us enhance our Tool and it's Free for you !! (:  
+<p align="center">
+  <a href="https://star-history.com/#yvann-ba/ComfyUI_Yvann-Nodes">
+    <img src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" alt="Star History Chart" width="50%">
+  </a>
+</p>
