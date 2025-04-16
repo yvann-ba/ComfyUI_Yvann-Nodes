@@ -255,18 +255,19 @@ Transforms float lists into an IPAdapter “weight strategy.”
 <h3 align="center">
   Please give a ⭐ on GitHub it helps us enhance our Tool and it's Free !! (:
 </h3>
-<p align="center">
-  <a href="https://github.com/yvann-ba/ComfyUI_Yvann-Nodes/stargazers">
-    <img src="https://reporoster.com/stars/dark/yvann-ba/ComfyUI_Yvann-Nodes" alt="Stargazers" width="50%">
-  </a>
-</p>
 
 <p align="center">
 <a href="https://www.star-history.com/#yvann-ba/ComfyUI_Yvann-Nodes&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date&theme=dark" width="50%" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" width="50%" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" width="65%" />
  </picture>
 </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/yvann-ba/ComfyUI_Yvann-Nodes/stargazers">
+    <img src="https://reporoster.com/stars/dark/yvann-ba/ComfyUI_Yvann-Nodes" alt="Stargazers" width="50%">
+  </a>
 </p>
