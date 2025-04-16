@@ -262,7 +262,11 @@ Transforms float lists into an IPAdapter “weight strategy.”
 </p>
 
 <p align="center">
-  <a href="https://star-history.com/#yvann-ba/ComfyUI_Yvann-Nodes">
-    <img src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" alt="Star History Chart" width="50%">
-  </a>
+<a href="https://www.star-history.com/#yvann-ba/ComfyUI_Yvann-Nodes&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" />
+ </picture>
+</a>
 </p>
