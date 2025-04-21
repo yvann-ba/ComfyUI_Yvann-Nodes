@@ -8,7 +8,7 @@
 ## What Does This Do?
 
 - **Create** Audio Reactive AI videos, enable controls over AI generations styles, content and composition with any audio
-- **Simple**: Just Drop one of our [Workflows](/WORKFLOW_AUDIO_REACTIVE) in ComfyUI and specify your audio and visuals input
+- **Simple**: Just Drop one of our [Workflows](/example_workflows) in ComfyUI and specify your audio and visuals input
 - **Flexible**: Works with existing ComfyUI AI tech and nodes (eg: IPAdapter, AnimateDiff, ControlNet, etc.)
 
 ---
@@ -81,12 +81,12 @@
 ### Load Your Chosen Workflow in ComfyUI
 
 1. **Download** the `.json` file for the workflow you picked:  
-   - [AudioReactive_ImagesToVideo_Yvann.json](WORKFLOW_AUDIO_REACTIVE/AudioReactive_ImagesToVideo_Yvann.json)  
-   - [AudioReactive_VideoToVideo_Yvann.json](WORKFLOW_AUDIO_REACTIVE/AudioReactive_VideoToVideo_Yvann.json)
+   - [AudioReactive_ImagesToVideo_Yvann.json](example_workflows/AudioReactive_ImagesToVideo_Yvann.json)  
+   - [AudioReactive_VideoToVideo_Yvann.json](example_workflows/AudioReactive_VideoToVideo_Yvann.json)
 
 2. **Drop** the `.json` file into the **ComfyUI window**.  
 
-3. **Open the “🧩 Manager”** → **“Install Missing Custom Nodes”**  
+3. **Open the "🧩 Manager"** → **"Install Missing Custom Nodes"**  
    - Install each pack of nodes that appears.  
    - **Restart** ComfyUI if prompted.
 
@@ -94,7 +94,7 @@
    - Provide the inputs needed (everything explained [here](https://www.youtube.com/@yvann_ba)
    - Click **Queue** button to produce your **audio-reactive** animation!
 
-**That’s it!** Have fun playing with the differents settings now !!
+**That's it!** Have fun playing with the differents settings now !!
 (if you have any questions or problems, check my [Youtube Tutorials](https://www.youtube.com/@yvann_ba)
 
 ---
@@ -159,7 +159,7 @@ Manages transitions between images based on peaks. Great for stable or style tra
   <summary><em>Node Parameters</em></summary>
 
 - **images**: Batch of images.  
-- **peaks_weights**: From “Audio Peaks Detection”.  
+- **peaks_weights**: From "Audio Peaks Detection".  
 - **blend_mode**, **transitions_length**, **min_IPA_weight**, etc.
 
 </details>
@@ -240,7 +240,7 @@ Converts a mask into a single float value.
 ---
 
 ### Floats To Weights Strategy 🏋️
-Transforms float lists into an IPAdapter “weight strategy.”  
+Transforms float lists into an IPAdapter "weight strategy."  
 <details>
   <summary><em>Node Parameters</em></summary>
 
