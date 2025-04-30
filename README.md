@@ -56,9 +56,17 @@
       <td>
           <video src="https://github.com/user-attachments/assets/c0fa2ca0-6c0f-4687-b1c9-fe531278c58e" width="100%" controls autoplay loop></video>
      </td>
+
+  </tr>
+
+</table>
+<table border="0" style="width: 70%; text-align: left; margin-top: 20px;">
+  <tr>
+      <td>
+          <video src="https://github.com/user-attachments/assets/a25bd896-4030-4576-9129-670c2cb2e544" width="100%" controls autoplay loop></video>
+     </td>
   </tr>
 </table>
-
 
 ## Quick Setup
 
