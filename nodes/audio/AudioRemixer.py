@@ -4,7 +4,6 @@ import torchaudio
 # from IPython.display import Audio
 # from mir_eval import separation
 from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
-from torchaudio.utils import download_asset
 
 from typing import Dict, Tuple, Any
 from torchaudio.transforms import Fade, Resample
