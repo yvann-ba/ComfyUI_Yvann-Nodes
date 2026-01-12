@@ -1,15 +1,13 @@
 import os
-import folder_paths
+from typing import Any, Dict, Tuple
+
 import torch
-from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
-from torchaudio.utils import download_asset
-from typing import Any
-from ... import Yvann
+import folder_paths
 import comfy.model_management as mm
+from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
 
+from ..base import AudioNodeBase
 
-class AudioNodeBase(Yvann):
-    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
 class LoadAudioSeparationModel(AudioNodeBase):
     audio_models = ["Hybrid Demucs", "Open-Unmix"]
@@ -18,7 +16,9 @@ class LoadAudioSeparationModel(AudioNodeBase):
     def INPUT_TYPES(cls) -> dict[str, dict[str, tuple]]:
         return {
             "required": {
-                "model": (cls.audio_models,),
+                "model": (cls.audio_models, {
+                    "tooltip": "Audio separation model: Hybrid Demucs (fast, accurate) or Open-Unmix (alternative)"
+                }),
             }
         }
 

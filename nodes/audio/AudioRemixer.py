@@ -1,19 +1,13 @@
+from typing import Dict, Tuple, Any
+
 import torch
 import torchaudio
-
-# from IPython.display import Audio
-# from mir_eval import separation
 from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
-from torchaudio.utils import download_asset
-
-from typing import Dict, Tuple, Any
 from torchaudio.transforms import Fade, Resample
 from termcolor import colored
 
-from ... import Yvann
+from ..base import AudioNodeBase
 
-class AudioNodeBase(Yvann):
-    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
 class AudioRemixer(AudioNodeBase):
 
@@ -21,12 +15,30 @@ class AudioRemixer(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_sep_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
-                "audio": ("AUDIO", {"forceInput": True}),
-                "drums_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
-                "vocals_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
-                "bass_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
-                "others_volume": ("FLOAT", {"default": 0.0, "min": -10.0, "max": 10, "step": 0.1}),
+                "audio_sep_model": ("AUDIO_SEPARATION_MODEL", {
+                    "forceInput": True,
+                    "tooltip": "Loaded model from Load Audio Separation Model node"
+                }),
+                "audio": ("AUDIO", {
+                    "forceInput": True,
+                    "tooltip": "Input audio file to remix"
+                }),
+                "drums_volume": ("FLOAT", {
+                    "default": 0.0, "min": -10.0, "max": 10, "step": 0.1,
+                    "tooltip": "Drums volume adjustment (-10=mute, 0=original, 10=boost)"
+                }),
+                "vocals_volume": ("FLOAT", {
+                    "default": 0.0, "min": -10.0, "max": 10, "step": 0.1,
+                    "tooltip": "Vocals volume adjustment (-10=mute, 0=original, 10=boost)"
+                }),
+                "bass_volume": ("FLOAT", {
+                    "default": 0.0, "min": -10.0, "max": 10, "step": 0.1,
+                    "tooltip": "Bass volume adjustment (-10=mute, 0=original, 10=boost)"
+                }),
+                "others_volume": ("FLOAT", {
+                    "default": 0.0, "min": -10.0, "max": 10, "step": 0.1,
+                    "tooltip": "Other instruments volume (-10=mute, 0=original, 10=boost)"
+                }),
             }
         }
     

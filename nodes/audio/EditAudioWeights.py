@@ -1,31 +1,41 @@
-from ... import Yvann
+import tempfile
+
+import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-import tempfile
 from PIL import Image
-import torch
 
-class AudioNodeBase(Yvann):
-    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
+from ..base import AudioNodeBase
+
 
 class EditAudioWeights(AudioNodeBase):
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "any_audio_weights": ("FLOATS", {"forceInput": True}),
-                "smooth": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
-                "min_range": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 2.99, "step": 0.01}),
-                "max_range": ("FLOAT", {"default": 1, "min": 0.01, "max": 3, "step": 0.01}),
+                "any_audio_weights": ("FLOATS", {
+                    "forceInput": True,
+                    "tooltip": "Audio weights from Audio Analysis or Audio Peaks Detection"
+                }),
+                "smooth": ("FLOAT", {
+                    "default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01,
+                    "tooltip": "Smoothing factor (0=none, 1=max smoothing)"
+                }),
+                "min_range": ("FLOAT", {
+                    "default": 0.0, "min": 0.0, "max": 2.99, "step": 0.01,
+                    "tooltip": "Minimum output value after rescaling"
+                }),
+                "max_range": ("FLOAT", {
+                    "default": 1, "min": 0.01, "max": 3, "step": 0.01,
+                    "tooltip": "Maximum output value after rescaling"
+                }),
             }
         }
 
     RETURN_TYPES = ("FLOATS", "IMAGE")
     RETURN_NAMES = ("process_weights", "graph_audio")
     FUNCTION = "process_any_audio_weights"
-
-    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
 
     def process_any_audio_weights(self, any_audio_weights, smooth, min_range, max_range):
         if not isinstance(any_audio_weights, (list, np.ndarray)):

@@ -1,19 +1,19 @@
+import tempfile
+from typing import Tuple, List, Dict
+
 import torch
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-import tempfile
-import numpy as np
 from PIL import Image
-from typing import Tuple, List, Dict
-from ... import Yvann
-import comfy.model_management as mm
 import torchaudio
 from torchaudio.pipelines import HDEMUCS_HIGH_MUSDB_PLUS
-from termcolor import colored
 from torchaudio.transforms import Fade, Resample
+from termcolor import colored
+import comfy.model_management as mm
 
-class AudioNodeBase(Yvann):
-    CATEGORY = "👁️ Yvann Nodes/🔊 Audio"
+from ..base import AudioNodeBase
+
 
 class AudioAnalysis(AudioNodeBase):
     analysis_modes = ["Drums Only", "Full Audio", "Vocals Only", "Bass Only", "Others Audio"]
@@ -22,13 +22,33 @@ class AudioAnalysis(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_sep_model": ("AUDIO_SEPARATION_MODEL", {"forceInput": True}),
-                "batch_size": ("INT", {"forceInput": True}),
-                "fps": ("FLOAT", {"forceInput": True}),
-                "audio": ("AUDIO", {"forceInput": True}),
-                "analysis_mode": (cls.analysis_modes,),
-                "threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1, "step": 0.01}),
-                "multiply": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.01}),
+                "audio_sep_model": ("AUDIO_SEPARATION_MODEL", {
+                    "forceInput": True,
+                    "tooltip": "Loaded model from Load Audio Separation Model node"
+                }),
+                "batch_size": ("INT", {
+                    "forceInput": True,
+                    "tooltip": "Number of frames to generate audio weights for"
+                }),
+                "fps": ("FLOAT", {
+                    "forceInput": True,
+                    "tooltip": "Frames per second for audio weight calculation"
+                }),
+                "audio": ("AUDIO", {
+                    "forceInput": True,
+                    "tooltip": "Input audio file to analyze"
+                }),
+                "analysis_mode": (cls.analysis_modes, {
+                    "tooltip": "Audio component to analyze: Drums, Vocals, Bass, Others, or Full Audio"
+                }),
+                "threshold": ("FLOAT", {
+                    "default": 0.5, "min": 0.0, "max": 1, "step": 0.01,
+                    "tooltip": "Minimum weight value to pass through (0-1)"
+                }),
+                "multiply": ("FLOAT", {
+                    "default": 1.0, "min": 0.0, "max": 5.0, "step": 0.01,
+                    "tooltip": "Amplification factor applied to weights before normalization"
+                }),
             }
         }
         
