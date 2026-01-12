@@ -1,6 +1,5 @@
-# 🔊 ComfyUI_Yvann-Nodes [![Check the Tutorial](https://img.shields.io/badge/Workflows_Tutorial-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann_ba)
+# 🔊 ComfyUI_Yvann-Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
 
-#### Made with the great help of [Lilien](https://x.com/Lilien_RIG) 😎
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
 ---
@@ -62,31 +61,28 @@
 </table>
 <table border="0" style="width: 70%; text-align: left; margin-top: 20px;">
   <tr>
-      <td>
-          <video src="https://github.com/user-attachments/assets/a25bd896-4030-4576-9129-670c2cb2e544" width="100%" controls autoplay loop></video>
-     </td>
   </tr>
 </table>
 
 ## Quick Setup
 
-- Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) and [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
+### 1. Install [ComfyUI](https://www.comfy.org/download) (Works on Mac, Windows, Linux)
 
-### Pick a Workflow (Images → Video or Video → Video)
+### 2. Choose a Workflow
 
-1. **Images → Video**  
-   - Takes a **set of images** plus an **audio** track.  
+- **Images to Video**  
+   - Takes a **set of images** + **audio**
    - *Watch Tutorial*:  
      [![Images2Video](https://img.youtube.com/vi/O2s6NseXlMc/maxresdefault.jpg)](https://www.youtube.com/watch?v=O2s6NseXlMc)  
 
-2. **Video → Video**  
-   - Takes a **source video** plus an **audio** track.  
+- **Video to Video**  
+   - Takes a **source video** + **audio**
    - *Watch Tutorial*:  
      [![Video2Video](https://img.youtube.com/vi/BiQHWKP3q0c/maxresdefault.jpg)](https://www.youtube.com/watch?v=BiQHWKP3q0c)  
 
 ---
 
-### Load Your Chosen Workflow in ComfyUI
+### 3. Load Your Chosen Workflow in ComfyUI
 
 1. **Download** the `.json` file for the workflow you picked:  
    - [AudioReactive_ImagesToVideo_Yvann.json](example_workflows/AudioReactive_ImagesToVideo_Yvann.json)  
@@ -94,9 +90,7 @@
 
 2. **Drop** the `.json` file into the **ComfyUI window**.  
 
-3. **Open the "🧩 Manager"** → **"Install Missing Custom Nodes"**  
-   - Install each pack of nodes that appears.  
-   - **Restart** ComfyUI if prompted.
+3. **Click "Install All" on the popup that appeared**
 
 4. **Set Your Inputs & Generate**  
    - Provide the inputs needed (everything explained [here](https://www.youtube.com/@yvann_ba)
@@ -264,18 +258,5 @@ Transforms float lists into an IPAdapter "weight strategy."
   Please give a ⭐ on GitHub it helps us enhance our Tool and it's Free !! (:
 </h3>
 
-<p align="center">
-<a href="https://www.star-history.com/#yvann-ba/ComfyUI_Yvann-Nodes&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date&theme=dark" width="50%" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" width="50%" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" width="65%" />
- </picture>
-</a>
-</p>
+#### Made with the help of [Lilien](https://www.linkedin.com/in/lilien-auger/) 😎
 
-<p align="center">
-  <a href="https://github.com/yvann-ba/ComfyUI_Yvann-Nodes/stargazers">
-    <img src="https://reporoster.com/stars/dark/yvann-ba/ComfyUI_Yvann-Nodes" alt="Stargazers" width="50%">
-  </a>
-</p>
