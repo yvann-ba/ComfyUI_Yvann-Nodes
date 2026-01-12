@@ -1,5 +1,6 @@
-# 🔊 ComfyUI_Yvann-Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
+# 🔊 ComfyUI_Yvann-Nodes [![Check the Tutorial](https://img.shields.io/badge/Workflows_Tutorial-white?style=for-the-badge&logo=youtube&logoColor=FF0000)](https://www.youtube.com/channel/yvann_ba)
 
+#### Made with the great help of [Lilien](https://x.com/Lilien_RIG) 😎
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
 ---
@@ -61,12 +62,15 @@
 </table>
 <table border="0" style="width: 70%; text-align: left; margin-top: 20px;">
   <tr>
+      <td>
+          <video src="https://github.com/user-attachments/assets/a25bd896-4030-4576-9129-670c2cb2e544" width="100%" controls autoplay loop></video>
+     </td>
   </tr>
 </table>
 
 ## Quick Setup
 
-- Install [ComfyUI](https://www.comfy.org/download) (Works on Mac, Windows, Linux)
+- Install [ComfyUI](https://github.com/comfyanonymous/ComfyUI) and [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
 
 ### Pick a Workflow (Images → Video or Video → Video)
 
@@ -260,5 +264,18 @@ Transforms float lists into an IPAdapter "weight strategy."
   Please give a ⭐ on GitHub it helps us enhance our Tool and it's Free !! (:
 </h3>
 
-#### Made with the help of [Lilien](https://www.linkedin.com/in/lilien-auger/) 😎
+<p align="center">
+<a href="https://www.star-history.com/#yvann-ba/ComfyUI_Yvann-Nodes&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date&theme=dark" width="50%" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" width="50%" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=yvann-ba/ComfyUI_Yvann-Nodes&type=Date" width="65%" />
+ </picture>
+</a>
+</p>
 
+<p align="center">
+  <a href="https://github.com/yvann-ba/ComfyUI_Yvann-Nodes/stargazers">
+    <img src="https://reporoster.com/stars/dark/yvann-ba/ComfyUI_Yvann-Nodes" alt="Stargazers" width="50%">
+  </a>
+</p>

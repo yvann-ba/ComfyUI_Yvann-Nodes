@@ -12,8 +12,8 @@ class MaskToFloat(ConvertNodeBase):
 				"mask": ("MASK", {"forceInput": True}),
 			},
 		}
-	RETURN_TYPES = ("FLOAT",)
-	RETURN_NAMES = ("float",)
+	RETURN_TYPES = ("FLOATS",)
+	RETURN_NAMES = ("floats",)
 	FUNCTION = "mask_to_float"
 
 	def mask_to_float(self, mask):

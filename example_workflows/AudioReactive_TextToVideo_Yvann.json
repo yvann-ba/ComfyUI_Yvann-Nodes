@@ -303,7 +303,7 @@
       "inputs": [
         {
           "name": "audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 1347,
           "widget": {
             "name": "audio_weights"
@@ -313,13 +313,13 @@
       "outputs": [
         {
           "name": "peaks_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [],
           "slot_index": 0
         },
         {
           "name": "peaks_alternate_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": null
         },
         {
@@ -418,7 +418,7 @@
         },
         {
           "name": "audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1347,
             2806,
@@ -634,7 +634,7 @@
       "inputs": [
         {
           "name": "any_audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 2807,
           "widget": {
             "name": "any_audio_weights"
@@ -644,7 +644,7 @@
       "outputs": [
         {
           "name": "process_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             2547
           ],
@@ -1564,7 +1564,7 @@
       "inputs": [
         {
           "name": "any_audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 2897,
           "widget": {
             "name": "any_audio_weights"
@@ -1574,7 +1574,7 @@
       "outputs": [
         {
           "name": "process_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             2896
           ],

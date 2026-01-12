@@ -2290,7 +2290,7 @@
           ]
         }
       ],
-      "title": "Context Options◆Looped Uniform",
+      "title": "Context Options\u25c6Looped Uniform",
       "properties": {
         "cnr_id": "comfyui-animatediff-evolved",
         "ver": "b3e508ae8211892a00f3897fcdb4da2d7514f572",
@@ -2957,7 +2957,7 @@
       ],
       "outputs": [
         {
-          "name": "fps🟦",
+          "name": "fps\ud83d\udfe6",
           "type": "FLOAT",
           "slot_index": 0,
           "links": [
@@ -2966,7 +2966,7 @@
           ]
         },
         {
-          "name": "frame_count🟦",
+          "name": "frame_count\ud83d\udfe6",
           "type": "INT",
           "slot_index": 1,
           "links": [
@@ -2974,13 +2974,13 @@
           ]
         },
         {
-          "name": "duration🟦",
+          "name": "duration\ud83d\udfe6",
           "type": "FLOAT",
           "slot_index": 2,
           "links": []
         },
         {
-          "name": "width🟦",
+          "name": "width\ud83d\udfe6",
           "type": "INT",
           "slot_index": 3,
           "links": [
@@ -2988,7 +2988,7 @@
           ]
         },
         {
-          "name": "height🟦",
+          "name": "height\ud83d\udfe6",
           "type": "INT",
           "slot_index": 4,
           "links": []
@@ -3401,14 +3401,14 @@
       "inputs": [
         {
           "name": "audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 1440
         }
       ],
       "outputs": [
         {
           "name": "peaks_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "slot_index": 0,
           "links": [
             1443
@@ -3416,7 +3416,7 @@
         },
         {
           "name": "peaks_alternate_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": null
         },
         {
@@ -3505,7 +3505,7 @@
         },
         {
           "name": "audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1440
           ]
@@ -3652,7 +3652,7 @@
         },
         {
           "name": "peaks_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 1443
         }
       ],
@@ -3666,7 +3666,7 @@
         },
         {
           "name": "weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1445
           ]
@@ -3680,7 +3680,7 @@
         },
         {
           "name": "weights_invert",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1447
           ]

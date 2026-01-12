@@ -10,10 +10,10 @@ class InvertFloats(UtilsNodeBase):
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"floats": ("FLOAT", {"forceInput": True}),
+				"floats": ("FLOATS", {"forceInput": True}),
 			}
 		}
-	RETURN_TYPES = ("FLOAT",)
+	RETURN_TYPES = ("FLOATS",)
 	RETURN_NAMES = ("inverted_floats",)
 	FUNCTION = "invert_floats"
 

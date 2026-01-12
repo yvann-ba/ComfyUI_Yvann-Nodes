@@ -231,15 +231,15 @@ Useful to compare audio weights
 
 add_node_config("MaskToFloat", {
     "BASE_DESCRIPTION": """
-Converts mask into float<br>
-works with batch of mask
+Converts mask batch into floats list<br>
+works with batch of masks
 **Inputs:**
 
 - **mask**: Mask input to convert
 
 **Outputs:**
 
-- **float**: Float value
+- **floats**: List of float values (one per mask in batch)
     """
 })
 

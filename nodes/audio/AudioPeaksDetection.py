@@ -15,13 +15,13 @@ class AudioPeaksDetection(AudioNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "audio_weights": ("FLOAT", {"forceInput": True}),
+                "audio_weights": ("FLOATS", {"forceInput": True}),
                 "peaks_threshold": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "min_peaks_distance": ("INT", {"default": 5, "min": 1, "max":100})
             }
         }
 
-    RETURN_TYPES = ("FLOAT",  "FLOAT", "STRING", "INT", "IMAGE")
+    RETURN_TYPES = ("FLOATS", "FLOATS", "STRING", "INT", "IMAGE")
     RETURN_NAMES = ("peaks_weights", "peaks_alternate_weights", "peaks_index", "peaks_count", "graph_peaks")
     FUNCTION = "detect_peaks"
 

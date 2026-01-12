@@ -16,7 +16,7 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 		return {
 			"required": {
 				"images": ("IMAGE", {"forceInput": True}),
-				"peaks_weights": ("FLOAT", {"forceInput": True}),
+				"peaks_weights": ("FLOATS", {"forceInput": True}),
 				"transition_mode": (["linear", "ease_in_out", "ease_in", "ease_out"], {"default": "linear"}),
 				"transition_length": ("INT", {"default": 5, "min": 1, "max":100, "step": 2}),
 				"min_IPA_weight": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.99, "step": 0.01}),
@@ -24,7 +24,7 @@ class AudioIPAdapterTransitions(AudioNodeBase):
 			}
 		}
 
-	RETURN_TYPES = ("IMAGE", "FLOAT", "IMAGE", "FLOAT", "IMAGE")
+	RETURN_TYPES = ("IMAGE", "FLOATS", "IMAGE", "FLOATS", "IMAGE")
 	RETURN_NAMES = ("image_1", "weights", "image_2", "weights_invert", "graph_transition")
 	FUNCTION = "process_transitions"
 

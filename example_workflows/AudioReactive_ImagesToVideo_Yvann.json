@@ -2573,7 +2573,7 @@
           ]
         }
       ],
-      "title": "Context Options◆Looped Uniform",
+      "title": "Context Options\u25c6Looped Uniform",
       "properties": {
         "cnr_id": "comfyui-animatediff-evolved",
         "ver": "b3e508ae8211892a00f3897fcdb4da2d7514f572",
@@ -3095,10 +3095,10 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "AUDIO REACTIVE 🔊 IMAGES TO VIDEO",
+      "title": "AUDIO REACTIVE \ud83d\udd0a IMAGES TO VIDEO",
       "properties": {},
       "widgets_values": [
-        "Youtube Tutorial for this Workflow:\nhttps://youtu.be/O2s6NseXlMc?si=qchsgSOU3OtZkTLN\n\nGive a ⭐ on GitHub to help us continue sharing ((:\nhttps://github.com/yvann-ba/ComfyUI_Yvann-Nodes\n\nDevelopped with ❤️ by Yvann, with the great help of Lilien"
+        "Youtube Tutorial for this Workflow:\nhttps://youtu.be/O2s6NseXlMc?si=qchsgSOU3OtZkTLN\n\nGive a \u2b50 on GitHub to help us continue sharing ((:\nhttps://github.com/yvann-ba/ComfyUI_Yvann-Nodes\n\nDevelopped with \u2764\ufe0f by Yvann, with the great help of Lilien"
       ],
       "color": "#322",
       "bgcolor": "#533"
@@ -3119,10 +3119,10 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "2.  MODEL REQUIREMENTS ⬇️",
+      "title": "2.  MODEL REQUIREMENTS \u2b07\ufe0f",
       "properties": {},
       "widgets_values": [
-        "(Follow the note above before)\nGo to your ComfyUI installation, to \"ComfyUI/models/\" and install these models in the correct subfolder as indicated below :\n\n📁 checkpoints/\nhttps://civitai.com/models/4384/dreamshaper\n\n📁 animatediff_models/\nhttps://huggingface.co/wangfuyun/AnimateLCM/blob/main/AnimateLCM_sd15_t2v.ckpt\n\n📁 loras/\nhttps://huggingface.co/wangfuyun/AnimateLCM/blob/main/AnimateLCM_sd15_t2v_lora.safetensors\n\n📁 upscale_models/\nhttps://openmodeldb.info/models/2x-sudo-UltraCompact\n\n📁 controlnet/\nhttps://huggingface.co/monster-labs/control_v1p_sd15_qrcode_monster/blob/main/v2/control_v1p_sd15_qrcode_monster_v2.safetensors\n\n\nThe models below can be downloaded directly from ComfyUI \nFor that go to \"🧩 Manager\", \"model manager\", search each name below and click \"install\" :\n\nvae-ft-mse-840000-ema-pruned\n\nv3_sd15_adapter\n\nv3_sd15_sparsectrl_rgb\n\nip-adapter-plus_sd15\n\nCLIP-ViT-H-14-laion2B-s32B-b79K\n\nAfter that just click on \"Refresh\" And you're all set 🎉🎉"
+        "(Follow the note above before)\nGo to your ComfyUI installation, to \"ComfyUI/models/\" and install these models in the correct subfolder as indicated below :\n\n\ud83d\udcc1 checkpoints/\nhttps://civitai.com/models/4384/dreamshaper\n\n\ud83d\udcc1 animatediff_models/\nhttps://huggingface.co/wangfuyun/AnimateLCM/blob/main/AnimateLCM_sd15_t2v.ckpt\n\n\ud83d\udcc1 loras/\nhttps://huggingface.co/wangfuyun/AnimateLCM/blob/main/AnimateLCM_sd15_t2v_lora.safetensors\n\n\ud83d\udcc1 upscale_models/\nhttps://openmodeldb.info/models/2x-sudo-UltraCompact\n\n\ud83d\udcc1 controlnet/\nhttps://huggingface.co/monster-labs/control_v1p_sd15_qrcode_monster/blob/main/v2/control_v1p_sd15_qrcode_monster_v2.safetensors\n\n\nThe models below can be downloaded directly from ComfyUI \nFor that go to \"\ud83e\udde9 Manager\", \"model manager\", search each name below and click \"install\" :\n\nvae-ft-mse-840000-ema-pruned\n\nv3_sd15_adapter\n\nv3_sd15_sparsectrl_rgb\n\nip-adapter-plus_sd15\n\nCLIP-ViT-H-14-laion2B-s32B-b79K\n\nAfter that just click on \"Refresh\" And you're all set \ud83c\udf89\ud83c\udf89"
       ],
       "color": "#223",
       "bgcolor": "#335"
@@ -3143,10 +3143,10 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "1. INSTALL COMFYUI MANAGER + NODES 🤓",
+      "title": "1. INSTALL COMFYUI MANAGER + NODES \ud83e\udd13",
       "properties": {},
       "widgets_values": [
-        "To install the missing nodes of this workflow:\n\ngit clone the repo below ⬇️ into ComfyUI/custom_nodes/  (if you don't have ComfyUI Manager)\nhttps://github.com/ltdrdata/ComfyUI-Manager\n\nrestart ComfyUI, click on \"🧩 Manager\", \"Install missing custom nodes\", Install all the custom-nodes in the list and then restart"
+        "To install the missing nodes of this workflow:\n\ngit clone the repo below \u2b07\ufe0f into ComfyUI/custom_nodes/  (if you don't have ComfyUI Manager)\nhttps://github.com/ltdrdata/ComfyUI-Manager\n\nrestart ComfyUI, click on \"\ud83e\udde9 Manager\", \"Install missing custom nodes\", Install all the custom-nodes in the list and then restart"
       ],
       "color": "#223",
       "bgcolor": "#335"
@@ -3453,14 +3453,14 @@
       "inputs": [
         {
           "name": "audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 1522
         }
       ],
       "outputs": [
         {
           "name": "peaks_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "slot_index": 0,
           "links": [
             1526
@@ -3468,7 +3468,7 @@
         },
         {
           "name": "peaks_alternate_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": null
         },
         {
@@ -3560,7 +3560,7 @@
         },
         {
           "name": "audio_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1522
           ]
@@ -3609,7 +3609,7 @@
         },
         {
           "name": "peaks_weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "link": 1526
         }
       ],
@@ -3623,7 +3623,7 @@
         },
         {
           "name": "weights",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1528
           ]
@@ -3637,7 +3637,7 @@
         },
         {
           "name": "weights_invert",
-          "type": "FLOAT",
+          "type": "FLOATS",
           "links": [
             1530
           ]

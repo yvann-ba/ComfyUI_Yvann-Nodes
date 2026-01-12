@@ -17,14 +17,14 @@ class FloatsVisualizer(UtilsNodeBase):
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"floats": ("FLOAT", {"forceInput": True}),
+				"floats": ("FLOATS", {"forceInput": True}),
 				"title": ("STRING", {"default": "Graph"}),
 				"x_label": ("STRING", {"default": "X-Axis"}),
 				"y_label": ("STRING", {"default": "Y-Axis"}),
 			},
 			"optional": {
-				"floats_optional1": ("FLOAT", {"forceInput": True}),
-				"floats_optional2": ("FLOAT", {"forceInput": True}),
+				"floats_optional1": ("FLOATS", {"forceInput": True}),
+				"floats_optional2": ("FLOATS", {"forceInput": True}),
 			}
 		}
 

@@ -32,7 +32,7 @@ class AudioAnalysis(AudioNodeBase):
             }
         }
         
-    RETURN_TYPES = ("AUDIO", "AUDIO", "FLOAT", "IMAGE")
+    RETURN_TYPES = ("AUDIO", "AUDIO", "FLOATS", "IMAGE")
     RETURN_NAMES = ("processed_audio", "original_audio", "audio_weights", "graph_audio")
     FUNCTION = "process_audio"
 
@@ -67,51 +67,38 @@ class AudioAnalysis(AudioNodeBase):
     def apply_model_and_extract_sources(self, model, waveform: torch.Tensor, device: torch.device) -> Tuple[torch.Tensor, list[str]]:
         """Applies the model and extracts audio sources, handling both Open-Unmix and GDemucs cases."""
         sources, sources_list = None, []
-
-        # --- MODIFICATION FOR MACOS STABILITY ---
-        # Force CPU for the heavy lifting, as MPS can be unstable with these models.
-        processing_device = torch.device("cpu")
-        print(colored(f"Forcing audio model processing on CPU for stability.", 'yellow'))
-        waveform = waveform.to(processing_device)
-        # --- END MODIFICATION ---
+        
 
         if isinstance(model, torch.nn.Module):  # Open-Unmix model
             print(colored("Applying Open_Unmix model on audio", 'green'))
-            model = model.to(processing_device)  # Move model to CPU
             self.model_sample_rate = model.sample_rate
 
             if self.audio_sample_rate != self.model_sample_rate:
-                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(processing_device)
+                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
                 waveform = resampler(waveform)
-            
-            with torch.no_grad():
-                sources = model(waveform.unsqueeze(0)).squeeze(0)
+            sources = model(waveform.unsqueeze(0)).squeeze(0)
             sources_list = ['bass', 'drums', 'others', 'vocals']
 
         elif "demucs" in model and model["demucs"]:  # GDemucs model
             print(colored("Applying GDemucs model on audio", 'green'))
             self.model_sample_rate = model["sample_rate"]
-            demucs_model = model["model"].to(processing_device) # Move model to CPU
+            model = model["model"]
 
             if self.audio_sample_rate != self.model_sample_rate:
-                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(processing_device)
+                resampler = torchaudio.transforms.Resample(orig_freq=self.audio_sample_rate, new_freq=self.model_sample_rate).to(device)
                 waveform = resampler(waveform)
-            
             ref = waveform.mean(0)
             waveform = (waveform - ref.mean()) / ref.std()
-            
-            # Ensure the separation runs on the CPU
-            sources = self.separate_sources(demucs_model, waveform[None], segment=10.0, overlap=0.1, device=processing_device)[0]
+            sources = self.separate_sources(model, waveform[None], segment=10.0, overlap=0.1, device=device)[0]
             sources = sources * ref.std() + ref.mean()
             
-            sources_list = getattr(demucs_model, 'sources', ['bass', 'drums', 'others', 'vocals'])
+            sources_list = getattr(model, 'sources', ['bass', 'drums', 'others', 'vocals'])
 
         else:
             print(colored("Unrecognized model type", 'red'))
             return None, []
 
-        # Move the final result back to the original device ComfyUI was using
-        return sources.to(device), sources_list
+        return sources, sources_list
 
     def separate_sources(self, model, mix, segment=10.0, overlap=0.1, device=None,
     ):
@@ -199,11 +186,6 @@ class AudioAnalysis(AudioNodeBase):
 
     def process_audio(self, audio_sep_model, audio: Dict[str, torch.Tensor], batch_size: int, fps: float, analysis_mode: str, threshold: float, multiply: float,) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], Dict[str, torch.Tensor], List[float]]:
         
-        # --- FIX 1: Set Matplotlib backend to non-interactive 'Agg' to prevent GUI-related crashes ---
-        import matplotlib
-        matplotlib.use('Agg')
-        # --- END FIX 1 ---
-
         if audio is None or 'waveform' not in audio or 'sample_rate' not in audio:
             raise ValueError("Invalid audio input")
 
@@ -226,6 +208,7 @@ class AudioAnalysis(AudioNodeBase):
             audio_duration = batch_size / fps
         total_samples_needed = int(audio_duration * sample_rate)
 
+
         samples_per_frame = total_samples_needed // batch_size
 
         if waveform.shape[-1] > total_samples_needed:
@@ -239,31 +222,27 @@ class AudioAnalysis(AudioNodeBase):
         if analysis_mode != "Full Audio":
             try:
                 device, waveform = self.prepare_audio_and_device(waveform, original_sample_rate)
-                
-                # --- FIX 2: Force audio separation to CPU for stability (same as before) ---
-                processing_device = torch.device("cpu")
-                print(colored(f"Forcing audio model processing on CPU for stability.", 'yellow'))
-                waveform_cpu = waveform.to(processing_device)
 
                 with torch.no_grad():
-                    # Pass the CPU tensor to the model processing function
-                    estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform_cpu, processing_device)
+                    estimates, estimates_list = self.apply_model_and_extract_sources(model, waveform, device)
 
-                # Estimates are now on the CPU, move them back to the original device for consistency
-                estimates = estimates.to(device)
-                # --- END FIX 2 ---
-                
                 estimates_list = ['drums', 'bass', 'others', 'vocals']
 
                 if isinstance(model, torch.nn.Module):
                     source_name_mapping = {
-                        "Others Audio": "vocals", "Bass Only": "others", "Drums Only": "bass", "Vocals Only": "drums"
+                        "Others Audio": "vocals",
+                        "Bass Only": "others",
+                        "Drums Only": "bass",
+                        "Vocals Only": "drums"
                     }
                 elif "demucs" in model and model["demucs"]:
                     source_name_mapping = {
-                        "Drums Only": "drums", "Bass Only": "bass", "Others Audio": "others", "Vocals Only": "vocals"
+                        "Drums Only": "drums",
+                        "Bass Only": "bass",
+                        "Others Audio": "others",
+                        "Vocals Only": "vocals"
                     }
-
+    
                 source_name = source_name_mapping.get(analysis_mode)
                 if source_name is not None:
                     try:
@@ -282,23 +261,26 @@ class AudioAnalysis(AudioNodeBase):
 
         #--------------------------------------------------#
 
+        # if waveform.shape[-1] > total_samples_needed:
+        #     waveform = waveform[..., :total_samples_needed]
+        # elif waveform.shape[-1] < total_samples_needed:
+        #     pad_length = total_samples_needed - waveform.shape[-1]
+        #     waveform = torch.nn.functional.pad(waveform, (0, pad_length))
+
         processed_waveform = self.adjust_waveform_dimensions(processed_waveform)
         original_waveform = self.adjust_waveform_dimensions(waveform.clone())
+
 
         final_sample_rate = self.model_sample_rate if hasattr(self, 'model_sample_rate') else sample_rate
         if (analysis_mode != "Full Audio"):
 
-            # --- FIX 3: Force final resampling to CPU to avoid MPS crash ---
-            print(colored(f"Resampling processed audio from {final_sample_rate} Hz back to {original_sample_rate} Hz on CPU.", 'yellow'))
-            cpu_device = torch.device("cpu")
-            processed_waveform_cpu = processed_waveform.to(cpu_device)
             
-            resampler = torchaudio.transforms.Resample(orig_freq=final_sample_rate, new_freq=original_sample_rate).to(cpu_device)
-            processed_waveform_cpu = processed_waveform_cpu.squeeze(0)
-            processed_waveform_cpu = resampler(processed_waveform_cpu)
-            processed_waveform = processed_waveform_cpu.unsqueeze(0)
-            # --- END FIX 3 ---
-                
+            print(f"Resampling processed audio from {final_sample_rate} Hz back to original sample rate {original_sample_rate} Hz.")
+            resampler = torchaudio.transforms.Resample(orig_freq=final_sample_rate, new_freq=original_sample_rate).to(processed_waveform.device)
+            processed_waveform = processed_waveform.squeeze(0)
+            processed_waveform = resampler(processed_waveform)
+            processed_waveform = processed_waveform.unsqueeze(0)
+            
         expected_num_samples = original_waveform.shape[-1]
         actual_num_samples = processed_waveform.shape[-1]
         if actual_num_samples > expected_num_samples:
@@ -306,10 +288,9 @@ class AudioAnalysis(AudioNodeBase):
         elif actual_num_samples < expected_num_samples:
             pad_length = expected_num_samples - actual_num_samples
             processed_waveform = torch.nn.functional.pad(processed_waveform, (0, pad_length))
-                
+            
         final_sample_rate = original_sample_rate
 
-        # The processed_waveform is already on the CPU from the fix above, so .cpu() is redundant but safe.
         processed_audio = {
             'waveform': processed_waveform.cpu().detach(),
             'sample_rate': self.audio_sample_rate
@@ -320,10 +301,11 @@ class AudioAnalysis(AudioNodeBase):
         }
 
         #--------------------------------------------------#
-
+    
         waveform_for_rms = processed_waveform.squeeze(0).squeeze(0)
         audio_weights = self._rms_energy(waveform_for_rms, batch_size, samples_per_frame)
 
+        
         if np.isnan(audio_weights).any() or np.isinf(audio_weights).any():
             raise ValueError("Invalid audio weights calculated")
 

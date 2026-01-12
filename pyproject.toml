@@ -2,8 +2,8 @@
 name = "comfyui_yvann-nodes"
 description = "Audio Reactive nodes for AI animations 🔊 Analyze audio, extract drums, bass, vocals. Compatible with IPAdapter, ControlNets, AnimateDiff... Generate reactive masks and weights. Create audio-driven visuals. Produce weight graphs and audio masks. Ideal for music videos and reactive animations. Features audio scheduling and waveform analysis"
 version = "2.0.2"
-license = {file = "LICENSE"}
-dependencies = ["openunmix", "numpy", "torch", "matplotlib", "pillow", "scipy.signal"]
+license = {file = "LICENCE"}
+dependencies = ["openunmix", "numpy", "torch", "matplotlib", "pillow", "scipy", "torchaudio", "termcolor"]
 
 [project.urls]
 Repository = "https://github.com/yvann-ba/ComfyUI_Yvann-Nodes"

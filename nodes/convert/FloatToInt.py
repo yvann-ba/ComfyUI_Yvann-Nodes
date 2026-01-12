@@ -9,16 +9,16 @@ class FloatToInt(ConvertNodeBase):
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "float": ("FLOAT", {"forceInput": True}),
+                "floats": ("FLOATS", {"forceInput": True}),
             }
         }
-    RETURN_TYPES = ("INT",)
-    RETURN_NAMES = ("int",)
+    RETURN_TYPES = ("INTS",)
+    RETURN_NAMES = ("ints",)
     FUNCTION = "convert_floats_to_ints"
 
-    def convert_floats_to_ints(self, float):
+    def convert_floats_to_ints(self, floats):
 
-        floats_array = np.array(float)
+        floats_array = np.array(floats)
 
         ints_array = np.round(floats_array)
 

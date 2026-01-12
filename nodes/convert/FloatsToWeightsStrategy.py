@@ -8,7 +8,7 @@ class FloatsToWeightsStrategy(ConvertNodeBase):
 	def INPUT_TYPES(cls):
 		return {
 			"required": {
-				"floats": ("FLOAT", {"forceInput": True}),
+				"floats": ("FLOATS", {"forceInput": True}),
 			}
 		}
 	RETURN_TYPES = ("WEIGHTS_STRATEGY",)
