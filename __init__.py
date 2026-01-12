@@ -8,15 +8,10 @@ from server import PromptServer
 class Yvann(metaclass=CombinedMeta):
     @classmethod
     def get_description(cls):
-        footer = "\n\n"
-        footer = "#### 🐙 Docs, Workflows and Code: [Yvann-Nodes GitHub](https://github.com/yvann-ba/ComfyUI_Yvann-Nodes) "
-        footer += " 👁️ Tutorials: [Yvann Youtube](https://www.youtube.com/@yvann.mp4)\n"
-
         desc = ""
 
         if hasattr(cls, 'DESCRIPTION'):
-            desc += f"{cls.DESCRIPTION}\n\n{footer}"
-            return desc
+            return cls.DESCRIPTION
 
         if hasattr(cls, 'TOP_DESCRIPTION'):
             desc += f"{cls.TOP_DESCRIPTION}\n\n"
@@ -36,7 +31,6 @@ class Yvann(metaclass=CombinedMeta):
         if hasattr(cls, 'BOTTOM_DESCRIPTION'):
             desc += f"{cls.BOTTOM_DESCRIPTION}\n\n"
 
-        desc += footer
         return desc
 
 from .nodes.audio.LoadAudioSeparationModel import LoadAudioSeparationModel

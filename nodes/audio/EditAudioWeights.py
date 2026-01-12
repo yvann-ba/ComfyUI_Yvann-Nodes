@@ -33,7 +33,7 @@ class EditAudioWeights(AudioNodeBase):
             }
         }
 
-    RETURN_TYPES = ("FLOATS", "IMAGE")
+    RETURN_TYPES = ("FLOAT", "IMAGE")
     RETURN_NAMES = ("process_weights", "graph_audio")
     FUNCTION = "process_any_audio_weights"
 
