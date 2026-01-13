@@ -1,22 +1,22 @@
 {
   "id": "fe431fee-b0dc-4f7a-aff0-25c2dec1e914",
   "revision": 0,
-  "last_node_id": 747,
-  "last_link_id": 3019,
+  "last_node_id": 752,
+  "last_link_id": 3022,
   "nodes": [
     {
       "id": 299,
       "type": "PreviewAudio",
       "pos": [
-        -3147.237009208041,
-        -1548.3258492690074
+        -3046.609052250985,
+        -1610.0748501877672
       ],
       "size": [
         304.34375,
         146
       ],
       "flags": {},
-      "order": 5,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -40,15 +40,15 @@
       "id": 371,
       "type": "PreviewImage",
       "pos": [
-        -2597.302977281246,
-        -2426.977673764052
+        -2596.9684782898153,
+        -2425.645885933748
       ],
       "size": [
         576,
         470.75
       ],
       "flags": {},
-      "order": 10,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -72,15 +72,15 @@
       "id": 410,
       "type": "VHS_VideoCombine",
       "pos": [
-        610.1289305454638,
-        -2649.258344900765
+        610.4614925705173,
+        -2647.9257401946675
       ],
       "size": [
         1003.765625,
-        1442.078125
+        1412.078125
       ],
       "flags": {},
-      "order": 15,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -144,13 +144,13 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "AnimateDiff_00005-audio.mp4",
-            "subfolder": "",
+            "filename": "01-13_00011-audio.mp4",
+            "subfolder": "AudioReactive_Yvann\\TextToVideo",
             "type": "output",
             "format": "video/h264-mp4",
-            "frame_rate": 24,
-            "workflow": "AnimateDiff_00005.png",
-            "fullpath": "C:\\Users\\yvann_416voxb\\Documents\\ComfyUI_windows_portable\\ComfyUI\\output\\AnimateDiff_00005-audio.mp4"
+            "frame_rate": 30,
+            "workflow": "01-13_00011.png",
+            "fullpath": "C:\\Users\\yvann_416voxb\\Documents\\ComfyUI_windows_portable\\ComfyUI\\output\\AudioReactive_Yvann\\TextToVideo\\01-13_00011-audio.mp4"
           },
           "muted": false
         }
@@ -162,15 +162,15 @@
       "id": 483,
       "type": "Audio Peaks Detection",
       "pos": [
-        -3040.8996264495318,
-        -2418.686125115807
+        -3040.566488537105,
+        -2417.353224983196
       ],
       "size": [
         378,
         238
       ],
       "flags": {},
-      "order": 6,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -218,8 +218,8 @@
         "Node name for S&R": "Audio Peaks Detection"
       },
       "widgets_values": [
-        0.5800000000000001,
-        5
+        0.4,
+        4
       ],
       "color": "#323",
       "bgcolor": "#535",
@@ -229,15 +229,15 @@
       "id": 616,
       "type": "Audio Prompt Schedule",
       "pos": [
-        -1877.1486893860065,
-        -1740.2577847536145
+        -1973.0155440472752,
+        -1829.5757923323847
       ],
       "size": [
         764.390625,
-        281.140625
+        155
       ],
       "flags": {},
-      "order": 9,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -252,7 +252,7 @@
           "type": "STRING",
           "slot_index": 0,
           "links": [
-            3012
+            3020
           ]
         }
       ],
@@ -272,15 +272,15 @@
       "id": 632,
       "type": "PreviewImage",
       "pos": [
-        -1382.8402472812763,
-        -2891.922830202116
+        -1382.507044535077,
+        -2890.590242310076
       ],
       "size": [
         480,
         406.75
       ],
       "flags": {},
-      "order": 11,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -303,21 +303,21 @@
       "id": 714,
       "type": "Audio Analysis",
       "pos": [
-        -3520.1486420191904,
-        -1869.1827689923473
+        -3519.814616855783,
+        -1867.8498418114023
       ],
       "size": [
         299.734375,
         248.65625
       ],
       "flags": {},
-      "order": 4,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
           "name": "audio_sep_model",
           "type": "AUDIO_SEPARATION_MODEL",
-          "link": 3018
+          "link": 3022
         },
         {
           "name": "batch_size",
@@ -332,7 +332,7 @@
         {
           "name": "audio",
           "type": "AUDIO",
-          "link": 3017
+          "link": 3021
         }
       ],
       "outputs": [
@@ -362,9 +362,7 @@
         {
           "name": "graph_audio",
           "type": "IMAGE",
-          "links": [
-            3019
-          ]
+          "links": []
         }
       ],
       "properties": {
@@ -375,7 +373,7 @@
       "widgets_values": [
         "Drums Only",
         0.5,
-        1
+        1.18
       ],
       "color": "#153a61",
       "bgcolor": "#1A4870",
@@ -385,12 +383,12 @@
       "id": 716,
       "type": "MarkdownNote",
       "pos": [
-        -1901.5752196892895,
-        -2405.4240794050957
+        -1762.3716508461018,
+        -2440.609507213173
       ],
       "size": [
         547.1875,
-        436.25
+        529.640625
       ],
       "flags": {},
       "order": 0,
@@ -400,7 +398,7 @@
       "title": "1.  MODEL REQUIREMENTS ⬇️",
       "properties": {},
       "widgets_values": [
-        "Go to your ComfyUI installation, to:\n\nComfyUI/models/\n\nand install these models in the correct subfolder as indicated below:\n\n📁 checkpoints/\nhttps://civitai.com/models/4384/dreamshaper\n\n📁 animatediff_models/\nhttps://huggingface.co/guoyww/animatediff/blob/main/mm_sd_v15_v2.ckpt\n\n📁 loras/\nhttps://huggingface.co/ByteDance/Hyper-SD/blob/main/Hyper-SD15-12steps-CFG-lora.safetensors\n\n---\n(optional part below)\n\n📁 animatediff_motion_lora/\nhttps://huggingface.co/guoyww/animatediff/blob/main/v2_lora_ZoomIn.ckpt\n"
+        "Go to your ComfyUI installation, to:\n\nComfyUI/models/\n\nand install these models in the correct subfolder as indicated below:\n\n📁 checkpoints/\n\nhttps://civitai.com/models/4384/dreamshaper\n\n📁 animatediff_models/\n\nhttps://huggingface.co/wangfuyun/AnimateLCM/blob/main/AnimateLCM_sd15_t2v.ckpt\n\n📁 loras/\n\nhttps://huggingface.co/ByteDance/Hyper-SD/blob/main/Hyper-SD15-12steps-CFG-lora.safetensors\n\nhttps://huggingface.co/guoyww/animatediff/blob/main/v3_sd15_adapter.ckpt\n\n📁 vae/\n\nhttps://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors\n\n📁 upscale_models/\n\nhttps://openmodeldb.info/models/2x-sudo-UltraCompact\n"
       ],
       "color": "#223",
       "bgcolor": "#335"
@@ -409,8 +407,8 @@
       "id": 728,
       "type": "a9cd8437-49e3-4fa2-9b85-14613efcb5ed",
       "pos": [
-        -3450.9422806015823,
-        -2988.0264655522496
+        -3450.608822583441,
+        -2986.6938954054467
       ],
       "size": [
         537.921875,
@@ -474,15 +472,15 @@
       "id": 734,
       "type": "f8f5221c-bc59-429e-ade6-52a6e203d8b0",
       "pos": [
-        -402.1495165189624,
-        -2476.0489452221686
+        -401.81646607648645,
+        -2474.715026999459
       ],
       "size": [
         367.4375,
-        270
+        646
       ],
       "flags": {},
-      "order": 13,
+      "order": 14,
       "mode": 0,
       "inputs": [
         {
@@ -545,15 +543,15 @@
       "id": 735,
       "type": "b278f958-f4ee-481a-a46c-86d955fc508a",
       "pos": [
-        92.70592613474128,
-        -2486.749364611843
+        93.03937885748928,
+        -2485.4164267470014
       ],
       "size": [
         349.125,
         112.65625
       ],
       "flags": {},
-      "order": 14,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -592,8 +590,8 @@
       "id": 737,
       "type": "943c2313-bbaa-451e-9718-6b79ffa22ba4",
       "pos": [
-        -3996.010240369831,
-        -1639.6787490506956
+        -4026.0025083988394,
+        -1649.718442925138
       ],
       "size": [
         359.53125,
@@ -689,25 +687,25 @@
         "ver": "0.8.2"
       },
       "widgets_values": [
-        "24",
-        "31",
-        512,
-        512
+        "30",
+        "100",
+        704,
+        704
       ]
     },
     {
       "id": 741,
       "type": "3a689ac7-11b3-44d6-85c0-968bc8cf26bd",
       "pos": [
-        -2014.8099748479817,
-        -2883.2438531090756
+        -2014.4766091544805,
+        -2881.9113314537226
       ],
       "size": [
         586.3125,
-        198
+        232.65625
       ],
       "flags": {},
-      "order": 7,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -778,15 +776,19 @@
           [
             "-1",
             "max_range"
+          ],
+          [
+            "738",
+            "model_name"
           ]
         ],
         "cnr_id": "comfy-core",
         "ver": "0.8.2"
       },
       "widgets_values": [
-        0.10000000000000002,
-        1.0000000000000002,
-        1.3000000000000003
+        0.1,
+        0.98,
+        1.22
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -795,15 +797,15 @@
       "id": 745,
       "type": "0d033df8-8901-4044-8084-331fbaa30c57",
       "pos": [
-        -1063.8101295787749,
-        -1875.5569084068325
+        -1063.47700610915,
+        -1874.2240597049074
       ],
       "size": [
         466.40625,
-        222
+        299
       ],
       "flags": {},
-      "order": 12,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
@@ -817,7 +819,7 @@
           "widget": {
             "name": "text"
           },
-          "link": 3012
+          "link": 3020
         },
         {
           "name": "max_frames",
@@ -878,6 +880,10 @@
         "proxyWidgets": [
           [
             "-1",
+            "text"
+          ],
+          [
+            "-1",
             "max_frames"
           ],
           [
@@ -893,23 +899,24 @@
         "ver": "0.8.2"
       },
       "widgets_values": [
+        "",
         120,
         0,
-        1.0000000000000002
+        1.1
       ],
       "color": "#232",
       "bgcolor": "#353"
     },
     {
-      "id": 746,
-      "type": "71c91689-da09-4142-9f98-70f7d399a6f6",
+      "id": 749,
+      "type": "VHS_LoadAudioUpload",
       "pos": [
-        -4001.000228027333,
-        -2046.1992663786393
+        -4019.0932018542444,
+        -2366.4962868512857
       ],
       "size": [
-        352.5,
-        138
+        341.125,
+        392.65625
       ],
       "flags": {},
       "order": 3,
@@ -920,60 +927,93 @@
           "name": "audio",
           "type": "AUDIO",
           "links": [
-            3017
+            3021
           ]
         },
+        {
+          "name": "duration",
+          "type": "FLOAT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-videohelpersuite",
+        "ver": "993082e4f2473bf4acaf06f51e33877a7eb38960",
+        "Node name for S&R": "VHS_LoadAudioUpload"
+      },
+      "widgets_values": {
+        "audio": "BLOU FEET - yakoi!.mp3",
+        "start_time": 0,
+        "duration": 0,
+        "audiopreview": {
+          "params": {
+            "start_time": 0,
+            "duration": 0,
+            "filename": "BLOU FEET - yakoi!.mp3",
+            "type": "input"
+          }
+        }
+      }
+    },
+    {
+      "id": 750,
+      "type": "Load Audio Separation Model",
+      "pos": [
+        -3979.5425544075056,
+        -1877.814211533428
+      ],
+      "size": [
+        295.53125,
+        112.65625
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
         {
           "name": "audio_sep_model",
           "type": "AUDIO_SEPARATION_MODEL",
           "links": [
-            3018
+            3022
           ]
         }
       ],
-      "title": "Load Audio",
       "properties": {
-        "proxyWidgets": [
-          [
-            "746",
-            "audio"
-          ]
-        ],
-        "cnr_id": "comfy-core",
-        "ver": "0.8.2"
+        "cnr_id": "comfyui_yvann-nodes",
+        "ver": "8e9d7ea127e566cb4998f9c738af5cabe1e6f8b2",
+        "Node name for S&R": "Load Audio Separation Model"
       },
-      "widgets_values": []
+      "widgets_values": [
+        "Hybrid Demucs"
+      ],
+      "color": "#223",
+      "bgcolor": "#335",
+      "shape": 1
     },
     {
-      "id": 747,
-      "type": "PreviewImage",
+      "id": 752,
+      "type": "MarkdownNote",
       "pos": [
-        -2748.451295268992,
-        -1528.425918075462
+        -1058.131232922432,
+        -2340.1248411145853
       ],
       "size": [
-        325.90625,
-        84.71875
+        397.796875,
+        240.359375
       ],
       "flags": {},
-      "order": 8,
+      "order": 5,
       "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 3019
-        }
-      ],
+      "inputs": [],
       "outputs": [],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.8.2",
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": [],
-      "color": "#223",
-      "bgcolor": "#335"
+      "title": "AUDIO REACTIVE 🔊 Text TO VIDEO",
+      "properties": {},
+      "widgets_values": [
+        "### ▶️ Contact me\nhttps://www.linkedin.com/in/yvann-barbot/\n\n### ⭐ Support the Project\nGive a ⭐ on GitHub to help us continue sharing ((:  \nhttps://github.com/yvann-ba/ComfyUI_Yvann-Nodes"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
     }
   ],
   "links": [
@@ -1114,14 +1154,6 @@
       "CLIP"
     ],
     [
-      3012,
-      616,
-      0,
-      745,
-      1,
-      "STRING"
-    ],
-    [
       3013,
       737,
       0,
@@ -1154,28 +1186,28 @@
       "CONDITIONING"
     ],
     [
-      3017,
-      746,
+      3020,
+      616,
+      0,
+      745,
+      1,
+      "STRING"
+    ],
+    [
+      3021,
+      749,
       0,
       714,
       3,
       "AUDIO"
     ],
     [
-      3018,
-      746,
-      1,
+      3022,
+      750,
+      0,
       714,
       0,
       "AUDIO_SEPARATION_MODEL"
-    ],
-    [
-      3019,
-      714,
-      3,
-      747,
-      0,
-      "IMAGE"
     ]
   ],
   "groups": [],
@@ -1751,7 +1783,7 @@
               "Node name for S&R": "KSampler"
             },
             "widgets_values": [
-              356115139917518,
+              356115139917534,
               "increment",
               10,
               11.4,
@@ -2203,7 +2235,7 @@
               "Node name for S&R": "Int"
             },
             "widgets_values": [
-              "31"
+              "100"
             ],
             "color": "#332922",
             "bgcolor": "#593930"
@@ -2267,8 +2299,8 @@
               "Node name for S&R": "ADE_EmptyLatentImageLarge"
             },
             "widgets_values": [
-              512,
-              512,
+              704,
+              704,
               1
             ],
             "color": "#233",
@@ -2317,7 +2349,7 @@
               "Node name for S&R": "Float"
             },
             "widgets_values": [
-              "24"
+              "30"
             ],
             "color": "#332922",
             "bgcolor": "#593930"
@@ -2541,8 +2573,8 @@
             "id": 738,
             "type": "ADE_AnimateDiffLoaderGen1",
             "pos": [
-              -523.2994289852986,
-              -1422.4390241102494
+              -523.2988476070227,
+              -1422.4395411104867
             ],
             "size": [
               378,
@@ -2639,8 +2671,8 @@
             "id": 739,
             "type": "ADE_AnimateDiffLoRALoader",
             "pos": [
-              -1281.706346069131,
-              -1929.6849462176897
+              -1281.705607809865,
+              -1929.6855677548378
             ],
             "size": [
               324.3125,
@@ -2682,8 +2714,8 @@
             "id": 740,
             "type": "ADE_LoopedUniformContextOptions",
             "pos": [
-              -1392.5124132985065,
-              -1321.4821907635094
+              -1392.5121717999923,
+              -1321.4828414171575
             ],
             "size": [
               378,
@@ -2738,8 +2770,8 @@
             "id": 631,
             "type": "Edit Audio Weights",
             "pos": [
-              -2807.5650531711494,
-              -1824.06218726015
+              -2807.5643795024016,
+              -1824.062659114671
             ],
             "size": [
               453.59375,
@@ -2809,9 +2841,9 @@
               "Node name for S&R": "Edit Audio Weights"
             },
             "widgets_values": [
-              0.10000000000000002,
-              1.0000000000000002,
-              1.3000000000000003
+              0.1,
+              0.98,
+              1.22
             ],
             "color": "#432",
             "bgcolor": "#653",
@@ -2821,8 +2853,8 @@
             "id": 630,
             "type": "ADE_MultivalDynamicFloatInput",
             "pos": [
-              -2044.6941698658898,
-              -1944.270480709612
+              -2044.6937435718023,
+              -1944.2710727169913
             ],
             "size": [
               270,
@@ -3125,8 +3157,8 @@
             "id": 742,
             "type": "CLIPTextEncode",
             "pos": [
-              -589.0413214985022,
-              -15.496436967548902
+              -589.0410347454258,
+              -15.496312209309963
             ],
             "size": [
               480,
@@ -3172,8 +3204,8 @@
             "id": 744,
             "type": "BatchPromptSchedule",
             "pos": [
-              -562.822516264491,
-              -667.6990819224799
+              -562.8223741498509,
+              -667.6988367653312
             ],
             "size": [
               480,
@@ -3284,7 +3316,7 @@
               "Node name for S&R": "BatchPromptSchedule"
             },
             "widgets_values": [
-              "120",
+              "",
               120,
               false,
               0,
@@ -3295,8 +3327,8 @@
             "id": 724,
             "type": "Edit Audio Weights",
             "pos": [
-              -1585.5292719794663,
-              -803.7529268992503
+              -1585.5290622289651,
+              -803.7528312564089
             ],
             "size": [
               453.59375,
@@ -3359,7 +3391,7 @@
             "widgets_values": [
               0,
               0,
-              1.0000000000000002
+              1.1
             ],
             "color": "#432",
             "bgcolor": "#653",
@@ -3468,169 +3500,19 @@
         "extra": {
           "workflowRendererVersion": "Vue"
         }
-      },
-      {
-        "id": "71c91689-da09-4142-9f98-70f7d399a6f6",
-        "version": 1,
-        "state": {
-          "lastGroupId": 0,
-          "lastNodeId": 746,
-          "lastLinkId": 3017,
-          "lastRerouteId": 0
-        },
-        "revision": 0,
-        "config": {},
-        "name": "New Subgraph",
-        "inputNode": {
-          "id": -10,
-          "bounding": [
-            -4997.314766309459,
-            -2057.5629136326597,
-            120,
-            40
-          ]
-        },
-        "outputNode": {
-          "id": -20,
-          "bounding": [
-            -4300.000523219992,
-            -2081.5629136326597,
-            138.267578125,
-            80
-          ]
-        },
-        "inputs": [],
-        "outputs": [
-          {
-            "id": "a3939bb8-fbd6-4415-a2de-2fdb7d2abaa6",
-            "name": "audio",
-            "type": "AUDIO",
-            "linkIds": [
-              3017
-            ],
-            "localized_name": "audio",
-            "pos": [
-              -4280.000523219992,
-              -2061.5629136326597
-            ]
-          },
-          {
-            "id": "a494db07-2e54-41e2-92b2-31012b19b5f4",
-            "name": "audio_sep_model",
-            "type": "AUDIO_SEPARATION_MODEL",
-            "linkIds": [
-              2910
-            ],
-            "localized_name": "audio_sep_model",
-            "pos": [
-              -4280.000523219992,
-              -2041.5629136326597
-            ]
-          }
-        ],
-        "widgets": [],
-        "nodes": [
-          {
-            "id": 430,
-            "type": "Load Audio Separation Model",
-            "pos": [
-              -4717.600687959893,
-              -2352.4007409960527
-            ],
-            "size": [
-              345.59375,
-              135.1875
-            ],
-            "flags": {},
-            "order": 0,
-            "mode": 0,
-            "inputs": [],
-            "outputs": [
-              {
-                "localized_name": "audio_sep_model",
-                "name": "audio_sep_model",
-                "type": "AUDIO_SEPARATION_MODEL",
-                "links": [
-                  2910
-                ]
-              }
-            ],
-            "properties": {
-              "cnr_id": "comfyui_yvann-nodes",
-              "ver": "8e9d7ea127e566cb4998f9c738af5cabe1e6f8b2",
-              "Node name for S&R": "Load Audio Separation Model"
-            },
-            "widgets_values": [
-              "Hybrid Demucs"
-            ],
-            "color": "#223",
-            "bgcolor": "#335",
-            "shape": 1
-          },
-          {
-            "id": 746,
-            "type": "LoadAudio",
-            "pos": [
-              -4701.542331065942,
-              -2111.421628077214
-            ],
-            "size": [
-              282.796875,
-              214
-            ],
-            "flags": {},
-            "order": 1,
-            "mode": 0,
-            "inputs": [],
-            "outputs": [
-              {
-                "localized_name": "AUDIO",
-                "name": "AUDIO",
-                "type": "AUDIO",
-                "links": [
-                  3017
-                ]
-              }
-            ],
-            "properties": {
-              "cnr_id": "comfy-core",
-              "ver": "0.8.2",
-              "Node name for S&R": "LoadAudio"
-            },
-            "widgets_values": [
-              "01-12_00004-audio.mp4",
-              null,
-              ""
-            ]
-          }
-        ],
-        "groups": [],
-        "links": [
-          {
-            "id": 2910,
-            "origin_id": 430,
-            "origin_slot": 0,
-            "target_id": -20,
-            "target_slot": 1,
-            "type": "AUDIO_SEPARATION_MODEL"
-          },
-          {
-            "id": 3017,
-            "origin_id": 746,
-            "origin_slot": 0,
-            "target_id": -20,
-            "target_slot": 0,
-            "type": "AUDIO"
-          }
-        ],
-        "extra": {
-          "workflowRendererVersion": "Vue"
-        }
       }
     ]
   },
   "config": {},
   "extra": {
+    "ds": {
+      "scale": 0.7914024304602403,
+      "offset": [
+        4349.3720250068,
+        2312.9126818416808
+      ]
+    },
+    "frontendVersion": "1.35.9",
     "workflowRendererVersion": "Vue",
     "ue_links": [
       {
@@ -3679,15 +3561,7 @@
     "VHS_latentpreviewrate": 0,
     "groupNodes": {},
     "VHS_MetadataImage": true,
-    "VHS_KeepIntermediate": true,
-    "ds": {
-      "scale": 0.2773817239110576,
-      "offset": [
-        4774.8682169022995,
-        3583.0127586569597
-      ]
-    },
-    "frontendVersion": "1.35.9"
+    "VHS_KeepIntermediate": true
   },
   "version": 0.4
 }
