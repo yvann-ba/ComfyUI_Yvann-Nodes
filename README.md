@@ -64,12 +64,15 @@
 <table border="0" style="width: 100%; text-align: left; margin-top: 20px;">
   <tr>
       <td>
-          <video src="https://github.com/user-attachments/assets/dummy-video-link" width="100%" controls autoplay loop></video>
-     </td>
-      <td>
-          <video src="https://github.com/user-attachments/assets/dummy-video-link" width="100%" controls autoplay loop></video>
+          <video src="https://github.com/user-attachments/assets/d5e709c1-6590-4971-ac9c-b7137fbe662a" width="100%" controls autoplay loop></video>
      </td>
   </tr>
+
+
+
+
+
+
 </table>
 
 ## Quick Setup
