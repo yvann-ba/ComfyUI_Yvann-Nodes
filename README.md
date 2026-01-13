@@ -2,6 +2,7 @@
 
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
+#### *I'm currently working on making AI useful for geospatial -> building [TerraLab](https://www.terra-lab.ai/) with my dad and best friend, come take a look ((:*
 ---
 
 ## What Does This Do?
