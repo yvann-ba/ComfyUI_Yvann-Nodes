@@ -1,10 +1,11 @@
+#### `pleaseee add a star⭐️ to this repo if you like it, so I can keep improving it for free ((:`
+---
 # 🔊 ComfyUI_Yvann-Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
 
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
 #### *I'm currently working on making AI useful for geospatial -> building [TerraLab](https://www.terra-lab.ai/) with my dad and best friend, come take a look hehe*
 
-#### `please add a star ⭐️ to this repo if you like it so I can continue to improve it for free ((:`
 ---
 
 ## What Does This Do?
