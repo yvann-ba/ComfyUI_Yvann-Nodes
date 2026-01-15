@@ -375,106 +375,6 @@
       "bgcolor": "#355"
     },
     {
-      "id": 741,
-      "type": "3a689ac7-11b3-44d6-85c0-968bc8cf26bd",
-      "pos": [
-        -1680.3971742954004,
-        -2403.259442878102
-      ],
-      "size": [
-        488.59375,
-        168.88020833333334
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 2998
-        },
-        {
-          "name": "any_audio_weights",
-          "type": "FLOATS",
-          "link": 2999
-        },
-        {
-          "label": "motion smooth",
-          "name": "smooth",
-          "type": "FLOAT",
-          "widget": {
-            "name": "smooth"
-          },
-          "link": null
-        },
-        {
-          "label": "motion min_range",
-          "name": "min_range",
-          "type": "FLOAT",
-          "widget": {
-            "name": "min_range"
-          },
-          "link": null
-        },
-        {
-          "label": "motion max_range",
-          "name": "max_range",
-          "type": "FLOAT",
-          "widget": {
-            "name": "max_range"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            3000
-          ]
-        },
-        {
-          "name": "graph_audio",
-          "type": "IMAGE",
-          "links": [
-            3001
-          ]
-        }
-      ],
-      "title": "AnimateDiff",
-      "properties": {
-        "proxyWidgets": [
-          [
-            "-1",
-            "smooth"
-          ],
-          [
-            "-1",
-            "min_range"
-          ],
-          [
-            "-1",
-            "max_range"
-          ],
-          [
-            "738",
-            "model_name"
-          ]
-        ],
-        "cnr_id": "comfy-core",
-        "ver": "0.8.2"
-      },
-      "widgets_values": [
-        0.1,
-        0.98,
-        1.22
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
       "id": 745,
       "type": "0d033df8-8901-4044-8084-331fbaa30c57",
       "pos": [
@@ -1014,6 +914,106 @@
       ],
       "color": "#322",
       "bgcolor": "#533"
+    },
+    {
+      "id": 741,
+      "type": "3a689ac7-11b3-44d6-85c0-968bc8cf26bd",
+      "pos": [
+        -1680.3971742954004,
+        -2403.259442878102
+      ],
+      "size": [
+        488.59375,
+        168.88020833333334
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 2998
+        },
+        {
+          "name": "any_audio_weights",
+          "type": "FLOATS",
+          "link": 2999
+        },
+        {
+          "label": "motion smooth",
+          "name": "smooth",
+          "type": "FLOAT",
+          "widget": {
+            "name": "smooth"
+          },
+          "link": null
+        },
+        {
+          "label": "motion min_range",
+          "name": "min_range",
+          "type": "FLOAT",
+          "widget": {
+            "name": "min_range"
+          },
+          "link": null
+        },
+        {
+          "label": "motion max_range",
+          "name": "max_range",
+          "type": "FLOAT",
+          "widget": {
+            "name": "max_range"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            3000
+          ]
+        },
+        {
+          "name": "graph_audio",
+          "type": "IMAGE",
+          "links": [
+            3001
+          ]
+        }
+      ],
+      "title": "AnimateDiff",
+      "properties": {
+        "proxyWidgets": [
+          [
+            "-1",
+            "smooth"
+          ],
+          [
+            "-1",
+            "min_range"
+          ],
+          [
+            "-1",
+            "max_range"
+          ],
+          [
+            "744",
+            "model_name"
+          ]
+        ],
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2"
+      },
+      "widgets_values": [
+        0.1,
+        0.98,
+        1.22
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
     }
   ],
   "links": [
@@ -1230,8 +1230,8 @@
           "bounding": [
             -3842.859503429408,
             -2981.437832331901,
-            100,
-            33.333333333333336
+            120,
+            40
           ]
         },
         "outputNode": {
@@ -1239,8 +1239,8 @@
           "bounding": [
             -2645.135347686202,
             -3001.437832331901,
-            100,
-            83.33333333333334
+            120,
+            100
           ]
         },
         "inputs": [],
@@ -1254,8 +1254,8 @@
             ],
             "localized_name": "MODEL",
             "pos": [
-              -3152.162417223442,
-              -3579.7253987982813
+              -2625.135347686202,
+              -2981.437832331901
             ]
           },
           {
@@ -1269,8 +1269,8 @@
             ],
             "localized_name": "CLIP",
             "pos": [
-              -3152.162417223442,
-              -3559.7253987982813
+              -2625.135347686202,
+              -2961.437832331901
             ]
           },
           {
@@ -1281,8 +1281,8 @@
               2957
             ],
             "pos": [
-              -3152.162417223442,
-              -3539.7253987982813
+              -2625.135347686202,
+              -2941.437832331901
             ]
           }
         ],
@@ -2428,8 +2428,8 @@
         "version": 1,
         "state": {
           "lastGroupId": 0,
-          "lastNodeId": 740,
-          "lastLinkId": 3000,
+          "lastNodeId": 744,
+          "lastLinkId": 3007,
           "lastRerouteId": 0
         },
         "revision": 0,
@@ -2440,8 +2440,8 @@
           "bounding": [
             -2953.372876554797,
             -1191.3509154214503,
-            121.48274739583334,
-            116.66666666666667
+            145.779296875,
+            140
           ]
         },
         "outputNode": {
@@ -2449,8 +2449,8 @@
           "bounding": [
             384.99993651445857,
             -1191.3509154214503,
-            100,
-            66.66666666666667
+            120,
+            80
           ]
         },
         "inputs": [
@@ -2459,12 +2459,12 @@
             "name": "model",
             "type": "MODEL",
             "linkIds": [
-              2995
+              3005
             ],
             "localized_name": "model",
             "pos": [
-              -3416.2681549907566,
-              -1407.6210985057403
+              -2827.593579679797,
+              -1171.3509154214503
             ]
           },
           {
@@ -2476,8 +2476,8 @@
             ],
             "localized_name": "any_audio_weights",
             "pos": [
-              -3416.2681549907566,
-              -1387.6210985057403
+              -2827.593579679797,
+              -1151.3509154214503
             ]
           },
           {
@@ -2489,8 +2489,8 @@
             ],
             "label": "motion smooth",
             "pos": [
-              -3416.2681549907566,
-              -1367.6210985057403
+              -2827.593579679797,
+              -1131.3509154214503
             ]
           },
           {
@@ -2502,8 +2502,8 @@
             ],
             "label": "motion min_range",
             "pos": [
-              -3416.2681549907566,
-              -1347.6210985057403
+              -2827.593579679797,
+              -1111.3509154214503
             ]
           },
           {
@@ -2515,8 +2515,8 @@
             ],
             "label": "motion max_range",
             "pos": [
-              -3416.2681549907566,
-              -1327.6210985057403
+              -2827.593579679797,
+              -1091.3509154214503
             ]
           }
         ],
@@ -2526,12 +2526,12 @@
             "name": "MODEL",
             "type": "MODEL",
             "linkIds": [
-              2997
+              3004
             ],
             "localized_name": "MODEL",
             "pos": [
-              483.99992381735024,
-              -1407.6210985057403
+              404.99993651445857,
+              -1171.3509154214503
             ]
           },
           {
@@ -2543,111 +2543,13 @@
             ],
             "localized_name": "graph_audio",
             "pos": [
-              483.99992381735024,
-              -1387.6210985057403
+              404.99993651445857,
+              -1151.3509154214503
             ]
           }
         ],
         "widgets": [],
         "nodes": [
-          {
-            "id": 738,
-            "type": "ADE_AnimateDiffLoaderGen1",
-            "pos": [
-              -437.74903967251896,
-              -1187.0329509254057
-            ],
-            "size": [
-              315,
-              257.7604166666667
-            ],
-            "flags": {},
-            "order": 4,
-            "mode": 0,
-            "inputs": [
-              {
-                "localized_name": "model",
-                "name": "model",
-                "type": "MODEL",
-                "link": 2995
-              },
-              {
-                "localized_name": "context_options",
-                "name": "context_options",
-                "shape": 7,
-                "type": "CONTEXT_OPTIONS",
-                "link": 2993
-              },
-              {
-                "localized_name": "motion_lora",
-                "name": "motion_lora",
-                "shape": 7,
-                "type": "MOTION_LORA",
-                "link": 2994
-              },
-              {
-                "localized_name": "ad_settings",
-                "name": "ad_settings",
-                "shape": 7,
-                "type": "AD_SETTINGS",
-                "link": null
-              },
-              {
-                "localized_name": "ad_keyframes",
-                "name": "ad_keyframes",
-                "shape": 7,
-                "type": "AD_KEYFRAMES",
-                "link": null
-              },
-              {
-                "localized_name": "sample_settings",
-                "name": "sample_settings",
-                "shape": 7,
-                "type": "SAMPLE_SETTINGS",
-                "link": null
-              },
-              {
-                "localized_name": "scale_multival",
-                "name": "scale_multival",
-                "shape": 7,
-                "type": "MULTIVAL",
-                "link": 2996
-              },
-              {
-                "localized_name": "effect_multival",
-                "name": "effect_multival",
-                "shape": 7,
-                "type": "MULTIVAL",
-                "link": null
-              },
-              {
-                "localized_name": "per_block",
-                "name": "per_block",
-                "shape": 7,
-                "type": "PER_BLOCK",
-                "link": null
-              }
-            ],
-            "outputs": [
-              {
-                "localized_name": "MODEL",
-                "name": "MODEL",
-                "type": "MODEL",
-                "links": [
-                  2997
-                ]
-              }
-            ],
-            "properties": {
-              "Node name for S&R": "ADE_AnimateDiffLoaderGen1",
-              "cnr_id": "comfyui-animatediff-evolved",
-              "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9"
-            },
-            "widgets_values": [
-              "AnimateLCM_sd15_t2v.ckpt",
-              "sqrt_linear (AnimateDiff)"
-            ]
-          },
           {
             "id": 739,
             "type": "ADE_AnimateDiffLoRALoader",
@@ -2677,7 +2579,7 @@
                 "name": "MOTION_LORA",
                 "type": "MOTION_LORA",
                 "links": [
-                  2994
+                  3006
                 ]
               }
             ],
@@ -2692,62 +2594,6 @@
             ]
           },
           {
-            "id": 740,
-            "type": "ADE_LoopedUniformContextOptions",
-            "pos": [
-              -1162.0934764999936,
-              -1102.9023678476312
-            ],
-            "size": [
-              315,
-              268.88020833333337
-            ],
-            "flags": {},
-            "order": 1,
-            "mode": 0,
-            "inputs": [
-              {
-                "localized_name": "prev_context",
-                "name": "prev_context",
-                "shape": 7,
-                "type": "CONTEXT_OPTIONS",
-                "link": null
-              },
-              {
-                "localized_name": "view_opts",
-                "name": "view_opts",
-                "shape": 7,
-                "type": "VIEW_OPTS",
-                "link": null
-              }
-            ],
-            "outputs": [
-              {
-                "localized_name": "CONTEXT_OPTS",
-                "name": "CONTEXT_OPTS",
-                "type": "CONTEXT_OPTIONS",
-                "links": [
-                  2993
-                ]
-              }
-            ],
-            "properties": {
-              "Node name for S&R": "ADE_LoopedUniformContextOptions",
-              "cnr_id": "comfyui-animatediff-evolved",
-              "ver": "90fb1331201a4b29488089e4fbffc0d82cc6d0a9"
-            },
-            "widgets_values": [
-              16,
-              1,
-              4,
-              false,
-              "pyramid",
-              false,
-              0,
-              1
-            ]
-          },
-          {
             "id": 631,
             "type": "Edit Audio Weights",
             "pos": [
@@ -2759,7 +2605,7 @@
               140
             ],
             "flags": {},
-            "order": 3,
+            "order": 4,
             "mode": 0,
             "inputs": [
               {
@@ -2831,6 +2677,147 @@
             "shape": 1
           },
           {
+            "id": 742,
+            "type": "ADE_LoopedUniformContextOptions",
+            "pos": [
+              -1213.557022623459,
+              -875.1327480610831
+            ],
+            "size": [
+              265.4654296875,
+              268.88020833333337
+            ],
+            "flags": {
+              "collapsed": false
+            },
+            "order": 1,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "prev_context",
+                "name": "prev_context",
+                "shape": 7,
+                "type": "CONTEXT_OPTIONS",
+                "link": null
+              },
+              {
+                "localized_name": "view_opts",
+                "name": "view_opts",
+                "shape": 7,
+                "type": "VIEW_OPTS",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "CONTEXT_OPTS",
+                "name": "CONTEXT_OPTS",
+                "type": "CONTEXT_OPTIONS",
+                "slot_index": 0,
+                "links": [
+                  3002
+                ]
+              }
+            ],
+            "title": "Context Options◆Looped Uniform",
+            "properties": {
+              "Node name for S&R": "ADE_LoopedUniformContextOptions",
+              "cnr_id": "comfyui-animatediff-evolved",
+              "ver": "b3e508ae8211892a00f3897fcdb4da2d7514f572"
+            },
+            "widgets_values": [
+              16,
+              1,
+              4,
+              true,
+              "pyramid",
+              false,
+              0,
+              1
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
+            "id": 743,
+            "type": "ADE_ApplyAnimateDiffModelSimple",
+            "pos": [
+              -882.3701135325572,
+              -1319.4643844247096
+            ],
+            "size": [
+              204.4341796875,
+              140
+            ],
+            "flags": {
+              "collapsed": false
+            },
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "motion_model",
+                "name": "motion_model",
+                "type": "MOTION_MODEL_ADE",
+                "link": 3003
+              },
+              {
+                "localized_name": "motion_lora",
+                "name": "motion_lora",
+                "shape": 7,
+                "type": "MOTION_LORA",
+                "link": 3006
+              },
+              {
+                "localized_name": "scale_multival",
+                "name": "scale_multival",
+                "shape": 7,
+                "type": "MULTIVAL",
+                "link": 3007
+              },
+              {
+                "localized_name": "effect_multival",
+                "name": "effect_multival",
+                "shape": 7,
+                "type": "MULTIVAL",
+                "link": null
+              },
+              {
+                "localized_name": "ad_keyframes",
+                "name": "ad_keyframes",
+                "shape": 7,
+                "type": "AD_KEYFRAMES",
+                "link": null
+              },
+              {
+                "localized_name": "per_block",
+                "name": "per_block",
+                "shape": 7,
+                "type": "PER_BLOCK",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "M_MODELS",
+                "name": "M_MODELS",
+                "type": "M_MODELS",
+                "slot_index": 0,
+                "links": [
+                  3001
+                ]
+              }
+            ],
+            "title": "Apply AnimateDiff Model",
+            "properties": {
+              "Node name for S&R": "ADE_ApplyAnimateDiffModelSimple",
+              "cnr_id": "comfyui-animatediff-evolved",
+              "ver": "b3e508ae8211892a00f3897fcdb4da2d7514f572"
+            },
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
             "id": 630,
             "type": "ADE_MultivalDynamicFloatInput",
             "pos": [
@@ -2844,7 +2831,7 @@
             "flags": {
               "collapsed": false
             },
-            "order": 2,
+            "order": 3,
             "mode": 0,
             "inputs": [
               {
@@ -2869,7 +2856,7 @@
                 "slot_index": 0,
                 "links": [
                   2701,
-                  2996
+                  3007
                 ]
               }
             ],
@@ -2882,34 +2869,116 @@
             "widgets_values": [],
             "color": "#432",
             "bgcolor": "#653"
+          },
+          {
+            "id": 741,
+            "type": "ADE_UseEvolvedSampling",
+            "pos": [
+              -443.58216780392803,
+              -1144.845936924952
+            ],
+            "size": [
+              375.79427083333337,
+              159.6484375
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "model",
+                "name": "model",
+                "type": "MODEL",
+                "link": 3005
+              },
+              {
+                "localized_name": "m_models",
+                "name": "m_models",
+                "shape": 7,
+                "type": "M_MODELS",
+                "link": 3001
+              },
+              {
+                "localized_name": "context_options",
+                "name": "context_options",
+                "shape": 7,
+                "type": "CONTEXT_OPTIONS",
+                "link": 3002
+              },
+              {
+                "localized_name": "sample_settings",
+                "name": "sample_settings",
+                "shape": 7,
+                "type": "SAMPLE_SETTINGS",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MODEL",
+                "name": "MODEL",
+                "type": "MODEL",
+                "slot_index": 0,
+                "links": [
+                  3004
+                ]
+              }
+            ],
+            "title": "Use Evolved Sampling",
+            "properties": {
+              "Node name for S&R": "ADE_UseEvolvedSampling",
+              "cnr_id": "comfyui-animatediff-evolved",
+              "ver": "b3e508ae8211892a00f3897fcdb4da2d7514f572"
+            },
+            "widgets_values": [
+              "sqrt_linear (AnimateDiff)"
+            ],
+            "color": "#2a363b",
+            "bgcolor": "#3f5159"
+          },
+          {
+            "id": 744,
+            "type": "ADE_LoadAnimateDiffModel",
+            "pos": [
+              -1460.9051524253045,
+              -1321.5610776605663
+            ],
+            "size": [
+              308.5201171875,
+              58
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [
+              {
+                "localized_name": "ad_settings",
+                "name": "ad_settings",
+                "shape": 7,
+                "type": "AD_SETTINGS",
+                "link": null
+              }
+            ],
+            "outputs": [
+              {
+                "localized_name": "MOTION_MODEL",
+                "name": "MOTION_MODEL",
+                "type": "MOTION_MODEL_ADE",
+                "links": [
+                  3003
+                ]
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "ADE_LoadAnimateDiffModel"
+            },
+            "widgets_values": [
+              "AnimateLCM_sd15_t2v.ckpt"
+            ]
           }
         ],
         "groups": [],
         "links": [
-          {
-            "id": 2993,
-            "origin_id": 740,
-            "origin_slot": 0,
-            "target_id": 738,
-            "target_slot": 1,
-            "type": "CONTEXT_OPTIONS"
-          },
-          {
-            "id": 2994,
-            "origin_id": 739,
-            "origin_slot": 0,
-            "target_id": 738,
-            "target_slot": 2,
-            "type": "MOTION_LORA"
-          },
-          {
-            "id": 2996,
-            "origin_id": 630,
-            "origin_slot": 0,
-            "target_id": 738,
-            "target_slot": 6,
-            "type": "MULTIVAL"
-          },
           {
             "id": 2547,
             "origin_id": 631,
@@ -2919,28 +2988,12 @@
             "type": "FLOAT"
           },
           {
-            "id": 2995,
-            "origin_id": -10,
-            "origin_slot": 0,
-            "target_id": 738,
-            "target_slot": 0,
-            "type": "MODEL"
-          },
-          {
             "id": 2919,
             "origin_id": -10,
             "origin_slot": 1,
             "target_id": 631,
             "target_slot": 0,
             "type": "FLOATS"
-          },
-          {
-            "id": 2997,
-            "origin_id": 738,
-            "origin_slot": 0,
-            "target_id": -20,
-            "target_slot": 0,
-            "type": "MODEL"
           },
           {
             "id": 2906,
@@ -2973,6 +3026,62 @@
             "target_id": 631,
             "target_slot": 3,
             "type": "FLOAT"
+          },
+          {
+            "id": 3001,
+            "origin_id": 743,
+            "origin_slot": 0,
+            "target_id": 741,
+            "target_slot": 1,
+            "type": "M_MODELS"
+          },
+          {
+            "id": 3002,
+            "origin_id": 742,
+            "origin_slot": 0,
+            "target_id": 741,
+            "target_slot": 2,
+            "type": "CONTEXT_OPTIONS"
+          },
+          {
+            "id": 3003,
+            "origin_id": 744,
+            "origin_slot": 0,
+            "target_id": 743,
+            "target_slot": 0,
+            "type": "MOTION_MODEL_ADE"
+          },
+          {
+            "id": 3004,
+            "origin_id": 741,
+            "origin_slot": 0,
+            "target_id": -20,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 3005,
+            "origin_id": -10,
+            "origin_slot": 0,
+            "target_id": 741,
+            "target_slot": 0,
+            "type": "MODEL"
+          },
+          {
+            "id": 3006,
+            "origin_id": 739,
+            "origin_slot": 0,
+            "target_id": 743,
+            "target_slot": 1,
+            "type": "MOTION_LORA"
+          },
+          {
+            "id": 3007,
+            "origin_id": 630,
+            "origin_slot": 0,
+            "target_id": 743,
+            "target_slot": 2,
+            "type": "MULTIVAL"
           }
         ],
         "extra": {
@@ -3486,13 +3595,6 @@
   },
   "config": {},
   "extra": {
-    "ds": {
-      "scale": 0.5405385086129658,
-      "offset": [
-        2048.4879194291284,
-        3106.4613005146393
-      ]
-    },
     "frontendVersion": "1.35.9",
     "workflowRendererVersion": "LG",
     "ue_links": [
@@ -3542,7 +3644,14 @@
     "VHS_latentpreviewrate": 0,
     "groupNodes": {},
     "VHS_MetadataImage": true,
-    "VHS_KeepIntermediate": true
+    "VHS_KeepIntermediate": true,
+    "ds": {
+      "scale": 0.5405385086129659,
+      "offset": [
+        2294.777285873275,
+        2842.473349088063
+      ]
+    }
   },
   "version": 0.4
 }
