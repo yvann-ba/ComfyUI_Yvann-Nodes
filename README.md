@@ -1,6 +1,7 @@
 #### `pleaseee add a star⭐️ to this repo if you like it, so I can keep improving it for free ((:`
 ---
-# 🔊 ComfyUI_Yvann-Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
+# 🔊 ComfyUI_Yvann-Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/) [![YouTube Tutorial](https://img.shields.io/badge/YouTube_Tutorial-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=O2s6NseXlMc)
+
 
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
