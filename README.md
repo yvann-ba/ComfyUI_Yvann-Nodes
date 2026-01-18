@@ -1,4 +1,4 @@
-#### `pleaseee add a star⭐️, so I can keep improving this project ((:`
+#### `pleaseee star⭐️ this repo, so I can keep improving it ((:`
 ---
 # 🔊 ComfyUI Yvann Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
 
