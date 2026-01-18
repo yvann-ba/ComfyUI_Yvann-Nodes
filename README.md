@@ -17,9 +17,9 @@
 
 ## Quick Setup
 
-### 1. Install [ComfyUI](https://www.comfy.org/download) (Works on Mac, Windows, Linux)
+#### 1. Install [ComfyUI](https://www.comfy.org/download) (Works on Mac, Windows, Linux)
 
-### 2. Pick a Workflow ⬇️
+#### 2. Pick a Workflow ⬇️
 
 ---
 
