@@ -3,6 +3,8 @@ from typing import Tuple, List, Dict
 
 import torch
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for thread safety (macOS fix)
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from PIL import Image

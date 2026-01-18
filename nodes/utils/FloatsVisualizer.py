@@ -2,6 +2,8 @@ import tempfile
 
 import torch
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for thread safety (macOS fix)
 import matplotlib.pyplot as plt
 from PIL import Image
 
