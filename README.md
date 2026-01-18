@@ -1,13 +1,11 @@
-#### `pleaseee star⭐️ this repo, so I can keep improving it ((:`
+#### `pleaseee star⭐️ this repo, so I can keep improving it ((:` [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
 ---
-# 🔊 ComfyUI Yvann Nodes [![Contact Me](https://img.shields.io/badge/Contact_Me-white?style=for-the-badge&logo=linkedin&logoColor=0A66C2)](https://www.linkedin.com/in/yvann-barbot/)
-
 
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
 ---
 
-## What Does This Do?
+### What Does This Do?
 
 - **Create** Audio Reactive AI videos, enable controls over AI generations styles, content and composition with any audio
 - **Simple**: Just Drop one of our [Workflows](/example_workflows) in ComfyUI and specify your audio and visuals input
@@ -15,7 +13,7 @@
 
 ---
 
-## Quick Setup
+### Quick Setup
 
 #### 1. Install [ComfyUI](https://www.comfy.org/download) (Works on Mac, Windows, Linux)
 
