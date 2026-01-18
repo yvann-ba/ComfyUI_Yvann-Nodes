@@ -40,7 +40,25 @@ Takes a **set of images** + **audio**
      </td>
   </tr>
 </table>
+<table border="0" style="width: 100%; text-align: left; margin-top: 20px;">
+  <tr>
+      <td>
+          <video src="https://github.com/user-attachments/assets/318f5b97-202b-483c-8b10-72fa0e741946" width="100%" controls autoplay loop></video>
+     </td>
+     <td>
+          <video src="https://github.com/user-attachments/assets/ba28fbcb-e9bd-43d2-b9b5-329fb7fe7198" width="100%" controls autoplay loop></video>
+     </td>
 
+
+
+
+
+
+
+
+
+  </tr>
+</table>
 <table border="0" style="width: 100%; text-align: left; margin-top: 20px;">
   <tr>
       <td>
@@ -54,6 +72,7 @@ Takes a **set of images** + **audio**
      </td>
   </tr>
 </table>
+
 
 <table>
   <tr>
