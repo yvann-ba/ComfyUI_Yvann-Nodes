@@ -1,6 +1,3 @@
-#### `pleaseee star⭐️ this repo, so I can keep improving it ((:`
----
-
 ### **A pack of custom nodes that enable audio reactivity within [ComfyUI](https://github.com/comfyanonymous/ComfyUI), allowing you to generate AI-driven animations that sync with music**
 
 ---
